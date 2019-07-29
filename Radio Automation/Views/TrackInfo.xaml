@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Radio_Automation.Views.TrackInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:models="clr-namespace:Radio_Automation.Models"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="250">
+
+	<UserControl.Resources>
+		<DataTemplate DataType="{x:Type models:Track}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<!--<TextBlock Grid.Column="0" Grid.Row="0" Text="Title: " VerticalAlignment="Center" FontSize="20" Margin="2,1"/>-->
+				<TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" HorizontalAlignment="Stretch" TextAlignment="Left" VerticalAlignment="Center" FontSize="20" Margin="2,1"/>
+				<!--<TextBlock Grid.Column="0" Grid.Row="1" Text="Artist: " VerticalAlignment="Center" FontSize="20" Margin="2,1"/>-->
+				<TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Artist}" HorizontalAlignment="Stretch" TextAlignment="Left" VerticalAlignment="Center" FontSize="20" Margin="2,1"/>
+			</Grid>
+		</DataTemplate>
+	</UserControl.Resources>
+	<ContentPresenter Content="{Binding}"/>
+</UserControl>

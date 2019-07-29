@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\dev\\Radio Automation\\Schedule\\Schedule.csproj": {}
+  },
+  "projects": {
+    "C:\\dev\\Radio Automation\\Schedule\\Schedule.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\dev\\Radio Automation\\Schedule\\Schedule.csproj",
+        "projectName": "Schedule",
+        "projectPath": "C:\\dev\\Radio Automation\\Schedule\\Schedule.csproj",
+        "packagesPath": "C:\\Users\\jeffu\\.nuget\\packages\\",
+        "outputPath": "C:\\dev\\Radio Automation\\Schedule\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\jeffu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://www.myget.org/F/catel/api/v3/index.json": {},
+          "https://www.nuget.org/api/v2/": {}
+        },
+        "frameworks": {
+          "netstandard2.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.0": {
+          "dependencies": {
+            "NETStandard.Library": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.3, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,86 @@
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Radio Automation.exe.config
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Radio Automation.exe
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Radio Automation.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.Core.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.MVVM.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.Serialization.Json.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\JobToolkit.Core.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\LiteDB.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Microsoft.Expression.Interactions.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\NAudioWrapper.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\NCrontab.Advanced.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\NCrontab.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Newtonsoft.Json.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\policy.2.0.taglib-sharp.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Serialize.Linq.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\System.Collections.Immutable.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\System.ComponentModel.Annotations.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\System.Configuration.ConfigurationManager.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\System.Windows.Interactivity.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\taglib-sharp.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\WPFDarkTheme.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\NAudio.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\NAudioWrapper.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Resources.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\WPFDarkTheme.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.Core.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.Core.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.MVVM.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.MVVM.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.Serialization.Json.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Catel.Serialization.Json.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\LiteDB.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Newtonsoft.Json.pdb
+C:\dev\Radio Automation\Radio Automation\bin\Debug\Newtonsoft.Json.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\System.Collections.Immutable.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\NAudio.xml
+C:\dev\Radio Automation\Radio Automation\bin\Debug\de\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\es\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\fr\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\it\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\nl\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ru\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\tr\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\zh-Hans\Catel.MVVM.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\en\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\es\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\fr\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\it\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ja\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ko\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ru\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\zh-Hans\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\zh-Hant\Microsoft.Expression.Interactions.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\en\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\es\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\fr\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\it\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ja\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ko\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\ru\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
+C:\dev\Radio Automation\Radio Automation\bin\Debug\policy.2.0.taglib-sharp.config
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.csprojAssemblyReference.cache
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Themes\Generic.baml
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\EventScheduleWindow.baml
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\EventScheduleWindow.g.cs
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\TrackInfo.g.cs
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\MainWindow.g.cs
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\TrackView.g.cs
+C:\dev\Radio Automation\Radio Automation\obj\Debug\App.g.cs
+C:\dev\Radio Automation\Radio Automation\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation_MarkupCompile.cache
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation_MarkupCompile.lref
+C:\dev\Radio Automation\Radio Automation\obj\Debug\App.baml
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\TrackInfo.baml
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\MainWindow.baml
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Views\TrackView.baml
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.g.resources
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio_Automation.Properties.Resources.resources
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.csproj.GenerateResource.cache
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.csproj.CoreCompileInputs.cache
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.csproj.CopyComplete
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.exe
+C:\dev\Radio Automation\Radio Automation\obj\Debug\Radio Automation.pdb

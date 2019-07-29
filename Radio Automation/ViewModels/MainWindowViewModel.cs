@@ -1,0 +1,1083 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using Catel.Collections;
+using Catel.Data;
+using Catel.IoC;
+using Catel.MVVM;
+using Catel.Services;
+using Catel.Windows;
+using Catel.Windows.Threading;
+using JobToolkit.Core;
+using NAudioWrapper;
+using Radio_Automation.Events;
+using Radio_Automation.Extensions;
+using Radio_Automation.Messaging;
+using Radio_Automation.Models;
+using Radio_Automation.Services;
+
+namespace Radio_Automation.ViewModels
+{
+	public class MainWindowViewModel: ViewModelBase
+	{
+		//Services injected
+		private readonly ISelectDirectoryService _selectDirectoryService;
+		private readonly IAudioTrackParserService _audioTrackParserService;
+		private readonly IOpenFileService _openFileService;
+		private readonly IPersistenceService _persistenceService;
+		private readonly IPleaseWaitService _pleaseWaitService;
+		
+		private readonly AudioPlayback _audioPlayer;
+		private PlaybackState _playbackState = PlaybackState.Stopped;
+		private readonly DispatcherTimer _playPositionTimer;
+		private readonly DispatcherTimer _pendingEventTimer;
+		private int _currentTrackIndex = -1;
+		private readonly EventScheduler _eventScheduler;
+		private EventSchedule _eventSchedule;
+		private readonly Queue<Event> _eventQueue = new Queue<Event>();
+		private Settings _settings = new Settings();
+		
+
+		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
+			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, ISaveFileService _saveFileService)
+		{
+			
+			_selectDirectoryService = selectDirectoryService;
+			_audioTrackParserService = audioTrackParserService;
+			_openFileService = openFileService;
+			_persistenceService = persistenceService;
+			_pleaseWaitService = pleaseWaitService;
+
+			PendingEvents = new ObservableCollection<PendingEvent>();
+
+			UpdatePlayPauseStates();
+
+			Clock = new Clock();
+			TrackEndTime = DateTime.MinValue;
+			_playPositionTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(1)};
+			_playPositionTimer.Tick += _playPositionTimer_Tick;
+			_playPositionTimer.IsEnabled = true;
+
+			_pendingEventTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(1)};
+			_pendingEventTimer.Tick += _pendingEventTimer_Tick;
+			_pendingEventTimer.IsEnabled = true;
+			_pendingEventTimer.Start();
+
+			Playlist = new Playlist();
+			
+			_audioPlayer = new AudioPlayback();
+			_audioPlayer.PlaybackPaused += PlaybackPaused;
+			_audioPlayer.PlaybackResumed += PlaybackResumed;
+			//_audioPlayer.PlaybackStopped += _audioPlayer_PlaybackStopped;
+			_audioPlayer.PlaybackEnded += PlaybackEnded;
+			_audioPlayer.OnSteamVolume += _audioPlayer_OnStreamVolume;
+			VolumeChangedCommand.Execute();
+			EventBus.EventTriggered += EventTriggered;
+			_eventScheduler = new EventScheduler();
+			_eventSchedule = new EventSchedule();
+			Event e = new Event(EventType.Time);
+			e.Name = @"Announce Time";
+			e.Enabled = true;
+			e.Demand = Demand.Delayed;
+			e.EndDateTime = DateTime.UtcNow.AddDays(1);
+			e.CronExpression = new CronExpression("*/10 7-17 * * *");
+			_eventSchedule.Events.Add(e);
+			_eventScheduler.LoadSchedule(_eventSchedule);
+		}
+
+		#region Overrides of ViewModelBase
+
+		/// <inheritdoc />
+		protected override async Task InitializeAsync()
+		{
+			await RestoreSettingsAsync();
+
+			Volume = _settings.Volume;
+
+			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
+			{
+				Playlist = await _persistenceService.LoadPlaylistAsync(_settings.LastPlaylistPath);
+			}
+		}
+
+		#endregion
+
+		private void EventTriggered(Event e)
+		{
+			if (_playbackState != PlaybackState.Stopped && e.Demand == Demand.Delayed)
+			{
+				_eventQueue.Enqueue(e);
+			}
+			else
+			{
+				DispatcherHelper.CurrentDispatcher.BeginInvoke(() => ExecuteEvent(e));
+			}
+		}
+
+		private enum PlaybackState
+		{
+			Playing, Stopped, Paused
+		}
+
+		#region Overrides of ViewModelBase
+
+		/// <inheritdoc />
+		public override string Title => @"Radio Automation";
+
+		#endregion
+
+		#region Playlist property
+
+		/// <summary>
+		/// Gets or sets the Playlist value.
+		/// </summary>
+		public Playlist Playlist
+		{
+			get { return GetValue<Playlist>(PlaylistProperty); }
+			set
+			{
+				SetValue(PlaylistProperty, value);
+				if (Playlist.Tracks.Count > 0)
+				{
+					_currentTrackIndex = 0;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Playlist property data.
+		/// </summary>
+		public static readonly PropertyData PlaylistProperty = RegisterProperty("Playlist", typeof(Playlist));
+
+		#endregion
+
+		#region PendingEvents property
+
+		/// <summary>
+		/// Gets or sets the PendingEvents value.
+		/// </summary>
+		public ObservableCollection<PendingEvent> PendingEvents
+		{
+			get { return GetValue<ObservableCollection<PendingEvent>>(PendingEventsProperty); }
+			set { SetValue(PendingEventsProperty, value); }
+		}
+
+		/// <summary>
+		/// PendingEvents property data.
+		/// </summary>
+		public static readonly PropertyData PendingEventsProperty = RegisterProperty("PendingEvents", typeof(ObservableCollection<PendingEvent>));
+
+		#endregion
+
+		#region PlayPauseImageSource property
+
+		/// <summary>
+		/// Gets or sets the PlayPauseImageSource value.
+		/// </summary>
+		public string PlayPauseImageSource
+		{
+			get { return GetValue<string>(PlayPauseImageSourceProperty); }
+			set { SetValue(PlayPauseImageSourceProperty, value); }
+		}
+
+		/// <summary>
+		/// PlayPauseImageSource property data.
+		/// </summary>
+		public static readonly PropertyData PlayPauseImageSourceProperty = RegisterProperty("PlayPauseImageSource", typeof(string));
+
+		#endregion
+		#region Clock property
+
+		/// <summary>
+		/// Gets or sets the Clock value.
+		/// </summary>
+		public Clock Clock
+		{
+			get { return GetValue<Clock>(ClockProperty); }
+			set { SetValue(ClockProperty, value); }
+		}
+
+		/// <summary>
+		/// Clock property data.
+		/// </summary>
+		public static readonly PropertyData ClockProperty = RegisterProperty("Clock", typeof(Clock));
+
+		#endregion
+
+		#region NextTrack property
+
+		/// <summary>
+		/// Gets or sets the NextTrack value.
+		/// </summary>
+		public Track NextTrack
+		{
+			get { return GetValue<Track>(NextTrackProperty); }
+			set { SetValue(NextTrackProperty, value); }
+		}
+
+		/// <summary>
+		/// NextTrack property data.
+		/// </summary>
+		public static readonly PropertyData NextTrackProperty = RegisterProperty("NextTrack", typeof(Track));
+
+		#endregion
+
+		#region CurrentTrack property
+
+		/// <summary>
+		/// Gets or sets the CurrentTrack value.
+		/// </summary>
+		public Track CurrentTrack
+		{
+			get { return GetValue<Track>(CurrentTrackProperty); }
+			set { SetValue(CurrentTrackProperty, value); }
+		}
+
+		/// <summary>
+		/// CurrentTrack property data.
+		/// </summary>
+		public static readonly PropertyData CurrentTrackProperty = RegisterProperty("CurrentTrack", typeof(Track));
+
+		#endregion
+
+		#region Position property
+
+		/// <summary>
+		/// Gets or sets the Position value.
+		/// </summary>
+		public TimeSpan Position
+		{
+			get { return GetValue<TimeSpan>(PositionProperty); }
+			set { SetValue(PositionProperty, value); }
+		}
+
+		/// <summary>
+		/// Position property data.
+		/// </summary>
+		public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(TimeSpan));
+
+		#endregion
+
+		#region RemainingTime property
+
+		/// <summary>
+		/// Gets or sets the RemainingTime value.
+		/// </summary>
+		public TimeSpan RemainingTime
+		{
+			get { return GetValue<TimeSpan>(RemainingTimeProperty); }
+			set { SetValue(RemainingTimeProperty, value); }
+		}
+
+		/// <summary>
+		/// RemainingTime property data.
+		/// </summary>
+		public static readonly PropertyData RemainingTimeProperty = RegisterProperty("RemainingTime", typeof(TimeSpan));
+
+		#endregion
+
+		#region TrackEndTime property
+
+		/// <summary>
+		/// Gets or sets the TrackEndTime value.
+		/// </summary>
+		public DateTime TrackEndTime
+		{
+			get { return GetValue<DateTime>(TrackEndTimeProperty); }
+			set { SetValue(TrackEndTimeProperty, value); }
+		}
+
+		/// <summary>
+		/// TrackEndTime property data.
+		/// </summary>
+		public static readonly PropertyData TrackEndTimeProperty = RegisterProperty("TrackEndTime", typeof(DateTime));
+
+		#endregion
+
+		#region Volume property
+
+		/// <summary>
+		/// Gets or sets the Volume value.
+		/// </summary>
+		public float Volume
+		{
+			get { return GetValue<float>(VolumeProperty); }
+			set { SetValue(VolumeProperty, value); }
+		}
+
+		/// <summary>
+		/// Volume property data.
+		/// </summary>
+		public static readonly PropertyData VolumeProperty = RegisterProperty("Volume", typeof(float));
+
+		#endregion
+
+		#region LeftLevel property
+
+		/// <summary>
+		/// Gets or sets the LeftLevel value.
+		/// </summary>
+		public int LeftLevel
+		{
+			get { return GetValue<int>(LeftLevelProperty); }
+			set { SetValue(LeftLevelProperty, value); }
+		}
+
+		/// <summary>
+		/// LeftLevel property data.
+		/// </summary>
+		public static readonly PropertyData LeftLevelProperty = RegisterProperty("LeftLevel", typeof(int));
+
+		#endregion
+
+		#region RightLevel property
+
+		/// <summary>
+		/// Gets or sets the RightLevel value.
+		/// </summary>
+		public int RightLevel
+		{
+			get { return GetValue<int>(RightLevelProperty); }
+			set { SetValue(RightLevelProperty, value); }
+		}
+
+		/// <summary>
+		/// RightLevel property data.
+		/// </summary>
+		public static readonly PropertyData RightLevelProperty = RegisterProperty("RightLevel", typeof(int));
+
+		#endregion
+
+
+
+		#region Overrides of ViewModelBase
+
+		/// <inheritdoc />
+		protected override async Task CloseAsync()
+		{
+			var success = SaveSettingsAsync();
+			success.Wait(TimeSpan.FromSeconds(1));
+			StopPlaying();
+			_audioPlayer?.Dispose();
+			await base.CloseAsync();
+		}
+
+		#endregion
+
+
+		#region NewPlaylist command
+
+		private Command _newPlaylistCommand;
+
+		/// <summary>
+		/// Gets the NewPlaylist command.
+		/// </summary>
+		public Command NewPlaylistCommand
+		{
+			get { return _newPlaylistCommand ?? (_newPlaylistCommand = new Command(NewPlaylist)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the NewPlaylist command is executed.
+		/// </summary>
+		private void NewPlaylist()
+		{
+			Playlist = new Playlist();
+		}
+
+		#endregion
+
+		#region OpenPlaylist command
+
+		private TaskCommand _openPlaylistCommand;
+
+		/// <summary>
+		/// Gets the OpenPlaylist command.
+		/// </summary>
+		public TaskCommand OpenPlaylistCommand
+		{
+			get { return _openPlaylistCommand ?? (_openPlaylistCommand = new TaskCommand(OpenPlaylist)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the OpenPlaylist command is executed.
+		/// </summary>
+		private async Task OpenPlaylist()
+		{
+			_openFileService.IsMultiSelect = false;
+			//_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			_openFileService.CheckFileExists = true;
+			_openFileService.Title = @"Import Zara Playlist";
+			await Console.Out.WriteLineAsync(_openFileService.InitialDirectory);
+			_openFileService.Filter = "Playlist (*.rpl) | *.rpl";
+			if (await _openFileService.DetermineFileAsync())
+			{
+				_pleaseWaitService.Show();
+				Playlist = await _persistenceService.LoadPlaylistAsync(_openFileService.FileName);
+				_settings.LastPlaylistPath = _openFileService.FileName;
+				_pleaseWaitService.Hide();
+			}
+		}
+
+		#endregion
+
+		#region ImportZaraPlaylist command
+
+		private TaskCommand _importZaraPlaylistCommand;
+
+		/// <summary>
+		/// Gets the ImportZaraPlaylist command.
+		/// </summary>
+		public TaskCommand ImportZaraPlaylistCommand
+		{
+			get { return _importZaraPlaylistCommand ?? (_importZaraPlaylistCommand = new TaskCommand(ImportZaraPlaylist)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the ImportZaraPlaylist command is executed.
+		/// </summary>
+		private async Task ImportZaraPlaylist()
+		{
+			_openFileService.IsMultiSelect = false;
+			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			_openFileService.CheckFileExists = true;
+			_openFileService.Title = @"Import Zara Playlist";
+			await Console.Out.WriteLineAsync(_openFileService.InitialDirectory);
+			_openFileService.Filter = "ZaraRadio List (*.lst) | *.lst";
+			if (await _openFileService.DetermineFileAsync())
+			{
+				_pleaseWaitService.Show();
+				Playlist = await _persistenceService.ImportZaraPlaylistAsync(_openFileService.FileName);
+				_pleaseWaitService.Hide();
+			}
+		}
+
+		#endregion
+
+		#region SavePlaylist command
+
+		private TaskCommand _savePlaylistCommand;
+
+		/// <summary>
+		/// Gets the SavePlaylist command.
+		/// </summary>
+		public TaskCommand SavePlaylistCommand
+		{
+			get { return _savePlaylistCommand ?? (_savePlaylistCommand = new TaskCommand(SavePlaylist)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the SavePlaylist command is executed.
+		/// </summary>
+		private async Task SavePlaylist()
+		{
+			var dependencyResolver = this.GetDependencyResolver();
+			var saveFileService = dependencyResolver.Resolve<ISaveFileService>();
+			saveFileService.Filter = "Playlist|*.rpl";
+			saveFileService.Title = @"Save Playlist";
+			if (await saveFileService.DetermineFileAsync())
+			{
+				_pleaseWaitService.Show();
+				await _persistenceService.SavePlaylistAsync(Playlist, saveFileService.FileName);
+				_pleaseWaitService.Hide();
+			}
+			
+		}
+
+		#endregion
+
+		#region SavePlaylistAs command
+
+		private TaskCommand _savePlaylistAsCommand;
+
+		/// <summary>
+		/// Gets the SavePlaylistAs command.
+		/// </summary>
+		public TaskCommand SavePlaylistAsCommand
+		{
+			get { return _savePlaylistAsCommand ?? (_savePlaylistAsCommand = new TaskCommand(SavePlaylistAs)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the SavePlaylistAs command is executed.
+		/// </summary>
+		private async Task SavePlaylistAs()
+		{
+			// TODO: Handle command logic here
+		}
+
+		#endregion
+
+		#region Exit command
+
+		private Command<Window> _exitCommand;
+
+		/// <summary>
+		/// Gets the Exit command.
+		/// </summary>
+		public Command<Window> ExitCommand => _exitCommand ?? (_exitCommand = new Command<Window>(Exit));
+
+		/// <summary>
+		/// Method to invoke when the Exit command is executed.
+		/// </summary>
+		private void Exit(Window window)
+		{
+			window?.Close();
+		}
+
+		#endregion
+
+		#region EditEventSchedule command
+
+		private TaskCommand _editEventScheduleCommand;
+
+		/// <summary>
+		/// Gets the EditEventSchedule command.
+		/// </summary>
+		public TaskCommand EditEventScheduleCommand
+		{
+			get { return _editEventScheduleCommand ?? (_editEventScheduleCommand = new TaskCommand(EditEventScheduleAsync)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the EditEventSchedule command is executed.
+		/// </summary>
+		private async Task EditEventScheduleAsync()
+		{
+			var viewModel = new EventScheduleViewModel(_eventSchedule);
+
+			var dependencyResolver = this.GetDependencyResolver();
+			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
+			await uiVisualizerService.ShowDialogAsync(viewModel);
+		}
+
+		#endregion
+
+
+		#region AddFile command
+
+		private Command _addFileCommand;
+
+		/// <summary>
+		/// Gets the AddFile command.
+		/// </summary>
+		public Command AddFileCommand
+		{
+			get { return _addFileCommand ?? (_addFileCommand = new Command(AddFile, CanAddFile)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the AddFile command is executed.
+		/// </summary>
+		private async void AddFile()
+		{
+			_openFileService.IsMultiSelect = true;
+			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+			_openFileService.Filter = "Audio files (*.wav, *.mp3, *.wma, *.ogg, *.flac) | *.wav; *.mp3; *.wma; *.ogg; *.flac";
+			if (await _openFileService.DetermineFileAsync())
+			{
+				foreach (var fileName in _openFileService.FileNames)
+				{
+					AddFileToPlaylist(fileName);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Method to check whether the AddFile command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanAddFile()
+		{
+			return _playbackState == PlaybackState.Stopped;
+		}
+
+		#endregion
+
+		#region AddFolder command
+
+		private Command _addFolderCommand;
+
+		/// <summary>
+		/// Gets the AddFolder command.
+		/// </summary>
+		public Command AddFolderCommand
+		{
+			get { return _addFolderCommand ?? (_addFolderCommand = new Command(AddFolder, CanAddFolder)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the AddFolder command is executed.
+		/// </summary>
+		private async void AddFolder()
+		{
+			_selectDirectoryService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+			_selectDirectoryService.ShowNewFolderButton = false;
+			if (await _selectDirectoryService.DetermineDirectoryAsync())
+			{
+				AddFolderToPlaylist(_selectDirectoryService.DirectoryName);
+			}
+
+		}
+
+		/// <summary>
+		/// Method to check whether the AddFolder command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanAddFolder()
+		{
+			return _playbackState == PlaybackState.Stopped;
+		}
+
+		#endregion
+
+		#region Help command
+
+		private Command _helpCommand;
+
+		/// <summary>
+		/// Gets the Help command.
+		/// </summary>
+		public Command HelpCommand
+		{
+			get { return _helpCommand ?? (_helpCommand = new Command(Help)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the Help command is executed.
+		/// </summary>
+		private void Help()
+		{
+			// TODO: Handle command logic here
+		}
+
+		#endregion
+
+		#region Preferences command
+
+		private Command _preferencesCommand;
+
+		/// <summary>
+		/// Gets the Preferences command.
+		/// </summary>
+		public Command PreferencesCommand
+		{
+			get { return _preferencesCommand ?? (_preferencesCommand = new Command(Preferences)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the Preferences command is executed.
+		/// </summary>
+		private void Preferences()
+		{
+			// TODO: Handle command logic here
+		}
+
+		#endregion
+
+		#region StartPlayback command
+
+		private Command _playPauseCommand;
+
+		/// <summary>
+		/// Gets the StartPlayback command.
+		/// </summary>
+		public Command PlayPauseCommand
+		{
+			get { return _playPauseCommand ?? (_playPauseCommand = new Command(PlayPause, CanPlayPause)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the StartPlayback command is executed.
+		/// </summary>
+		private void PlayPause()
+		{
+
+			switch (_playbackState)
+			{
+				case PlaybackState.Paused:
+					_playbackState = PlaybackState.Playing;
+					_audioPlayer.TogglePlayPause();
+					break;
+				case PlaybackState.Playing:
+					_playbackState = PlaybackState.Paused;
+					_audioPlayer.TogglePlayPause();
+					break;
+				default:
+					StartPlay();
+					break;
+
+			}
+			
+		}
+
+		private void StartPlay()
+		{
+			UpdateCurrentNextTracks();
+			if (CurrentTrack != null)
+			{
+				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
+				_playbackState = PlaybackState.Playing;
+				_audioPlayer.Load(CurrentTrack.Path);
+				TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
+				_audioPlayer.TogglePlayPause();
+			}
+		}
+
+		/// <summary>
+		/// Method to check whether the StartPlayback command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanPlayPause()
+		{
+			return true;
+		}
+
+		#endregion
+
+		#region StopPlayback command
+
+		private Command _stopPlaybackCommand;
+
+		/// <summary>
+		/// Gets the StopPlayback command.
+		/// </summary>
+		public Command StopPlaybackCommand
+		{
+			get { return _stopPlaybackCommand ?? (_stopPlaybackCommand = new Command(StopPlayback, CanStopPlayback)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the StopPlayback command is executed.
+		/// </summary>
+		private void StopPlayback()
+		{
+			_playbackState = PlaybackState.Stopped;
+			_audioPlayer?.Stop();
+		}
+
+		/// <summary>
+		/// Method to check whether the StopPlayback command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanStopPlayback()
+		{
+			return _playbackState == PlaybackState.Playing || _playbackState == PlaybackState.Paused;
+		}
+
+		#endregion
+
+		#region ForwardToEnd command
+
+		private Command _forwardToEndCommand;
+
+		/// <summary>
+		/// Gets the ForwardToEnd command.
+		/// </summary>
+		public Command ForwardToEndCommand
+		{
+			get { return _forwardToEndCommand ?? (_forwardToEndCommand = new Command(ForwardToEnd, CanForwardToEnd)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the ForwardToEnd command is executed.
+		/// </summary>
+		private void ForwardToEnd()
+		{
+			_audioPlayer?.Stop();
+		}
+
+		/// <summary>
+		/// Method to check whether the ForwardToEnd command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanForwardToEnd()
+		{
+			return _playbackState == PlaybackState.Playing;
+		}
+
+		#endregion
+
+		#region RewindToStart command
+
+		private Command _rewindToStartCommand;
+
+		/// <summary>
+		/// Gets the RewindToStart command.
+		/// </summary>
+		public Command RewindToStartCommand
+		{
+			get { return _rewindToStartCommand ?? (_rewindToStartCommand = new Command(RewindToStart, CanRewindToStart)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the RewindToStart command is executed.
+		/// </summary>
+		private void RewindToStart()
+		{
+			_audioPlayer.Position = 0; // set position to zero
+		}
+
+		/// <summary>
+		/// Method to check whether the RewindToStart command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanRewindToStart()
+		{
+			return _playbackState == PlaybackState.Playing;
+		}
+
+		#endregion
+
+		#region Shuffle command
+
+		private Command _shuffleCommand;
+
+		/// <summary>
+		/// Gets the Shuffle command.
+		/// </summary>
+		public Command ShuffleCommand
+		{
+			get { return _shuffleCommand ?? (_shuffleCommand = new Command(Shuffle, CanShuffle)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the Shuffle command is executed.
+		/// </summary>
+		private void Shuffle()
+		{
+			Playlist.Tracks.Shuffle();
+			//_eventSchedule.UpNext();
+			//PlayTime(new AudioPlayback());
+		}
+
+		/// <summary>
+		/// Method to check whether the Shuffle command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanShuffle()
+		{
+			return _playbackState == PlaybackState.Stopped;
+		}
+
+		#endregion
+
+		#region VolumeChanged command
+
+		private Command _volumeChangedCommand;
+
+		/// <summary>
+		/// Gets the VolumeChanged command.
+		/// </summary>
+		public Command VolumeChangedCommand
+		{
+			get { return _volumeChangedCommand ?? (_volumeChangedCommand = new Command(VolumeChanged)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the VolumeChanged command is executed.
+		/// </summary>
+		private void VolumeChanged()
+		{
+			_audioPlayer.Volume = Volume/100;
+		}
+
+		#endregion
+
+
+		#region Player Events
+
+		private void PlaybackEnded()
+		{
+			TrackEndTime = DateTime.MinValue;
+			TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, false));
+			if (_playbackState == PlaybackState.Stopped)
+			{
+				StopPlaying();
+				return;
+			}
+
+			//_playbackState = PlaybackState.Stopped;
+			if (_eventQueue.Any())
+			{
+				CurrentTrack = null;
+				ExecuteEvent(_eventQueue.Dequeue());
+			}
+			else
+			{
+				if (++_currentTrackIndex >= Playlist.Tracks.Count)
+				{
+					_currentTrackIndex = 0;
+				}
+
+				StartPlay();
+			}
+			
+		}
+
+		private void StopPlaying()
+		{
+			_playbackState = PlaybackState.Stopped;
+			_playPositionTimer.Stop();
+			UpdatePlayPauseStates();
+
+			UpdateCommandStates();
+			Position = TimeSpan.Zero;
+			RemainingTime = TimeSpan.Zero;
+			CurrentTrack = null;
+			NextTrack = null;
+		}
+
+		private void PlaybackResumed()
+		{
+			_playPositionTimer.Start();
+			UpdatePlayPauseStates();
+		}
+
+		private void PlaybackPaused()
+		{
+			_playPositionTimer.Stop();
+			UpdatePlayPauseStates();
+		}
+
+		private void _playPositionTimer_Tick(object sender, EventArgs e)
+		{
+			if(CurrentTrack != null)
+			{
+				Position = TimeSpan.FromSeconds(_audioPlayer.Position);
+				RemainingTime = CurrentTrack.Duration - Position;
+			}
+		}
+
+		private void _pendingEventTimer_Tick(object sender, EventArgs e)
+		{
+			var pending = _eventScheduler.UpNext(5);
+			PendingEvents.AddRange(pending.Except(PendingEvents));
+		}
+
+		private void _audioPlayer_OnStreamVolume(VolumeEventArgs e)
+		{
+			//Console.Out.WriteLineAsync($"{e.Left}, {e.Right}");
+			LeftLevel = (int)(e.Left * 100);
+			RightLevel = (int)(e.Right * 100);
+		}
+
+		#endregion
+
+		private void UpdatePlayPauseStates()
+		{
+			switch (_playbackState)
+			{
+				case PlaybackState.Playing:
+					PlayPauseImageSource = "/Resources;component/Icons/control_pause_blue.png";
+					break;
+				case PlaybackState.Paused:
+				case PlaybackState.Stopped:
+					LeftLevel = 0;
+					RightLevel = 0;
+					PlayPauseImageSource = "/Resources;component/Icons/control_play_blue.png";
+					break;
+			}
+		}
+
+		private void UpdateCurrentNextTracks()
+		{
+			if (_currentTrackIndex >= 0)
+			{
+				CurrentTrack = Playlist.Tracks[_currentTrackIndex];
+				NextTrack = _currentTrackIndex + 1 < Playlist.Tracks.Count ? Playlist.Tracks[_currentTrackIndex + 1] : null;
+			}
+			else
+			{
+				CurrentTrack = null;
+				NextTrack = null;
+			}
+			
+		}
+
+		private async Task<bool> SaveSettingsAsync()
+		{
+			_settings.Volume = Volume;
+			return await _persistenceService.SaveSettingsAsync(_settings);
+		}
+
+		private async Task RestoreSettingsAsync()
+		{
+			_settings = await _persistenceService.LoadSettingsAsync();
+		}
+
+		private void LoadPlaylistFromFolder(string path, bool recurse=false)
+		{
+			var tracks = _audioTrackParserService.RetrieveAudioTracksInPath(path, recurse);
+			Playlist = new Playlist(tracks);
+		}
+
+		private void AddFolderToPlaylist(string path, bool recurse = false)
+		{
+			var tracks = _audioTrackParserService.RetrieveAudioTracksInPath(path, recurse);
+			Playlist.Tracks.AddItems(tracks);
+		}
+
+		private void AddFileToPlaylist(string filePath)
+		{
+			var track = _audioTrackParserService.RetrieveAudioTrackFromFile(filePath);
+			Playlist.Tracks.Add(track);
+		}
+
+		protected void UpdateCommandStates()
+		{
+			var viewModelBase = this as ViewModelBase;
+			var commandManager = viewModelBase.GetViewModelCommandManager();
+			commandManager.InvalidateCommands();
+		}
+
+		private void ExecuteEvent(Event e)
+		{
+			switch (e.EventType)
+			{
+				case EventType.Time:
+					PlayTime(_audioPlayer, _playbackState == PlaybackState.Stopped);
+					break;
+				case EventType.Stop:
+					StopPlaying();
+					break;
+				case EventType.Play:
+					PlayPause();
+					break;
+			}
+
+			PendingEvents.Remove(PendingEvents.First(x => x.Event == e));
+		}
+
+		private void PlayTemperature(AudioPlayback audioPlayer)
+		{
+
+		}
+
+		private void PlayTime(AudioPlayback audioPlayer, bool setState=true)
+		{
+			var time = DateTime.Now;
+			var hourSuffix = time.Minute == 0 ? @"_O" : string.Empty;
+			var hourPath = System.IO.Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time",
+					$"HRS{time:hh}{hourSuffix}.mp3");
+			if (time.Minute > 0)
+			{
+				var minutePath = System.IO.Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time", $"MIN{time:mm}.mp3");
+				audioPlayer.Load(new[] { hourPath, minutePath });
+			}
+			else
+			{
+				audioPlayer.Load(hourPath);
+			}
+
+			//if (setState)
+			//{
+			//	_playbackState = PlaybackState.Playing;
+			//}
+			audioPlayer.TogglePlayPause();
+		}
+	}
+}
