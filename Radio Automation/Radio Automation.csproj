@@ -224,6 +224,10 @@
       <Project>{6785e9d3-de59-48a9-8923-26ce871164da}</Project>
       <Name>Resources</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weather\Weather.csproj">
+      <Project>{0f652b9e-f9ca-4d95-ba19-0ae4dccd330f}</Project>
+      <Name>Weather</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WPFDarkTheme\WPFDarkTheme.csproj">
       <Project>{cc6f214a-f1fc-4516-abf7-85ea0a426a10}</Project>
       <Name>WPFDarkTheme</Name>

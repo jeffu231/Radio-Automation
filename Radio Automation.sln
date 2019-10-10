@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Reso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAudioWrapper", "NAudioWrapper\NAudioWrapper.csproj", "{BA779E3D-4DC8-481B-8DB8-9C4A15E18ACB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather", "Weather\Weather.csproj", "{0F652B9E-F9CA-4D95-BA19-0AE4DCCD330F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BA779E3D-4DC8-481B-8DB8-9C4A15E18ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA779E3D-4DC8-481B-8DB8-9C4A15E18ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA779E3D-4DC8-481B-8DB8-9C4A15E18ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F652B9E-F9CA-4D95-BA19-0AE4DCCD330F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F652B9E-F9CA-4D95-BA19-0AE4DCCD330F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F652B9E-F9CA-4D95-BA19-0AE4DCCD330F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F652B9E-F9CA-4D95-BA19-0AE4DCCD330F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

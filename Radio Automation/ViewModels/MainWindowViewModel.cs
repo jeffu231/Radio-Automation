@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -18,6 +19,7 @@ using Radio_Automation.Extensions;
 using Radio_Automation.Messaging;
 using Radio_Automation.Models;
 using Radio_Automation.Services;
+using Weather;
 
 namespace Radio_Automation.ViewModels
 {
@@ -34,16 +36,19 @@ namespace Radio_Automation.ViewModels
 		private PlaybackState _playbackState = PlaybackState.Stopped;
 		private readonly DispatcherTimer _playPositionTimer;
 		private readonly DispatcherTimer _pendingEventTimer;
+		private readonly DispatcherTimer _weatherUpdateTimer;
 		private int _currentTrackIndex = -1;
 		private readonly EventScheduler _eventScheduler;
 		private EventSchedule _eventSchedule;
 		private readonly Queue<Event> _eventQueue = new Queue<Event>();
 		private Settings _settings = new Settings();
-		
+		private readonly WunderGround _wg;
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, ISaveFileService _saveFileService)
 		{
+			_wg = new WunderGround("f78420eccab34f098420eccab3cf091f");
+			UpdateWeatherData();
 			
 			_selectDirectoryService = selectDirectoryService;
 			_audioTrackParserService = audioTrackParserService;
@@ -65,6 +70,11 @@ namespace Radio_Automation.ViewModels
 			_pendingEventTimer.Tick += _pendingEventTimer_Tick;
 			_pendingEventTimer.IsEnabled = true;
 			_pendingEventTimer.Start();
+
+			_weatherUpdateTimer = new DispatcherTimer{Interval = TimeSpan.FromMinutes(10)};
+			_weatherUpdateTimer.Tick += _weatherUpdateTimer_Tick;
+			_weatherUpdateTimer.IsEnabled = true;
+			_weatherUpdateTimer.Start();
 
 			Playlist = new Playlist();
 			
@@ -294,6 +304,42 @@ namespace Radio_Automation.ViewModels
 		/// TrackEndTime property data.
 		/// </summary>
 		public static readonly PropertyData TrackEndTimeProperty = RegisterProperty("TrackEndTime", typeof(DateTime));
+
+		#endregion
+
+		#region Temperature property
+
+		/// <summary>
+		/// Gets or sets the Temperature value.
+		/// </summary>
+		public int Temperature
+		{
+			get { return GetValue<int>(TemperatureProperty); }
+			set { SetValue(TemperatureProperty, value); }
+		}
+
+		/// <summary>
+		/// Temperature property data.
+		/// </summary>
+		public static readonly PropertyData TemperatureProperty = RegisterProperty("Temperature", typeof(int));
+
+		#endregion
+
+		#region Humidity property
+
+		/// <summary>
+		/// Gets or sets the Humidity value.
+		/// </summary>
+		public int Humidity
+		{
+			get { return GetValue<int>(HumidityProperty); }
+			set { SetValue(HumidityProperty, value); }
+		}
+
+		/// <summary>
+		/// Humidity property data.
+		/// </summary>
+		public static readonly PropertyData HumidityProperty = RegisterProperty("Humidity", typeof(int));
 
 		#endregion
 
@@ -832,6 +878,30 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+		#region PlayTemperature command
+
+		private TaskCommand _playTemperatureCommand;
+
+		/// <summary>
+		/// Gets the PlayTemperature command.
+		/// </summary>
+		public TaskCommand PlayTemperatureCommand
+		{
+			get { return _playTemperatureCommand ?? (_playTemperatureCommand = new TaskCommand(PlayTemperatureAsync)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the PlayTemperature command is executed.
+		/// </summary>
+		private async Task PlayTemperatureAsync()
+		{
+			await PlayTemperature(_audioPlayer, _playbackState == PlaybackState.Stopped);
+		}
+
+		#endregion
+
+
+
 		#region Shuffle command
 
 		private Command _shuffleCommand;
@@ -958,6 +1028,12 @@ namespace Radio_Automation.ViewModels
 			PendingEvents.AddRange(pending.Except(PendingEvents));
 		}
 
+		private async void _weatherUpdateTimer_Tick(object sender, EventArgs e)
+		{
+			await UpdateWeatherData();
+		}
+
+
 		private void _audioPlayer_OnStreamVolume(VolumeEventArgs e)
 		{
 			//Console.Out.WriteLineAsync($"{e.Left}, {e.Right}");
@@ -1034,12 +1110,15 @@ namespace Radio_Automation.ViewModels
 			commandManager.InvalidateCommands();
 		}
 
-		private void ExecuteEvent(Event e)
+		private async void ExecuteEvent(Event e)
 		{
 			switch (e.EventType)
 			{
 				case EventType.Time:
 					PlayTime(_audioPlayer, _playbackState == PlaybackState.Stopped);
+					break;
+				case EventType.Temperature:
+					await PlayTemperature(_audioPlayer, _playbackState == PlaybackState.Stopped);
 					break;
 				case EventType.Stop:
 					StopPlaying();
@@ -1052,9 +1131,23 @@ namespace Radio_Automation.ViewModels
 			PendingEvents.Remove(PendingEvents.First(x => x.Event == e));
 		}
 
-		private void PlayTemperature(AudioPlayback audioPlayer)
+		private async Task UpdateWeatherData()
 		{
+			var obs = await _wg.GetObservationAsync(@"KILMARYV6");
+			Temperature = (int)Math.Round(obs.Temp);
+			Humidity = (int) Math.Round(obs.Humidity);
+		}
 
+		private async Task PlayTemperature(AudioPlayback audioPlayer, bool setState=true)
+		{
+			var format = "000";
+			var tempFile = Temperature < 0 ? $"TMPN{Temperature.ToString(format)}.mp3" : $"TMP{Temperature.ToString(format)}.mp3";
+			var temperaturePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Temperature",tempFile);
+			if (File.Exists(temperaturePath))
+			{
+				audioPlayer.Load(temperaturePath);
+				audioPlayer.TogglePlayPause();
+			}
 		}
 
 		private void PlayTime(AudioPlayback audioPlayer, bool setState=true)
@@ -1065,7 +1158,7 @@ namespace Radio_Automation.ViewModels
 					$"HRS{time:hh}{hourSuffix}.mp3");
 			if (time.Minute > 0)
 			{
-				var minutePath = System.IO.Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time", $"MIN{time:mm}.mp3");
+				var minutePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time", $"MIN{time:mm}.mp3");
 				audioPlayer.Load(new[] { hourPath, minutePath });
 			}
 			else
@@ -1073,10 +1166,6 @@ namespace Radio_Automation.ViewModels
 				audioPlayer.Load(hourPath);
 			}
 
-			//if (setState)
-			//{
-			//	_playbackState = PlaybackState.Playing;
-			//}
 			audioPlayer.TogglePlayPause();
 		}
 	}

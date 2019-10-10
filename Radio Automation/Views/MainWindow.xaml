@@ -95,6 +95,7 @@
 				<ColumnDefinition Width="40"/>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="40"/>
+				<ColumnDefinition Width="40"/>
 			</Grid.ColumnDefinitions>
 			<Button Grid.Column="0" Margin="3" Command="{Binding RewindToStartCommand}">
 				<Image Source="/Resources;component/Icons/control_start_blue.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -108,7 +109,10 @@
 			<Button Grid.Column="3" Margin="3" Command="{Binding ForwardToEndCommand}">
 				<Image Source="/Resources;component/Icons/control_end_blue.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
-			<Button Grid.Column="5" Margin="3" Command="{Binding ShuffleCommand}">
+			<Button Grid.Column="5" Margin="3" Command="{Binding PlayTemperatureCommand}">
+				<Image Source="/Resources;component/Icons/arrow_switch.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			</Button>
+			<Button Grid.Column="6" Margin="3" Command="{Binding ShuffleCommand}">
 				<Image Source="/Resources;component/Icons/arrow_switch.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
 		</Grid>
@@ -200,11 +204,11 @@
 							<TextBlock Name="DateTime" Grid.Column="0" Text="{Binding Clock.CurrentDateTime, StringFormat={x:Static constants:Formatters.DateTimeFormat}}" VerticalAlignment="Center"/>
 							<WrapPanel Grid.Column="1" HorizontalAlignment="Center">
 								<Label Content="Temp" VerticalAlignment="Center"/>
-								<TextBlock Name="Temperature" VerticalAlignment="Center" Text="88"/>
+								<TextBlock Name="Temperature" VerticalAlignment="Center" Text="{Binding Temperature, StringFormat={}{0:##0} F}"/>
 							</WrapPanel>
 							<WrapPanel Grid.Column="2" HorizontalAlignment="Center">
 								<Label Content="Humidity"  VerticalAlignment="Center"/>
-								<TextBlock Name="Humidity" VerticalAlignment="Center" Text="88"/>
+								<TextBlock Name="Humidity" VerticalAlignment="Center" Text="{Binding Humidity, StringFormat={}{0:##0}%}"/>
 							</WrapPanel>
 						</Grid>
 					</Border>

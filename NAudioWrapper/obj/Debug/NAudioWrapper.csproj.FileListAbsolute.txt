@@ -1,9 +1,0 @@
-C:\dev\Radio Automation\NAudioWrapper\bin\Debug\NAudioWrapper.dll
-C:\dev\Radio Automation\NAudioWrapper\bin\Debug\NAudioWrapper.pdb
-C:\dev\Radio Automation\NAudioWrapper\bin\Debug\NAudio.dll
-C:\dev\Radio Automation\NAudioWrapper\bin\Debug\NAudio.xml
-C:\dev\Radio Automation\NAudioWrapper\obj\Debug\NAudioWrapper.csprojAssemblyReference.cache
-C:\dev\Radio Automation\NAudioWrapper\obj\Debug\NAudioWrapper.csproj.CoreCompileInputs.cache
-C:\dev\Radio Automation\NAudioWrapper\obj\Debug\NAudioWrapper.csproj.CopyComplete
-C:\dev\Radio Automation\NAudioWrapper\obj\Debug\NAudioWrapper.dll
-C:\dev\Radio Automation\NAudioWrapper\obj\Debug\NAudioWrapper.pdb
