@@ -11,7 +11,7 @@ namespace Radio_Automation.Models
 			Id = Guid.NewGuid();
 		}
 
-		public Event(EventType eventType)
+		public Event(EventType eventType):this()
 		{
 			EventType = eventType;
 		}
@@ -88,7 +88,23 @@ namespace Radio_Automation.Models
 
 		#endregion
 
-		public CronExpression CronExpression { get; set; }
+		#region CronExpression property
+
+		/// <summary>
+		/// Gets or sets the CronExpression value.
+		/// </summary>
+		public string CronExpression
+		{
+			get { return GetValue<string>(CronExpressionProperty); }
+			set { SetValue(CronExpressionProperty, value); }
+		}
+
+		/// <summary>
+		/// CronExpression property data.
+		/// </summary>
+		public static readonly PropertyData CronExpressionProperty = RegisterProperty("CronExpression", typeof(string));
+
+		#endregion
 
 		#region StartDateTime property
 

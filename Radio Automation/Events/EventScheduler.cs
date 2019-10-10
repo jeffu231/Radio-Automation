@@ -81,7 +81,8 @@ namespace Radio_Automation.Events
 			foreach (var e in _schedule.Events)
 			{
 				var t = new EventTask(e);
-				_jm.Schedule(t, e.CronExpression.GetNextTime(DateTimeOffset.Now), e.CronExpression, new DateTimeOffset(e.EndDateTime), null);
+				var cronExpression = new CronExpression(e.CronExpression);
+				_jm.Schedule(t, cronExpression.GetNextTime(DateTimeOffset.Now), cronExpression, new DateTimeOffset(e.EndDateTime), null);
 			}
 			
 			StartServer();

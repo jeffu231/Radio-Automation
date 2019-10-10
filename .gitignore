@@ -4,5 +4,4 @@ _ReSharper.*
 bin
 obj
 packages
-/Radio Automation/bin
-/Radio Automation/obj
+/.vs

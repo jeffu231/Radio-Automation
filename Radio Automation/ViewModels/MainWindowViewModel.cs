@@ -48,7 +48,7 @@ namespace Radio_Automation.ViewModels
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, ISaveFileService _saveFileService)
 		{
 			_wg = new WunderGround("f78420eccab34f098420eccab3cf091f");
-			UpdateWeatherData();
+			//UpdateWeatherData();
 			
 			_selectDirectoryService = selectDirectoryService;
 			_audioTrackParserService = audioTrackParserService;
@@ -81,21 +81,13 @@ namespace Radio_Automation.ViewModels
 			_audioPlayer = new AudioPlayback();
 			_audioPlayer.PlaybackPaused += PlaybackPaused;
 			_audioPlayer.PlaybackResumed += PlaybackResumed;
-			//_audioPlayer.PlaybackStopped += _audioPlayer_PlaybackStopped;
+			
 			_audioPlayer.PlaybackEnded += PlaybackEnded;
 			_audioPlayer.OnSteamVolume += _audioPlayer_OnStreamVolume;
 			VolumeChangedCommand.Execute();
 			EventBus.EventTriggered += EventTriggered;
 			_eventScheduler = new EventScheduler();
 			_eventSchedule = new EventSchedule();
-			Event e = new Event(EventType.Time);
-			e.Name = @"Announce Time";
-			e.Enabled = true;
-			e.Demand = Demand.Delayed;
-			e.EndDateTime = DateTime.UtcNow.AddDays(1);
-			e.CronExpression = new CronExpression("*/10 7-17 * * *");
-			_eventSchedule.Events.Add(e);
-			_eventScheduler.LoadSchedule(_eventSchedule);
 		}
 
 		#region Overrides of ViewModelBase
@@ -106,6 +98,10 @@ namespace Radio_Automation.ViewModels
 			await RestoreSettingsAsync();
 
 			Volume = _settings.Volume;
+			
+			/_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
+
+			_eventScheduler.LoadSchedule(_eventSchedule);
 
 			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
 			{
@@ -594,10 +590,12 @@ namespace Radio_Automation.ViewModels
 		private async Task EditEventScheduleAsync()
 		{
 			var viewModel = new EventScheduleViewModel(_eventSchedule);
-
+			viewModel.Path = _settings.LastEventSchedulePath;
 			var dependencyResolver = this.GetDependencyResolver();
 			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
 			await uiVisualizerService.ShowDialogAsync(viewModel);
+			_settings.LastEventSchedulePath = viewModel.Path;
+			_eventScheduler.LoadSchedule(viewModel.EventSchedule);
 		}
 
 		#endregion

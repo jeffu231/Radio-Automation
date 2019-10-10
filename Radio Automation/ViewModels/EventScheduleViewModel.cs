@@ -242,7 +242,7 @@ namespace Radio_Automation.ViewModels
 			if (await openFileService.DetermineFileAsync())
 			{
 				pleaseWaitService.Show();
-				await persistenceService.LoadEventScheduleAsync(openFileService.FileName);
+				EventSchedule = await persistenceService.LoadEventScheduleAsync(openFileService.FileName);
 				Path = openFileService.FileName;
 				pleaseWaitService.Hide();
 			}
@@ -291,7 +291,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task OkAsync()
 		{
-			await SaveAsync();
+			await this.CloseViewModelAsync(true);
 		}
 
 		#endregion
