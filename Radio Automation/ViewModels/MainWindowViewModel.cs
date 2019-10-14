@@ -99,7 +99,7 @@ namespace Radio_Automation.ViewModels
 
 			Volume = _settings.Volume;
 			
-			/_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
+			_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
 
 			_eventScheduler.LoadSchedule(_eventSchedule);
 

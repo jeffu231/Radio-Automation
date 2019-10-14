@@ -1,0 +1,94 @@
+﻿<catel:Window x:Class="Radio_Automation.Views.EditEventWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://schemas.catelproject.com"
+                  xmlns:extensions="clr-namespace:Radio_Automation.Extensions"
+                  xmlns:models="clr-namespace:Radio_Automation.Models"
+                  xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                  xmlns:converters="clr-namespace:Radio_Automation.Converters"
+                  Height="450" Width="550" 
+                  WindowStartupLocation="CenterOwner"
+                  Background="{StaticResource BackColorBrush}"
+                  Foreground="{StaticResource ForeColorBrush}">
+	<DockPanel>
+		<WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
+			<Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
+			<Button Content="Cancel" IsCancel="True"  Style="{StaticResource RowButtonStyle}"/>
+		</WrapPanel>
+		
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width=".5*"/>
+				<ColumnDefinition Width=".5*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+				<TextBlock Text="Event Name" Margin="5"/>
+				<TextBox Text="{Binding Name}" Margin="5"/>
+			</WrapPanel>
+			<GroupBox Grid.Row="1" Grid.Column="0" Name="Schedule" Header="Schedule" HorizontalContentAlignment="Stretch" Margin="5">
+				<StackPanel>
+					<TextBlock Text="Start Date and Time" HorizontalAlignment="Stretch" Margin="5"/>
+					<xctk:DateTimeUpDown AllowSpin="True" Format="FullDateTime" Kind="Local"
+					                     Value="{Binding StartDateTime}" 
+					                     DefaultValue="{Binding DefaultDateTime}"  Margin="5"
+					                     Background="{StaticResource BackColorBrush}"
+					                     Foreground="{StaticResource ForeColorBrush}"/>
+					<CheckBox IsChecked="{Binding Expires}" Name="ExpiresCheck" Margin="5,10,5,0">Expires</CheckBox>
+					<TextBlock Text="Expire Date and Time" HorizontalAlignment="Stretch" Margin="5"/>
+					<xctk:DateTimeUpDown AllowSpin="True" Format="FullDateTime" Kind="Local"
+					                     Value="{Binding EndDateTime}" 
+					                     IsEnabled="{Binding ElementName=ExpiresCheck, Path=IsChecked}"
+					                     DefaultValue="{Binding DefaultDateTime}" Margin="5"
+					                     Background="{StaticResource BackColorBrush}"
+					                     Foreground="{StaticResource ForeColorBrush}">
+						
+					</xctk:DateTimeUpDown>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<TextBlock Grid.Column="0" Grid.Row="0" Text="Cron Expression" Margin="5"/>
+						<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CronExpression}" Margin="5"/>
+						<TextBlock Grid.Column="0" Grid.Row="1" Text="Demand Type" Margin="5"/>
+						<ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:Demand}}}"
+						          DisplayMemberPath="Description"
+						          SelectedValue="{Binding Demand}"
+						          SelectedValuePath="Value"
+						          Margin="5"/>
+					</Grid>
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Event Type" Grid.Row="1" Grid.Column="1" Margin="5">
+				<Grid Margin="5">
+					<Grid.Resources>
+						<converters:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
+					</Grid.Resources>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<RadioButton Grid.Row="0" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Play}">Play</RadioButton>
+					<RadioButton Grid.Row="1" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Stop}">Stop</RadioButton>
+					<RadioButton Grid.Row="2" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Pause}">Pause</RadioButton>
+					<RadioButton Grid.Row="3" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Time}">Time Announcement</RadioButton>
+					<RadioButton Grid.Row="4" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Temperature}">Temperature Announcement</RadioButton>
+					<RadioButton Grid.Row="5" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Humidity}">Humidity Announcement</RadioButton>
+				</Grid>
+			</GroupBox>
+		</Grid>
+	</DockPanel>
+    
+</catel:Window>

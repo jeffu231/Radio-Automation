@@ -89,7 +89,11 @@ namespace Radio_Automation.ViewModels
 		public Event SelectedItem
 		{
 			get { return GetValue<Event>(SelectedItemProperty); }
-			set { SetValue(SelectedItemProperty, value); }
+			set
+			{
+				SetValue(SelectedItemProperty, value);
+				UpdateCommandStates();
+			}
 		}
 
 		/// <summary>
@@ -169,18 +173,31 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand EditEventCommand
 		{
-			get { return _editEventCommand ?? (_editEventCommand = new TaskCommand(EditEventAsync)); }
+			get { return _editEventCommand ?? (_editEventCommand = new TaskCommand(EditEvent, CanEditEvent)); }
 		}
 
 		/// <summary>
 		/// Method to invoke when the EditEvent command is executed.
 		/// </summary>
-		private async Task EditEventAsync()
+		private async Task EditEvent()
 		{
-			// TODO: Handle command logic here
+			EditEventViewModel viewModel = new EditEventViewModel(SelectedItem);
+			var dependencyResolver = this.GetDependencyResolver();
+			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
+			await uiVisualizerService.ShowDialogAsync(viewModel);
+		}
+
+		/// <summary>
+		/// Method to check whether the EditEvent command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanEditEvent()
+		{
+			return SelectedItem != null;
 		}
 
 		#endregion
+
 
 		#region SaveSchedule command
 
@@ -319,6 +336,11 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
-		
+		protected void UpdateCommandStates()
+		{
+			var viewModelBase = this as ViewModelBase;
+			var commandManager = viewModelBase.GetViewModelCommandManager();
+			commandManager.InvalidateCommands();
+		}
 	}
 }

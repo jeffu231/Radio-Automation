@@ -124,6 +124,24 @@ namespace Radio_Automation.Models
 
 		#endregion
 
+		#region Expires property
+
+		/// <summary>
+		/// Gets or sets the Expires value.
+		/// </summary>
+		public bool Expires
+		{
+			get { return GetValue<bool>(ExpiresProperty); }
+			set { SetValue(ExpiresProperty, value); }
+		}
+
+		/// <summary>
+		/// Expires property data.
+		/// </summary>
+		public static readonly PropertyData ExpiresProperty = RegisterProperty("Expires", typeof(bool));
+
+		#endregion
+
 		#region EndDateTime property
 
 		/// <summary>
