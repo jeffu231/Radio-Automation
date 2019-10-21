@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
 using Radio_Automation.Models;
@@ -176,22 +177,32 @@ namespace Radio_Automation.ViewModels
 
 		#region Ok command
 
-		private Command _okCommand;
+		private TaskCommand _okCommand;
 
 		/// <summary>
 		/// Gets the Ok command.
 		/// </summary>
-		public Command OkCommand
+		public TaskCommand OkCommand
 		{
-			get { return _okCommand ?? (_okCommand = new Command(Ok)); }
+			get { return _okCommand ?? (_okCommand = new TaskCommand(OkAsync, CanOk)); }
 		}
 
 		/// <summary>
 		/// Method to invoke when the Ok command is executed.
 		/// </summary>
-		private void Ok()
+		private async Task OkAsync()
 		{
-			CloseViewModelAsync(true);
+			//await SaveViewModelAsync();
+			await CloseViewModelAsync(true);
+		}
+
+		/// <summary>
+		/// Method to check whether the Ok command can be executed.
+		/// </summary>
+		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+		private bool CanOk()
+		{
+			return true;
 		}
 
 		#endregion

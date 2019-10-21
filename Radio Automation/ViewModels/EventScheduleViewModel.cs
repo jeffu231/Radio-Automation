@@ -214,21 +214,28 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Method to invoke when the SaveSchedule command is executed.
 		/// </summary>
-		private async Task SaveScheduleAsync()
+		private async Task<bool> SaveScheduleAsync()
 		{
 			var dependencyResolver = this.GetDependencyResolver();
 			var saveFileService = dependencyResolver.Resolve<ISaveFileService>();
 			var pleaseWaitService = dependencyResolver.Resolve<IPleaseWaitService>();
 			var persistenceService = dependencyResolver.Resolve<IPersistenceService>();
-			saveFileService.Filter = "Event Schedule|*.evs";
-			saveFileService.Title = @"Save Event Schedule";
-			if (await saveFileService.DetermineFileAsync())
+			if (string.IsNullOrEmpty(Path))
 			{
-				pleaseWaitService.Show();
-				await persistenceService.SaveEventScheduleAsync(EventSchedule, saveFileService.FileName);
-				Path = saveFileService.FileName;
-				pleaseWaitService.Hide();
+				saveFileService.Filter = "Event Schedule|*.evs";
+				saveFileService.Title = @"Save Event Schedule";
+				
+				if (await saveFileService.DetermineFileAsync())
+				{
+					Path = saveFileService.FileName;
+				}
 			}
+
+			pleaseWaitService.Show();
+			var success = await persistenceService.SaveEventScheduleAsync(EventSchedule, Path);
+			pleaseWaitService.Hide();
+			
+			return success;
 		}
 
 		#endregion
@@ -308,7 +315,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task OkAsync()
 		{
-			await this.CloseViewModelAsync(true);
+			await this.SaveAndCloseViewModelAsync();
 		}
 
 		#endregion
@@ -317,10 +324,9 @@ namespace Radio_Automation.ViewModels
 		#region Overrides of ViewModelBase
 
 		/// <inheritdoc />
-		protected override Task<bool> SaveAsync()
+		protected override async Task<bool> SaveAsync()
 		{
-			Console.Out.WriteLineAsync("Save!");
-			return base.SaveAsync();
+			return await SaveScheduleAsync();
 		}
 
 		#endregion

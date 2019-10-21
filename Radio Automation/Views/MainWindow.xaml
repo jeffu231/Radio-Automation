@@ -60,6 +60,11 @@
 						<Image Source="/Resources;component/Icons/Save_6530.png" Width="16" Height="16"></Image>
 					</MenuItem.Icon>
 				</MenuItem>
+				<MenuItem Header="Add Internet Stream" Command="{Binding AddInternetStreamCommand}">
+					<MenuItem.Icon>
+						<Image Source="/Resources;component/Icons/Save_6530.png" Width="16" Height="16"></Image>
+					</MenuItem.Icon>
+				</MenuItem>
 				<MenuItem Header="Events" Command="{Binding EditEventScheduleCommand}">
 					<MenuItem.Icon>
 						<Image Source="/Resources;component/Icons/Save_6530.png" Width="16" Height="16"></Image>

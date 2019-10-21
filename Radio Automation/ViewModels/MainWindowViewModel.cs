@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Catel.Collections;
@@ -12,7 +13,6 @@ using Catel.MVVM;
 using Catel.Services;
 using Catel.Windows;
 using Catel.Windows.Threading;
-using JobToolkit.Core;
 using NAudioWrapper;
 using Radio_Automation.Events;
 using Radio_Automation.Extensions;
@@ -109,6 +109,9 @@ namespace Radio_Automation.ViewModels
 			}
 		}
 
+		/// <inheritdoc />
+		public override string Title => @"Radio Automation";
+
 		#endregion
 
 		private void EventTriggered(Event e)
@@ -127,13 +130,6 @@ namespace Radio_Automation.ViewModels
 		{
 			Playing, Stopped, Paused
 		}
-
-		#region Overrides of ViewModelBase
-
-		/// <inheritdoc />
-		public override string Title => @"Radio Automation";
-
-		#endregion
 
 		#region Playlist property
 
@@ -450,10 +446,8 @@ namespace Radio_Automation.ViewModels
 		private async Task OpenPlaylist()
 		{
 			_openFileService.IsMultiSelect = false;
-			//_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			_openFileService.CheckFileExists = true;
 			_openFileService.Title = @"Import Zara Playlist";
-			await Console.Out.WriteLineAsync(_openFileService.InitialDirectory);
 			_openFileService.Filter = "Playlist (*.rpl) | *.rpl";
 			if (await _openFileService.DetermineFileAsync())
 			{
@@ -487,7 +481,6 @@ namespace Radio_Automation.ViewModels
 			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 			_openFileService.CheckFileExists = true;
 			_openFileService.Title = @"Import Zara Playlist";
-			await Console.Out.WriteLineAsync(_openFileService.InitialDirectory);
 			_openFileService.Filter = "ZaraRadio List (*.lst) | *.lst";
 			if (await _openFileService.DetermineFileAsync())
 			{
@@ -596,6 +589,29 @@ namespace Radio_Automation.ViewModels
 			await uiVisualizerService.ShowDialogAsync(viewModel);
 			_settings.LastEventSchedulePath = viewModel.Path;
 			_eventScheduler.LoadSchedule(viewModel.EventSchedule);
+		}
+
+		#endregion
+
+		#region AddInternetStream command
+
+		private Command _addInternetStreamCommand;
+
+		/// <summary>
+		/// Gets the AddInternetStream command.
+		/// </summary>
+		public Command AddInternetStreamCommand
+		{
+			get { return _addInternetStreamCommand ?? (_addInternetStreamCommand = new Command(AddInternetStream)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the AddInternetStream command is executed.
+		/// </summary>
+		private void AddInternetStream()
+		{
+			var stream = new Track("HalloweenRadio.net", "http://stream.zenolive.com/3yaezmm1h3quv");
+			Playlist.Tracks.Add(stream);
 		}
 
 		#endregion
@@ -766,6 +782,7 @@ namespace Radio_Automation.ViewModels
 				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
 				_playbackState = PlaybackState.Playing;
 				_audioPlayer.Load(CurrentTrack.Path);
+				RemainingTime = CurrentTrack.Duration;
 				TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
 				_audioPlayer.TogglePlayPause();
 			}
@@ -893,7 +910,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task PlayTemperatureAsync()
 		{
-			await PlayTemperature(_audioPlayer, _playbackState == PlaybackState.Stopped);
+			await PlayTemperature();
 		}
 
 		#endregion
@@ -968,7 +985,6 @@ namespace Radio_Automation.ViewModels
 				return;
 			}
 
-			//_playbackState = PlaybackState.Stopped;
 			if (_eventQueue.Any())
 			{
 				CurrentTrack = null;
@@ -983,7 +999,6 @@ namespace Radio_Automation.ViewModels
 
 				StartPlay();
 			}
-			
 		}
 
 		private void StopPlaying()
@@ -1016,7 +1031,14 @@ namespace Radio_Automation.ViewModels
 			if(CurrentTrack != null)
 			{
 				Position = TimeSpan.FromSeconds(_audioPlayer.Position);
-				RemainingTime = CurrentTrack.Duration - Position;
+				if (CurrentTrack.Duration == TimeSpan.Zero)
+				{
+					TrackEndTime = Clock.CurrentDateTime;
+				}
+				else
+				{
+					RemainingTime = CurrentTrack.Duration - Position;
+				}
 			}
 		}
 
@@ -1034,7 +1056,6 @@ namespace Radio_Automation.ViewModels
 
 		private void _audioPlayer_OnStreamVolume(VolumeEventArgs e)
 		{
-			//Console.Out.WriteLineAsync($"{e.Left}, {e.Right}");
 			LeftLevel = (int)(e.Left * 100);
 			RightLevel = (int)(e.Right * 100);
 		}
@@ -1110,23 +1131,23 @@ namespace Radio_Automation.ViewModels
 
 		private async void ExecuteEvent(Event e)
 		{
+			PendingEvents.Remove(PendingEvents.First(x => x.Event == e));
+
 			switch (e.EventType)
 			{
 				case EventType.Time:
-					PlayTime(_audioPlayer, _playbackState == PlaybackState.Stopped);
+					await PlayTime();
 					break;
 				case EventType.Temperature:
-					await PlayTemperature(_audioPlayer, _playbackState == PlaybackState.Stopped);
+					await PlayTemperature();
 					break;
 				case EventType.Stop:
-					StopPlaying();
+					StopPlayback();
 					break;
 				case EventType.Play:
 					PlayPause();
 					break;
 			}
-
-			PendingEvents.Remove(PendingEvents.First(x => x.Event == e));
 		}
 
 		private async Task UpdateWeatherData()
@@ -1136,35 +1157,85 @@ namespace Radio_Automation.ViewModels
 			Humidity = (int) Math.Round(obs.Humidity);
 		}
 
-		private async Task PlayTemperature(AudioPlayback audioPlayer, bool setState=true)
+		private async Task PlayTemperature()
 		{
+			var player = _audioPlayer;
+			if (_playbackState == PlaybackState.Playing)
+			{
+				player = new AudioPlayback();
+				player.PlaybackEnded += () =>
+				{
+					FadeVolumeUp();
+					player.Dispose();
+				};
+				player.Volume = _audioPlayer.Volume;
+				FadeVolumeDown();
+			}
 			var format = "000";
 			var tempFile = Temperature < 0 ? $"TMPN{Temperature.ToString(format)}.mp3" : $"TMP{Temperature.ToString(format)}.mp3";
 			var temperaturePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Temperature",tempFile);
 			if (File.Exists(temperaturePath))
 			{
-				audioPlayer.Load(temperaturePath);
-				audioPlayer.TogglePlayPause();
+				player.Load(temperaturePath);
+				player.TogglePlayPause();
 			}
+
+			await Task.CompletedTask;
 		}
 
-		private void PlayTime(AudioPlayback audioPlayer, bool setState=true)
+		private async Task PlayTime()
 		{
+			var player = _audioPlayer;
+			if (_playbackState == PlaybackState.Playing)
+			{
+				player = new AudioPlayback();
+				player.PlaybackEnded += () =>
+				{
+					FadeVolumeUp();
+					player.Dispose();
+				};
+				player.Volume = _audioPlayer.Volume;
+				FadeVolumeDown();
+			}
 			var time = DateTime.Now;
 			var hourSuffix = time.Minute == 0 ? @"_O" : string.Empty;
-			var hourPath = System.IO.Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time",
+			var hourPath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time",
 					$"HRS{time:hh}{hourSuffix}.mp3");
 			if (time.Minute > 0)
 			{
 				var minutePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time", $"MIN{time:mm}.mp3");
-				audioPlayer.Load(new[] { hourPath, minutePath });
+				player.Load(new[] { hourPath, minutePath });
 			}
 			else
 			{
-				audioPlayer.Load(hourPath);
+				player.Load(hourPath);
 			}
 
-			audioPlayer.TogglePlayPause();
+			player.TogglePlayPause();
+
+			await Task.CompletedTask;
+		}
+
+		private void FadeVolumeDown()
+		{
+			for (float i = _audioPlayer.Volume - .1f; i > 0; i = i - .1f)
+			{
+				_audioPlayer.Volume = i;
+				Thread.Sleep(25);
+			}
+
+			_audioPlayer.Volume = 0;
+		}
+
+		private void FadeVolumeUp()
+		{
+			for (float i = 0; i < Volume; i = i + .1f)
+			{
+				_audioPlayer.Volume = i;
+				Thread.Sleep(25);
+			}
+
+			_audioPlayer.Volume = Volume;
 		}
 	}
 }

@@ -12,6 +12,18 @@ namespace Radio_Automation.Models
 			Id = Guid.NewGuid();
 		}
 
+		public Track(string name, string path)
+		{
+			Name = name;
+			Path = path;
+			Artist = string.Empty;
+			Album = string.Empty;
+			Year = (uint)DateTime.Now.Year;
+			Duration = TimeSpan.Zero;
+			Tags = new List<Tag>();
+			Genres = new List<Genre>();
+		}
+
 		public Track(string name, string artist, string album, uint year, TimeSpan duration, List<Tag> tags, List<Genre> genres):this()
 		{
 			Name = name;

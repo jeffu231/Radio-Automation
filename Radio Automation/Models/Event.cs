@@ -9,6 +9,8 @@ namespace Radio_Automation.Models
 		public Event()
 		{
 			Id = Guid.NewGuid();
+			StartDateTime = DateTime.Now;
+			EndDateTime = DateTime.Now.AddYears(1);
 		}
 
 		public Event(EventType eventType):this()

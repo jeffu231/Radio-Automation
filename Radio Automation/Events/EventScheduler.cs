@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JobToolkit.Core;
+using NCrontab;
 using Radio_Automation.Models;
 
 namespace Radio_Automation.Events
@@ -78,11 +80,20 @@ namespace Radio_Automation.Events
 				_jm.Dequeue(job.Id);
 			}
 
-			foreach (var e in _schedule.Events)
+			foreach (var e in _schedule.Events.Where(x => x.Enabled))
 			{
-				var t = new EventTask(e);
-				var cronExpression = new CronExpression(e.CronExpression);
-				_jm.Schedule(t, cronExpression.GetNextTime(DateTimeOffset.Now), cronExpression, new DateTimeOffset(e.EndDateTime), null);
+				try
+				{
+					var t = new EventTask(e);
+					var cronExpression = new CronExpression(e.CronExpression);
+					_jm.Schedule(t, cronExpression.GetNextTime(DateTimeOffset.Now), cronExpression,
+						new DateTimeOffset(e.EndDateTime), null);
+				}
+				catch (Exception ex)
+				{
+					Console.Out.WriteLine($"Error creating event {ex.Message}");
+				}
+				
 			}
 			
 			StartServer();

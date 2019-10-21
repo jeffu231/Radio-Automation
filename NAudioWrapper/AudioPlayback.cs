@@ -85,9 +85,9 @@ namespace NAudioWrapper
         {
             try
             {
-                var inputStream = new AudioFileReader(fileName);
-                _fileStream = inputStream;
-                Initialize(inputStream);
+                var inputStream = new MediaFoundationReader(fileName);
+				_fileStream = inputStream;
+                Initialize(inputStream.ToSampleProvider());
             }
             catch (Exception e)
             {
@@ -158,7 +158,7 @@ namespace NAudioWrapper
 
         public void Stop()
         {
-            _playbackDevice?.Stop();
+			_playbackDevice?.Stop();
 			DisposePlaybackDevice();
             if (_fileStream != null)
             {
