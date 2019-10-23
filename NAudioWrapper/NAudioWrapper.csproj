@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioPlayback.cs" />
+    <Compile Include="Device.cs" />
     <Compile Include="VolumeEventArgs.cs" />
     <Compile Include="ConcatenatingAudioFileReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

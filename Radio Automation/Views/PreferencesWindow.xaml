@@ -1,0 +1,32 @@
+﻿<catel:Window x:Class="Radio_Automation.Views.PreferencesWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://schemas.catelproject.com"
+                  Title="{Binding Title}"
+                  Height="450" Width="550" 
+                  WindowStartupLocation="CenterOwner"
+                  Background="{StaticResource BackColorBrush}"
+                  Foreground="{StaticResource ForeColorBrush}">
+<DockPanel>
+	<WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
+		<Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
+		<Button Content="Cancel" IsCancel="True"  Style="{StaticResource RowButtonStyle}"/>
+	</WrapPanel>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Row="0" Grid.Column="0" Text="Primary Output Device" Margin="5"/>
+		<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Devices}" 
+		          DisplayMemberPath="FriendlyName" 
+		          SelectedItem="{Binding Path=PrimaryOutputDevice}" Margin="5"/>
+	</Grid>
+</DockPanel>
+    
+    
+</catel:Window>

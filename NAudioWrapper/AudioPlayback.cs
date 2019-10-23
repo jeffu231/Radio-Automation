@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
 namespace NAudioWrapper
 {
-    public class AudioPlayback : IDisposable
+    public class AudioPlayback : IDisposable, IMMNotificationClient
     {
         private IWavePlayer _playbackDevice;
         private WaveStream _fileStream;
@@ -22,19 +24,86 @@ namespace NAudioWrapper
 		public static MMDevice CurrentDevice;
 		private VolumeSampleProvider _volumeProvider;
 		private float _volume = 1f;
+		private static readonly MMDeviceEnumerator DeviceEnumerator;
 
-		public AudioPlayback()
+		static AudioPlayback()
+		{
+			DeviceEnumerator = new MMDeviceEnumerator();
+		}
+
+		public AudioPlayback():this(GetDefaultMMDevice())
+		{
+			
+		}
+
+		internal AudioPlayback(MMDevice device)
+		{
+			CurrentDevice = device;
+		}
+
+		public AudioPlayback(Device device)
+		{
+			var mmDevice = DeviceEnumerator.GetDevice(device.Id);
+			if (mmDevice != null && mmDevice.State == DeviceState.Active)
+			{
+				CurrentDevice = mmDevice;
+			}
+			else
+			{
+				CurrentDevice = mmDevice ?? DeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+			}
+			
+		}
+
+		public static Device GetDefaultDevice()
+		{
+			var mmDevice = GetDefaultMMDevice();
+			return new Device(mmDevice, true);
+		}
+
+		private static MMDevice GetDefaultMMDevice()
 		{
 			var deviceEnumerator = new MMDeviceEnumerator();
-			var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-			foreach (var device in devices)
+			return deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+		}
+
+		public static List<Device> GetActiveDevices()
+		{
+			var deviceEnumerator = new MMDeviceEnumerator();
+			var mmDevices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+			var defaultDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+			var devices = new List<Device>();
+			foreach (var device in mmDevices)
 			{
-				Console.Out.WriteLineAsync(device.FriendlyName);
+				devices.Add(new Device(device,device.ID == defaultDevice.ID));
 			}
 
-			CurrentDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-			Console.Out.WriteLineAsync($"Default = {CurrentDevice}");
+			return devices;
 		}
+
+		public static string DeviceId => CurrentDevice.ID;
+
+		/// <summary>
+		/// Registers a call back for Device Events
+		/// </summary>
+		/// <param name="client">Object implementing IMMNotificationClient type casted as IMMNotificationClient interface</param>
+		/// <returns></returns>
+		public int RegisterEndpointNotificationCallback([In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client)
+		{
+			//DeviceEnum declared below
+			return DeviceEnumerator.RegisterEndpointNotificationCallback(client);
+		}
+
+		/// <summary>
+		/// UnRegisters a call back for Device Events
+		/// </summary>
+		/// <param name="client">Object implementing IMMNotificationClient type casted as IMMNotificationClient interface </param>
+		/// <returns></returns>
+		public int UnRegisterEndpointNotificationCallback([In] [MarshalAs(UnmanagedType.Interface)] IMMNotificationClient client)
+		{
+			//DeviceEnum declared below
+			return DeviceEnumerator.UnregisterEndpointNotificationCallback(client);
+		} 
 
 		public void Load(string fileName)
         {
@@ -223,5 +292,39 @@ namespace NAudioWrapper
 	        _playbackDevice?.Dispose();
 	        _playbackDevice = null;
 		}
+
+        #region Implementation of IMMNotificationClient
+
+        /// <inheritdoc />
+        public void OnDeviceStateChanged(string deviceId, DeviceState newState)
+        {
+	        
+        }
+
+        /// <inheritdoc />
+        public void OnDeviceAdded(string pwstrDeviceId)
+        {
+	        
+        }
+
+        /// <inheritdoc />
+        public void OnDeviceRemoved(string deviceId)
+        {
+	        
+        }
+
+        /// <inheritdoc />
+        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
+        {
+	        
+        }
+
+        /// <inheritdoc />
+        public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key)
+        {
+	        
+        }
+
+        #endregion
     }
 }

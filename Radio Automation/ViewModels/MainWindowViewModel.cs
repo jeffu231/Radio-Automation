@@ -32,7 +32,7 @@ namespace Radio_Automation.ViewModels
 		private readonly IPersistenceService _persistenceService;
 		private readonly IPleaseWaitService _pleaseWaitService;
 		
-		private readonly AudioPlayback _audioPlayer;
+		private AudioPlayback _audioPlayer;
 		private PlaybackState _playbackState = PlaybackState.Stopped;
 		private readonly DispatcherTimer _playPositionTimer;
 		private readonly DispatcherTimer _pendingEventTimer;
@@ -77,14 +77,7 @@ namespace Radio_Automation.ViewModels
 			_weatherUpdateTimer.Start();
 
 			Playlist = new Playlist();
-			
-			_audioPlayer = new AudioPlayback();
-			_audioPlayer.PlaybackPaused += PlaybackPaused;
-			_audioPlayer.PlaybackResumed += PlaybackResumed;
-			
-			_audioPlayer.PlaybackEnded += PlaybackEnded;
-			_audioPlayer.OnSteamVolume += _audioPlayer_OnStreamVolume;
-			VolumeChangedCommand.Execute();
+
 			EventBus.EventTriggered += EventTriggered;
 			_eventScheduler = new EventScheduler();
 			_eventSchedule = new EventSchedule();
@@ -97,8 +90,8 @@ namespace Radio_Automation.ViewModels
 		{
 			await RestoreSettingsAsync();
 
-			Volume = _settings.Volume;
-			
+			ConfigurePrimaryAudioPlayer();
+
 			_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
 
 			_eventScheduler.LoadSchedule(_eventSchedule);
@@ -107,6 +100,20 @@ namespace Radio_Automation.ViewModels
 			{
 				Playlist = await _persistenceService.LoadPlaylistAsync(_settings.LastPlaylistPath);
 			}
+		}
+
+		private void ConfigurePrimaryAudioPlayer()
+		{
+			_audioPlayer?.Dispose();
+
+			_audioPlayer = new AudioPlayback(_settings.PrimaryOutputDevice);
+			_audioPlayer.PlaybackPaused += PlaybackPaused;
+			_audioPlayer.PlaybackResumed += PlaybackResumed;
+			_audioPlayer.PlaybackEnded += PlaybackEnded;
+			_audioPlayer.OnSteamVolume += _audioPlayer_OnStreamVolume;
+
+			VolumeChangedCommand.Execute();
+			Volume = _settings.Volume;
 		}
 
 		/// <inheritdoc />
@@ -718,22 +725,32 @@ namespace Radio_Automation.ViewModels
 
 		#region Preferences command
 
-		private Command _preferencesCommand;
+		private TaskCommand _preferencesCommand;
 
 		/// <summary>
 		/// Gets the Preferences command.
 		/// </summary>
-		public Command PreferencesCommand
+		public TaskCommand PreferencesCommand
 		{
-			get { return _preferencesCommand ?? (_preferencesCommand = new Command(Preferences)); }
+			get { return _preferencesCommand ?? (_preferencesCommand = new TaskCommand(PreferencesAsync)); }
 		}
 
 		/// <summary>
 		/// Method to invoke when the Preferences command is executed.
 		/// </summary>
-		private void Preferences()
+		private async Task PreferencesAsync()
 		{
-			// TODO: Handle command logic here
+			PreferencesViewModel viewModel = new PreferencesViewModel(_settings);
+			var dependencyResolver = this.GetDependencyResolver();
+			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
+			var ok = await uiVisualizerService.ShowDialogAsync(viewModel);
+			if (ok.HasValue && ok.Value)
+			{
+				if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
+				{
+					ConfigurePrimaryAudioPlayer();
+				}
+			}
 		}
 
 		#endregion

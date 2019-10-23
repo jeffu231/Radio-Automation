@@ -1,4 +1,5 @@
 ﻿using Catel.Data;
+using NAudioWrapper;
 
 namespace Radio_Automation.Models
 {
@@ -7,6 +8,7 @@ namespace Radio_Automation.Models
 		public Settings()
 		{
 			Volume = 100;
+			PrimaryOutputDevice = AudioPlayback.GetDefaultDevice();
 		}
 
 		#region LastPlaylistPath property
@@ -78,6 +80,24 @@ namespace Radio_Automation.Models
 		/// Volume property data.
 		/// </summary>
 		public static readonly PropertyData VolumeProperty = RegisterProperty("Volume", typeof(float));
+
+		#endregion
+
+		#region PrimaryOutputDevice property
+
+		/// <summary>
+		/// Gets or sets the PrimaryOutputDevice value.
+		/// </summary>
+		public Device PrimaryOutputDevice
+		{
+			get { return GetValue<Device>(PrimaryOutputDeviceProperty); }
+			set { SetValue(PrimaryOutputDeviceProperty, value); }
+		}
+
+		/// <summary>
+		/// PrimaryOutputDevice property data.
+		/// </summary>
+		public static readonly PropertyData PrimaryOutputDeviceProperty = RegisterProperty("PrimaryOutputDevice", typeof(Device));
 
 		#endregion
 	}

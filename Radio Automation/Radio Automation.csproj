@@ -141,12 +141,16 @@
     <Compile Include="Messaging\TrackPlayingMessage.cs" />
     <Compile Include="Messaging\TrackInfoData.cs" />
     <Compile Include="ViewModels\EditEventViewModel.cs" />
+    <Compile Include="ViewModels\PreferencesViewModel.cs" />
     <Compile Include="ViewModels\TrackViewModel.cs" />
     <Compile Include="Views\EditEventWindow.xaml.cs">
       <DependentUpon>EditEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EventScheduleWindow.xaml.cs">
       <DependentUpon>EventScheduleWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PreferencesWindow.xaml.cs">
+      <DependentUpon>PreferencesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TrackView.xaml.cs">
       <DependentUpon>TrackView.xaml</DependentUpon>
@@ -161,6 +165,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EventScheduleWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PreferencesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
