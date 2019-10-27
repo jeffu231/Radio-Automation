@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Catel.Logging;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
@@ -12,6 +13,8 @@ namespace NAudioWrapper
 {
     public class AudioPlayback : IDisposable, IMMNotificationClient
     {
+	    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
         private IWavePlayer _playbackDevice;
         private WaveStream _fileStream;
 
@@ -146,6 +149,7 @@ namespace NAudioWrapper
 	        catch (Exception e)
 	        {
 				MessageBox.Show(e.Message, "Problem opening files");
+				Log.Error(e, $"An error occurred opening the file. {paths}");
 				CloseFile();
 			}
         }
@@ -161,6 +165,7 @@ namespace NAudioWrapper
             catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Problem opening file");
+                Log.Error(e, $"An error occurred opening the file. {fileName}");
                 CloseFile();
             }
         }

@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
+using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
 using Catel.Windows;
@@ -35,6 +36,9 @@ namespace Radio_Automation.ViewModels
 		private readonly IPersistenceService _persistenceService;
 		private readonly IPleaseWaitService _pleaseWaitService;
 		private readonly IMessageService _messageService;
+
+		//Logging
+		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 		
 		private AudioPlayback _audioPlayer;
 		private PlaybackState _playbackState = PlaybackState.Stopped;
