@@ -80,6 +80,11 @@
 						<Image Source="/Resources;component/Icons/help.png" Width="16" Height="16" />
 					</MenuItem.Icon>
 				</MenuItem>
+				<MenuItem Header="About" Command="{Binding ShowAboutCommand}">
+					<MenuItem.Icon>
+						<Image Source="/Resources;component/Icons/help.png" Width="16" Height="16" />
+					</MenuItem.Icon>
+				</MenuItem>
 			</MenuItem>
 		</Menu>
 

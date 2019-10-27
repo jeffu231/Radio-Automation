@@ -16,7 +16,7 @@ namespace Radio_Automation.Models
 		{
 			Name = name;
 			Path = path;
-			Artist = string.Empty;
+			Artist = @"Stream";
 			Album = string.Empty;
 			Year = (uint)DateTime.Now.Year;
 			Duration = TimeSpan.Zero;

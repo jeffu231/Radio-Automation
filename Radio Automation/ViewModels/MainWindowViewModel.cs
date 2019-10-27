@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Deployment;
+using System.Deployment.Application;
 using System.Windows.Threading;
 using Catel.Collections;
 using Catel.Data;
@@ -29,8 +31,10 @@ namespace Radio_Automation.ViewModels
 		private readonly ISelectDirectoryService _selectDirectoryService;
 		private readonly IAudioTrackParserService _audioTrackParserService;
 		private readonly IOpenFileService _openFileService;
+		private readonly ISaveFileService _saveFileService;
 		private readonly IPersistenceService _persistenceService;
 		private readonly IPleaseWaitService _pleaseWaitService;
+		private readonly IMessageService _messageService;
 		
 		private AudioPlayback _audioPlayer;
 		private PlaybackState _playbackState = PlaybackState.Stopped;
@@ -45,16 +49,19 @@ namespace Radio_Automation.ViewModels
 		private readonly WunderGround _wg;
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
-			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, ISaveFileService _saveFileService)
+			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, 
+			ISaveFileService saveFileService, IMessageService messageService)
 		{
-			_wg = new WunderGround("f78420eccab34f098420eccab3cf091f");
-			//UpdateWeatherData();
+			//f78420eccab34f098420eccab3cf091f
+			_wg = new WunderGround();
 			
 			_selectDirectoryService = selectDirectoryService;
 			_audioTrackParserService = audioTrackParserService;
 			_openFileService = openFileService;
+			_saveFileService = saveFileService;
 			_persistenceService = persistenceService;
 			_pleaseWaitService = pleaseWaitService;
+			_messageService = messageService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
 
@@ -91,6 +98,8 @@ namespace Radio_Automation.ViewModels
 			await RestoreSettingsAsync();
 
 			ConfigurePrimaryAudioPlayer();
+
+			await UpdateWeatherData();
 
 			_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
 
@@ -198,6 +207,7 @@ namespace Radio_Automation.ViewModels
 		public static readonly PropertyData PlayPauseImageSourceProperty = RegisterProperty("PlayPauseImageSource", typeof(string));
 
 		#endregion
+
 		#region Clock property
 
 		/// <summary>
@@ -396,8 +406,6 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
-
-
 		#region Overrides of ViewModelBase
 
 		/// <inheritdoc />
@@ -411,7 +419,6 @@ namespace Radio_Automation.ViewModels
 		}
 
 		#endregion
-
 
 		#region NewPlaylist command
 
@@ -516,17 +523,16 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task SavePlaylist()
 		{
-			var dependencyResolver = this.GetDependencyResolver();
-			var saveFileService = dependencyResolver.Resolve<ISaveFileService>();
-			saveFileService.Filter = "Playlist|*.rpl";
-			saveFileService.Title = @"Save Playlist";
-			if (await saveFileService.DetermineFileAsync())
+			if (File.Exists(_settings.LastPlaylistPath))
 			{
 				_pleaseWaitService.Show();
-				await _persistenceService.SavePlaylistAsync(Playlist, saveFileService.FileName);
+				await _persistenceService.SavePlaylistAsync(Playlist, _settings.LastPlaylistPath);
 				_pleaseWaitService.Hide();
 			}
-			
+			else
+			{
+				await SavePlaylistAs();
+			}
 		}
 
 		#endregion
@@ -548,7 +554,17 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task SavePlaylistAs()
 		{
-			// TODO: Handle command logic here
+			var dependencyResolver = this.GetDependencyResolver();
+			var saveFileService = dependencyResolver.Resolve<ISaveFileService>();
+			saveFileService.Filter = "Playlist|*.rpl";
+			saveFileService.Title = @"Save Playlist";
+			if (await saveFileService.DetermineFileAsync())
+			{
+				_pleaseWaitService.Show();
+				await _persistenceService.SavePlaylistAsync(Playlist, saveFileService.FileName);
+				_settings.LastPlaylistPath = _saveFileService.FileName;
+				_pleaseWaitService.Hide();
+			}
 		}
 
 		#endregion
@@ -622,7 +638,6 @@ namespace Radio_Automation.ViewModels
 		}
 
 		#endregion
-
 
 		#region AddFile command
 
@@ -740,7 +755,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task PreferencesAsync()
 		{
-			PreferencesViewModel viewModel = new PreferencesViewModel(_settings);
+			PreferencesViewModel viewModel = new PreferencesViewModel(_settings, _saveFileService);
 			var dependencyResolver = this.GetDependencyResolver();
 			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
 			var ok = await uiVisualizerService.ShowDialogAsync(viewModel);
@@ -932,8 +947,6 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
-
-
 		#region Shuffle command
 
 		private Command _shuffleCommand;
@@ -985,6 +998,32 @@ namespace Radio_Automation.ViewModels
 		private void VolumeChanged()
 		{
 			_audioPlayer.Volume = Volume/100;
+		}
+
+		#endregion
+
+		#region ShowAbout command
+
+		private TaskCommand _showAboutCommand;
+
+		/// <summary>
+		/// Gets the ShowAbout command.
+		/// </summary>
+		public TaskCommand ShowAboutCommand
+		{
+			get { return _showAboutCommand ?? (_showAboutCommand = new TaskCommand(ShowAboutAsync)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the ShowAbout command is executed.
+		/// </summary>
+		private async Task ShowAboutAsync()
+		{
+			if (ApplicationDeployment.IsNetworkDeployed)
+			{
+				var version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
+				await _messageService.ShowInformationAsync(version, "Version");
+			}
 		}
 
 		#endregion
@@ -1108,6 +1147,7 @@ namespace Radio_Automation.ViewModels
 				NextTrack = null;
 			}
 			
+			UpdateCurrentSong();
 		}
 
 		private async Task<bool> SaveSettingsAsync()
@@ -1169,9 +1209,20 @@ namespace Radio_Automation.ViewModels
 
 		private async Task UpdateWeatherData()
 		{
-			var obs = await _wg.GetObservationAsync(@"KILMARYV6");
-			Temperature = (int)Math.Round(obs.Temp);
-			Humidity = (int) Math.Round(obs.Humidity);
+			if (_settings.UseWUnderground)
+			{
+				var obs = await _wg.GetObservationAsync(_settings.WUndergroundStation, _settings.WUndergroundKey);
+				Temperature = (int)Math.Round(obs.Temp);
+				Humidity = (int) Math.Round(obs.Humidity);
+			}
+		}
+
+		private void UpdateCurrentSong()
+		{
+			if(Directory.Exists(Path.GetDirectoryName(_settings.CurrentSongPath)))
+			{
+				File.WriteAllLines(_settings.CurrentSongPath, new []{CurrentTrack !=null ? CurrentTrack.FormattedName: "Nothing Playing"});
+			}
 		}
 
 		private async Task PlayTemperature()

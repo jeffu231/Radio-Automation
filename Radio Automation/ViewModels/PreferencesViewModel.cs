@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Services;
 using NAudioWrapper;
 using Radio_Automation.Models;
 
@@ -9,9 +10,11 @@ namespace Radio_Automation.ViewModels
 {
 	public class PreferencesViewModel: ViewModelBase
 	{
+		private readonly ISaveFileService _saveFileService;
 
-		public PreferencesViewModel(Settings settings)
+		public PreferencesViewModel(Settings settings, ISaveFileService saveFileService)
 		{
+			_saveFileService = saveFileService;
 			Devices = AudioPlayback.GetActiveDevices();
 			Settings = settings; 
 			Title = "Preferences";
@@ -35,8 +38,7 @@ namespace Radio_Automation.ViewModels
 		public static readonly PropertyData SettingsProperty = RegisterProperty("Settings", typeof(Settings));
 
 		#endregion
-
-
+		
 		#region Devices property
 
 		/// <summary>
@@ -74,6 +76,82 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+		#region UseWUnderground property
+
+		/// <summary>
+		/// Gets or sets the UseWUnderground value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public bool UseWUnderground
+		{
+			get { return GetValue<bool>(UseWUndergroundProperty); }
+			set { SetValue(UseWUndergroundProperty, value); }
+		}
+
+		/// <summary>
+		/// UseWUnderground property data.
+		/// </summary>
+		public static readonly PropertyData UseWUndergroundProperty = RegisterProperty("UseWUnderground", typeof(bool), null);
+
+		#endregion
+
+		#region WUndergroundKey property
+
+		/// <summary>
+		/// Gets or sets the WUndergroundKey value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public string WUndergroundKey
+		{
+			get { return GetValue<string>(WUndergroundKeyProperty); }
+			set { SetValue(WUndergroundKeyProperty, value); }
+		}
+
+		/// <summary>
+		/// WUndergroundKey property data.
+		/// </summary>
+		public static readonly PropertyData WUndergroundKeyProperty = RegisterProperty("WUndergroundKey", typeof(string), null);
+
+		#endregion
+
+		#region WUndergroundStation property
+
+		/// <summary>
+		/// Gets or sets the WUndergroundStation value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public string WUndergroundStation
+		{
+			get { return GetValue<string>(WUndergroundStationProperty); }
+			set { SetValue(WUndergroundStationProperty, value); }
+		}
+
+		/// <summary>
+		/// WUndergroundStation property data.
+		/// </summary>
+		public static readonly PropertyData WUndergroundStationProperty = RegisterProperty("WUndergroundStation", typeof(string), null);
+
+		#endregion
+
+		#region CurrentSongPath property
+
+		/// <summary>
+		/// Gets or sets the CurrentSongPath value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public string CurrentSongPath
+		{
+			get { return GetValue<string>(CurrentSongPathProperty); }
+			set { SetValue(CurrentSongPathProperty, value); }
+		}
+
+		/// <summary>
+		/// CurrentSongPath property data.
+		/// </summary>
+		public static readonly PropertyData CurrentSongPathProperty = RegisterProperty("CurrentSongPath", typeof(string), null);
+
+		#endregion
+		
 		#region Ok command
 
 		private TaskCommand _okCommand;
@@ -102,6 +180,32 @@ namespace Radio_Automation.ViewModels
 		private bool CanOk()
 		{
 			return true;
+		}
+
+		#endregion
+
+		#region SelectCurrentSongPath command
+
+		private TaskCommand _selectCurrentSongPathCommand;
+
+		/// <summary>
+		/// Gets the SelectCurrentSongPath command.
+		/// </summary>
+		public TaskCommand SelectCurrentSongPathCommand
+		{
+			get { return _selectCurrentSongPathCommand ?? (_selectCurrentSongPathCommand = new TaskCommand(SelectCurrentSongPathAsync)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the SelectCurrentSongPath command is executed.
+		/// </summary>
+		private async Task SelectCurrentSongPathAsync()
+		{
+			_saveFileService.CheckPathExists = true;
+			if (await _saveFileService.DetermineFileAsync())
+			{
+				CurrentSongPath = _saveFileService.FileName;
+			}
 		}
 
 		#endregion

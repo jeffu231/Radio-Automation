@@ -16,8 +16,11 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
@@ -25,6 +28,32 @@
 		<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Devices}" 
 		          DisplayMemberPath="FriendlyName" 
 		          SelectedItem="{Binding Path=PrimaryOutputDevice}" Margin="5"/>
+		<TextBlock Grid.Row="1" Grid.Column="0" Text="Current Song Path" Margin="5"/>
+		<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentSongPath}" Margin="5"/>
+		<Button Grid.Row="1" Grid.Column="2" Command="{Binding SelectCurrentSongPathCommand}">
+			<Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"></Image>
+		</Button>
+		<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Weather Info">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<CheckBox Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" IsChecked="{Binding UseWUnderground}" Margin="5">Enable Weather Underground</CheckBox>
+				<TextBlock Grid.Row="1" Grid.Column="0" Text="WUnderground Key" Margin="5"/>
+				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WUndergroundKey}" Margin="5"/>
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="WUnderground Station" Margin="5"/>
+				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding WUndergroundStation}" Margin="5"/>
+			</Grid>
+		</GroupBox>
+		
+		
 	</Grid>
 </DockPanel>
     

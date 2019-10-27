@@ -18,29 +18,23 @@ namespace Weather
 			_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
-		public WunderGround(string apiKey)
+		public async Task<IObservation> GetObservationAsync(string stationId, string apiKey, bool highPrecision = false)
 		{
-			if (string.IsNullOrEmpty(apiKey))
+			if (!string.IsNullOrEmpty(stationId) && !string.IsNullOrEmpty(apiKey))
 			{
-				throw new ArgumentNullException(nameof(apiKey));
-			}
-			_apiKey = apiKey;
-		}
+				WundergroundObservations obs = null;
+				var precision = highPrecision ? "&numericPrecision=decimal" : String.Empty;
+				var request = $"{_url}?stationId={stationId}&format=json&units=e&apiKey={apiKey}{precision}";
+				HttpResponseMessage response = await _client.GetAsync(request);
+				if (response.IsSuccessStatusCode)
+				{
+					obs = await response.Content.ReadAsAsync<WundergroundObservations>();
+				}
 
-		public async Task<IObservation> GetObservationAsync(string stationId, bool highPrecision = false)
-		{
-			WundergroundObservations obs = null;
-			var precision = highPrecision ? "&numericPrecision=decimal" : String.Empty;
-			var request = $"{_url}?stationId={stationId}&format=json&units=e&apiKey={_apiKey}{precision}";
-			HttpResponseMessage response = await _client.GetAsync(request);
-			if (response.IsSuccessStatusCode)
-			{
-				obs = await response.Content.ReadAsAsync<WundergroundObservations>();
-			}
-
-			if (obs != null && obs.Observations.Any())
-			{
-				return obs.Observations.First();
+				if (obs != null && obs.Observations.Any())
+				{
+					return obs.Observations.First();
+				}
 			}
 
 			return new WunderGroundObservation();

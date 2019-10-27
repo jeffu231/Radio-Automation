@@ -7,8 +7,9 @@ namespace Radio_Automation.Models
 	{
 		public Settings()
 		{
-			Volume = 100;
+			Volume = 50;
 			PrimaryOutputDevice = AudioPlayback.GetDefaultDevice();
+			UseWUnderground = true;
 		}
 
 		#region LastPlaylistPath property
@@ -98,6 +99,78 @@ namespace Radio_Automation.Models
 		/// PrimaryOutputDevice property data.
 		/// </summary>
 		public static readonly PropertyData PrimaryOutputDeviceProperty = RegisterProperty("PrimaryOutputDevice", typeof(Device));
+
+		#endregion
+
+		#region WUndergroundKey property
+
+		/// <summary>
+		/// Gets or sets the WUndergroundKey value.
+		/// </summary>
+		public string WUndergroundKey
+		{
+			get { return GetValue<string>(WUndergroundKeyProperty); }
+			set { SetValue(WUndergroundKeyProperty, value); }
+		}
+
+		/// <summary>
+		/// WUndergroundKey property data.
+		/// </summary>
+		public static readonly PropertyData WUndergroundKeyProperty = RegisterProperty("WUndergroundKey", typeof(string));
+
+		#endregion
+
+		#region WUndergroundStation property
+
+		/// <summary>
+		/// Gets or sets the WUndergroundStation value.
+		/// </summary>
+		public string WUndergroundStation
+		{
+			get { return GetValue<string>(WUndergroundStationProperty); }
+			set { SetValue(WUndergroundStationProperty, value); }
+		}
+
+		/// <summary>
+		/// WUndergroundStation property data.
+		/// </summary>
+		public static readonly PropertyData WUndergroundStationProperty = RegisterProperty("WUndergroundStation", typeof(string));
+
+		#endregion
+
+		#region CurrentSongPath property
+
+		/// <summary>
+		/// Gets or sets the CurrentSongPath value.
+		/// </summary>
+		public string CurrentSongPath
+		{
+			get { return GetValue<string>(CurrentSongPathProperty); }
+			set { SetValue(CurrentSongPathProperty, value); }
+		}
+
+		/// <summary>
+		/// CurrentSongPath property data.
+		/// </summary>
+		public static readonly PropertyData CurrentSongPathProperty = RegisterProperty("CurrentSongPath", typeof(string));
+
+		#endregion
+
+		#region UseWUnderground property
+
+		/// <summary>
+		/// Gets or sets the UseWUnderground value.
+		/// </summary>
+		public bool UseWUnderground
+		{
+			get { return GetValue<bool>(UseWUndergroundProperty); }
+			set { SetValue(UseWUndergroundProperty, value); }
+		}
+
+		/// <summary>
+		/// UseWUnderground property data.
+		/// </summary>
+		public static readonly PropertyData UseWUndergroundProperty = RegisterProperty("UseWUnderground", typeof(bool));
 
 		#endregion
 	}
