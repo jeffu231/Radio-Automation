@@ -14,8 +14,18 @@ namespace Radio_Automation.ViewModels
 		{
 			Argument.IsNotNull("track", track);
 			Track = track;
-			TrackPlayingMessage.Register(this, TrackPlaying);
 		}
+
+		#region Overrides of ViewModelBase
+
+		/// <inheritdoc />
+		protected override Task InitializeAsync()
+		{
+			TrackPlayingMessage.Register(this, TrackPlaying);
+			return Task.CompletedTask;
+		}
+
+		#endregion
 
 		private void TrackPlaying(TrackPlayingMessage message)
 		{
@@ -24,6 +34,17 @@ namespace Radio_Automation.ViewModels
 				IsPlaying = message.Data.IsPlaying;
 			}
 		}
+
+		#region Overrides of ViewModelBase
+
+		/// <inheritdoc />
+		protected override Task OnClosingAsync()
+		{
+			TrackPlayingMessage.Unregister(this, TrackPlaying);
+			return Task.CompletedTask;
+		}
+
+		#endregion
 
 		#region Track model property
 

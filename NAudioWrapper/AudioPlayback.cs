@@ -108,12 +108,12 @@ namespace NAudioWrapper
 			return DeviceEnumerator.UnregisterEndpointNotificationCallback(client);
 		} 
 
-		public void Load(string fileName)
+		public bool Load(string fileName)
         {
             Stop();
             CloseFile();
             EnsureDeviceCreated();
-            OpenFile(fileName);
+            return OpenFile(fileName);
         }
 
 
@@ -127,8 +127,15 @@ namespace NAudioWrapper
 
 		private void CloseFile()
         {
-            _fileStream?.Dispose();
-            _fileStream = null;
+	        try
+	        {
+		        _fileStream?.Dispose();
+		        _fileStream = null;
+	        }
+	        catch (Exception e)
+	        {
+		        Log.Error(e, "Unable to close the file stream.");
+	        }
         }
 
         private void LoadFiles(string[] paths)
@@ -148,19 +155,20 @@ namespace NAudioWrapper
 	        }
 	        catch (Exception e)
 	        {
-				MessageBox.Show(e.Message, "Problem opening files");
 				Log.Error(e, $"An error occurred opening the file. {paths}");
 				CloseFile();
 			}
         }
 
-        private void OpenFile(string fileName)
+        private bool OpenFile(string fileName)
         {
+	        var status = false;
             try
             {
                 var inputStream = new MediaFoundationReader(fileName);
 				_fileStream = inputStream;
                 Initialize(inputStream.ToSampleProvider());
+                status = true;
             }
             catch (Exception e)
             {
@@ -168,16 +176,15 @@ namespace NAudioWrapper
                 Log.Error(e, $"An error occurred opening the file. {fileName}");
                 CloseFile();
             }
+
+            return status;
         }
 
         private void Initialize(ISampleProvider inputStream)
         {
-			
-			_volumeProvider = new VolumeSampleProvider(inputStream);
+	        _volumeProvider = new VolumeSampleProvider(inputStream);
 			var postVolumeMeter = new MeteringSampleProvider(_volumeProvider);
 			postVolumeMeter.StreamVolume += PostVolumeMeter_StreamVolume;
-
-
 			_playbackDevice.Init(postVolumeMeter);
         }
 
@@ -239,6 +246,21 @@ namespace NAudioWrapper
                 _fileStream.Position = 0;
             }
 			PlaybackStopped?.Invoke();
+        }
+
+        public bool IsPlaying()
+        {
+	        return _playbackDevice?.PlaybackState == PlaybackState.Playing;
+        }
+
+        public bool IsPaused()
+        {
+	        return _playbackDevice?.PlaybackState == PlaybackState.Paused;
+        }
+
+        public bool IsStopped()
+        {
+	        return _playbackDevice?.PlaybackState == PlaybackState.Stopped;
         }
 
         public void TogglePlayPause()

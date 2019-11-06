@@ -7,6 +7,7 @@ using Catel;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
 using Newtonsoft.Json;
+using OneWay.M3U;
 using Radio_Automation.Extensions;
 using Radio_Automation.Models;
 using FileMode = System.IO.FileMode;
@@ -94,6 +95,37 @@ namespace Radio_Automation.Services
 
 			});
 			
+		}
+
+		/// <inheritdoc />
+		public async Task<Playlist> ImportM3UPlaylistAsync(string path)
+		{
+			return await Task.Factory.StartNew(() =>
+			{
+				M3UFileInfo m3uFile;
+				var file = new FileInfo(path);
+				using (var reader = new M3UFileReader(file))
+				{
+					m3uFile = reader.Read();
+				}
+
+				if (m3uFile != null)
+				{
+					List<Track> tracks = new List<Track>(m3uFile.MediaFiles.Count);
+					foreach (var m3UMediaInfo in m3uFile.MediaFiles)
+					{
+						var track = AudioTrackParserService.CreateTrackFromFile(m3UMediaInfo.Uri.LocalPath);
+						if (track != null)
+						{
+							tracks.Add(track);
+						}
+
+					}
+					return new Playlist(tracks);
+				}
+				
+				return new Playlist();
+			});
 		}
 
 		/// <inheritdoc />

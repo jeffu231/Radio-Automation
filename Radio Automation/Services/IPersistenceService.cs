@@ -11,6 +11,8 @@ namespace Radio_Automation.Services
 
 		Task<Playlist> ImportZaraPlaylistAsync(string path);
 
+		Task<Playlist> ImportM3UPlaylistAsync(string path);
+
 		Task<Settings> LoadSettingsAsync();
 
 		Task<bool> SaveSettingsAsync(Settings settings);

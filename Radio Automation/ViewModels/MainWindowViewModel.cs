@@ -45,20 +45,22 @@ namespace Radio_Automation.ViewModels
 		private readonly DispatcherTimer _playPositionTimer;
 		private readonly DispatcherTimer _pendingEventTimer;
 		private readonly DispatcherTimer _weatherUpdateTimer;
-		private int _currentTrackIndex = -1;
+		//private int _currentTrackIndex = -1;
 		private readonly EventScheduler _eventScheduler;
 		private EventSchedule _eventSchedule;
 		private readonly Queue<Event> _eventQueue = new Queue<Event>();
 		private Settings _settings = new Settings();
 		private readonly WunderGround _wg;
+		private IDisposable _validationToken;
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, 
 			ISaveFileService saveFileService, IMessageService messageService)
 		{
 			//f78420eccab34f098420eccab3cf091f
+			_validationToken = SuspendValidations();
 			_wg = new WunderGround();
-			
+			CurrentTrackIndex = -1;
 			_selectDirectoryService = selectDirectoryService;
 			_audioTrackParserService = audioTrackParserService;
 			_openFileService = openFileService;
@@ -92,6 +94,7 @@ namespace Radio_Automation.ViewModels
 			EventBus.EventTriggered += EventTriggered;
 			_eventScheduler = new EventScheduler();
 			_eventSchedule = new EventSchedule();
+			
 		}
 
 		#region Overrides of ViewModelBase
@@ -164,7 +167,7 @@ namespace Radio_Automation.ViewModels
 				SetValue(PlaylistProperty, value);
 				if (Playlist.Tracks.Count > 0)
 				{
-					_currentTrackIndex = 0;
+					CurrentTrackIndex = 0;
 				}
 			}
 		}
@@ -263,6 +266,24 @@ namespace Radio_Automation.ViewModels
 		/// CurrentTrack property data.
 		/// </summary>
 		public static readonly PropertyData CurrentTrackProperty = RegisterProperty("CurrentTrack", typeof(Track));
+
+		#endregion
+
+		#region CurrentTrackIndex property
+
+		/// <summary>
+		/// Gets or sets the CurrentTrackIndex value.
+		/// </summary>
+		public int CurrentTrackIndex
+		{
+			get { return GetValue<int>(CurrentTrackIndexProperty); }
+			set { SetValue(CurrentTrackIndexProperty, value); }
+		}
+
+		/// <summary>
+		/// CurrentTrackIndex property data.
+		/// </summary>
+		public static readonly PropertyData CurrentTrackIndexProperty = RegisterProperty("CurrentTrackIndex", typeof(int));
 
 		#endregion
 
@@ -419,6 +440,7 @@ namespace Radio_Automation.ViewModels
 			success.Wait(TimeSpan.FromSeconds(1));
 			StopPlaying();
 			_audioPlayer?.Dispose();
+			_validationToken.Dispose();
 			await base.CloseAsync();
 		}
 
@@ -504,6 +526,38 @@ namespace Radio_Automation.ViewModels
 			{
 				_pleaseWaitService.Show();
 				Playlist = await _persistenceService.ImportZaraPlaylistAsync(_openFileService.FileName);
+				_pleaseWaitService.Hide();
+			}
+		}
+
+		#endregion
+
+		#region ImportM3UPlaylist command
+
+		private TaskCommand _importM3UPlaylistCommand;
+
+		/// <summary>
+		/// Gets the ImportM3UPlaylist command.
+		/// </summary>
+		public TaskCommand ImportM3UPlaylistCommand
+		{
+			get { return _importM3UPlaylistCommand ?? (_importM3UPlaylistCommand = new TaskCommand(ImportM3UPlaylistAsync)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the ImportM3UPlaylist command is executed.
+		/// </summary>
+		private async Task ImportM3UPlaylistAsync()
+		{
+			_openFileService.IsMultiSelect = false;
+			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			_openFileService.CheckFileExists = true;
+			_openFileService.Title = @"Import M3U Playlist";
+			_openFileService.Filter = "M3U Play List (*.m3u) | *.m3u";
+			if (await _openFileService.DetermineFileAsync())
+			{
+				_pleaseWaitService.Show();
+				Playlist = await _persistenceService.ImportM3UPlaylistAsync(_openFileService.FileName);
 				_pleaseWaitService.Hide();
 			}
 		}
@@ -615,7 +669,9 @@ namespace Radio_Automation.ViewModels
 			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
 			await uiVisualizerService.ShowDialogAsync(viewModel);
 			_settings.LastEventSchedulePath = viewModel.Path;
-			_eventScheduler.LoadSchedule(viewModel.EventSchedule);
+			_eventSchedule = viewModel.EventSchedule;
+			PendingEvents.Clear();
+			_eventScheduler.LoadSchedule(_eventSchedule);
 		}
 
 		#endregion
@@ -817,10 +873,17 @@ namespace Radio_Automation.ViewModels
 			{
 				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
 				_playbackState = PlaybackState.Playing;
-				_audioPlayer.Load(CurrentTrack.Path);
-				RemainingTime = CurrentTrack.Duration;
-				TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
-				_audioPlayer.TogglePlayPause();
+				var success = _audioPlayer.Load(CurrentTrack.Path);
+				if(success)
+				{
+					RemainingTime = CurrentTrack.Duration;
+					TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
+					_audioPlayer.TogglePlayPause();
+				}
+				else
+				{
+					PlaybackEnded();
+				}
 			}
 		}
 
@@ -1052,9 +1115,10 @@ namespace Radio_Automation.ViewModels
 			}
 			else
 			{
-				if (++_currentTrackIndex >= Playlist.Tracks.Count)
+				if (++CurrentTrackIndex >= Playlist.Tracks.Count)
 				{
-					_currentTrackIndex = 0;
+					CurrentTrackIndex = 0;
+					Shuffle();
 				}
 
 				StartPlay();
@@ -1140,10 +1204,10 @@ namespace Radio_Automation.ViewModels
 
 		private void UpdateCurrentNextTracks()
 		{
-			if (_currentTrackIndex >= 0)
+			if (CurrentTrackIndex >= 0)
 			{
-				CurrentTrack = Playlist.Tracks[_currentTrackIndex];
-				NextTrack = _currentTrackIndex + 1 < Playlist.Tracks.Count ? Playlist.Tracks[_currentTrackIndex + 1] : null;
+				CurrentTrack = Playlist.Tracks[CurrentTrackIndex];
+				NextTrack = CurrentTrackIndex + 1 < Playlist.Tracks.Count ? Playlist.Tracks[CurrentTrackIndex + 1] : null;
 			}
 			else
 			{
@@ -1192,7 +1256,7 @@ namespace Radio_Automation.ViewModels
 
 		private async void ExecuteEvent(Event e)
 		{
-			PendingEvents.Remove(PendingEvents.First(x => x.Event == e));
+			PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
 
 			switch (e.EventType)
 			{
@@ -1232,9 +1296,9 @@ namespace Radio_Automation.ViewModels
 		private async Task PlayTemperature()
 		{
 			var player = _audioPlayer;
-			if (_playbackState == PlaybackState.Playing)
+			if (player.IsPaused() || player.IsPlaying())
 			{
-				player = new AudioPlayback();
+				player = new AudioPlayback(_settings.PrimaryOutputDevice);
 				player.PlaybackEnded += () =>
 				{
 					FadeVolumeUp();
@@ -1258,9 +1322,9 @@ namespace Radio_Automation.ViewModels
 		private async Task PlayTime()
 		{
 			var player = _audioPlayer;
-			if (_playbackState == PlaybackState.Playing)
+			if (player.IsPaused() || player.IsPlaying())
 			{
-				player = new AudioPlayback();
+				player = new AudioPlayback(_settings.PrimaryOutputDevice);
 				player.PlaybackEnded += () =>
 				{
 					FadeVolumeUp();

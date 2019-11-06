@@ -9,6 +9,8 @@
         xmlns:converters="clr-namespace:Radio_Automation.Converters"
         xmlns:events="clr-namespace:Radio_Automation.Events"
         xmlns:views="clr-namespace:Radio_Automation.Views"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:behaviors="clr-namespace:Radio_Automation.Behaviors"
         mc:Ignorable="d"
         Height="700" Width="900" WindowStartupLocation="CenterScreen"
         CanCloseUsingEscape="False" Background="{StaticResource BackColorBrush}">
@@ -33,6 +35,11 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem Header="Import Zara Playlist" Command="{Binding ImportZaraPlaylistCommand}">
+					<MenuItem.Icon>
+						<Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"></Image>
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem Header="Import M3U Playlist" Command="{Binding ImportM3UPlaylistCommand}">
 					<MenuItem.Icon>
 						<Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"></Image>
 					</MenuItem.Icon>
@@ -207,9 +214,9 @@
 					<Border Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource ForeColorBrush}" Padding="5,3,5,3">
 						<Grid>
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width=".33*"/>
-								<ColumnDefinition Width=".33*"/>
-								<ColumnDefinition Width=".33*"/>
+								<ColumnDefinition Width=".40*"/>
+								<ColumnDefinition Width=".29*"/>
+								<ColumnDefinition Width=".30*"/>
 							</Grid.ColumnDefinitions>
 							<TextBlock Name="DateTime" Grid.Column="0" Text="{Binding Clock.CurrentDateTime, StringFormat={x:Static constants:Formatters.DateTimeFormat}}" VerticalAlignment="Center"/>
 							<WrapPanel Grid.Column="1" HorizontalAlignment="Center">
@@ -279,6 +286,12 @@
 
 			<ListView x:Name="PlaylistView" Grid.Column="1" Grid.Row="2" 
 			          ItemsSource="{Binding Playlist.Tracks}"  Margin="0,5,5,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				<i:Interaction.Behaviors>
+					<behaviors:ScrollPlayingIntoViewBehavior CurrentTrackIndex="{Binding CurrentTrackIndex}">
+
+					</behaviors:ScrollPlayingIntoViewBehavior>
+				</i:Interaction.Behaviors>
+				
 				<ListView.ItemContainerStyle>
 					<Style TargetType="{x:Type ListViewItem}">
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>

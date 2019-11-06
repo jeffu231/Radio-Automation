@@ -28,7 +28,7 @@
     <InstallUrl>\\nas.home.kb9kld.org\safe\Radio_Automation_Publish\</InstallUrl>
     <ProductName>Radio Automation</ProductName>
     <PublisherName>jtdev</PublisherName>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>18</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -92,6 +92,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OneWay.M3U, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OneWay.M3U.1.0.3\lib\netstandard2.0\OneWay.M3U.dll</HintPath>
     </Reference>
     <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
       <HintPath>..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
@@ -172,6 +175,7 @@
     <Compile Include="Extensions\EnumerationExtension.cs" />
     <Compile Include="Messaging\TrackPlayingMessage.cs" />
     <Compile Include="Messaging\TrackInfoData.cs" />
+    <Compile Include="Behaviors\ScrollPlayingIntoViewBehavior.cs" />
     <Compile Include="ViewModels\EditEventViewModel.cs" />
     <Compile Include="ViewModels\PreferencesViewModel.cs" />
     <Compile Include="ViewModels\TrackViewModel.cs" />
