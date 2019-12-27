@@ -117,12 +117,12 @@ namespace NAudioWrapper
         }
 
 
-		public void Load(string[] files)
+		public bool Load(string[] files)
 		{
 			Stop();
 			CloseFile();
 			EnsureDeviceCreated();
-			LoadFiles(files);
+			return LoadFiles(files);
 		}
 
 		private void CloseFile()
@@ -138,8 +138,9 @@ namespace NAudioWrapper
 	        }
         }
 
-        private void LoadFiles(string[] paths)
+        private bool LoadFiles(string[] paths)
         {
+	        var status = false;
 	        try
 	        {
 		        List<AudioFileReader> readers = new List<AudioFileReader>(paths.Length);
@@ -152,12 +153,15 @@ namespace NAudioWrapper
 		        var merged = new ConcatenatingAudioFileReader(readers.ToArray());
 		        _fileStream = merged;
 				Initialize(merged);
+				status = true;
 	        }
 	        catch (Exception e)
 	        {
 				Log.Error(e, $"An error occurred opening the file. {paths}");
 				CloseFile();
 			}
+
+	        return status;
         }
 
         private bool OpenFile(string fileName)
@@ -172,8 +176,7 @@ namespace NAudioWrapper
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Problem opening file");
-                Log.Error(e, $"An error occurred opening the file. {fileName}");
+	            Log.Error(e, $"An error occurred opening the file. {fileName}");
                 CloseFile();
             }
 
@@ -209,7 +212,7 @@ namespace NAudioWrapper
         private void CreateDevice()
         {
             //_playbackDevice = new WaveOutEvent {DesiredLatency = 100};
-			_playbackDevice = new WasapiOut(CurrentDevice,AudioClientShareMode.Shared, false, 20);
+			_playbackDevice = new WasapiOut(CurrentDevice,AudioClientShareMode.Exclusive, false, 10);
 			//_playbackDevice.Volume = Volume;
 			_playbackDevice.PlaybackStopped += PlaybackDeviceOnPlaybackStopped;
         }

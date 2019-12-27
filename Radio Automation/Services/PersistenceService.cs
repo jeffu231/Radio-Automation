@@ -40,7 +40,9 @@ namespace Radio_Automation.Services
 			{
 				using (var fileStream = File.Open(path, FileMode.Open))
 				{
-					return _serializer.Deserialize<Playlist>(fileStream, _serializationConfiguration);
+					var pl = _serializer.Deserialize<Playlist>(fileStream, _serializationConfiguration);
+					pl?.CalculateTotalTime();
+					return pl;
 				}
 			});
 		}

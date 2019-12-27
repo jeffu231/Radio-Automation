@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Catel.Logging;
 using JobToolkit.Core;
 using NCrontab;
 using Radio_Automation.Models;
@@ -12,6 +13,7 @@ namespace Radio_Automation.Events
 		private JobManager _jm;
 		private JobServer _js;
 		private EventSchedule _schedule;
+		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 		
 		public EventScheduler()
 		{
@@ -85,13 +87,15 @@ namespace Radio_Automation.Events
 				try
 				{
 					var t = new EventTask(e);
-					var cronExpression = new CronExpression(e.CronExpression);
+					var cronExpression = new CronExpression(e.CronExpression,true);
+				
 					_jm.Schedule(t, cronExpression.GetNextTime(DateTimeOffset.Now), cronExpression,
-						new DateTimeOffset(e.EndDateTime), null);
+						e.Expires?new DateTimeOffset(e.EndDateTime):DateTimeOffset.MaxValue, null);
+					
 				}
 				catch (Exception ex)
 				{
-					Console.Out.WriteLine($"Error creating event {ex.Message}");
+					Log.Error($"Error creating event {e.Name} : {ex.Message}");
 				}
 				
 			}

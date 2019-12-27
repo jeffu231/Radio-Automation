@@ -16,8 +16,6 @@ namespace Radio_Automation.Models
 		{
 			Id = Guid.NewGuid();
 			Tracks = new FastObservableCollection<Track>(tracks);
-			TotalTime = CalculateTotalTime();
-			Tracks.CollectionChanged += Tracks_CollectionChanged;
 		}
 
 		private void Tracks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -87,7 +85,17 @@ namespace Radio_Automation.Models
 		public FastObservableCollection<Track> Tracks
 		{
 			get { return GetValue<FastObservableCollection<Track>>(TracksProperty); }
-			protected set { SetValue(TracksProperty, value); }
+			protected set
+			{
+				var oldT = Tracks;
+				if (oldT != null)
+				{
+					oldT.CollectionChanged -= Tracks_CollectionChanged;
+				}
+				SetValue(TracksProperty, value);
+				CalculateTotalTime();
+				Tracks.CollectionChanged += Tracks_CollectionChanged;
+			}
 		}
 
 		/// <summary>
@@ -97,7 +105,7 @@ namespace Radio_Automation.Models
 
 		#endregion
 		
-		private TimeSpan CalculateTotalTime()
+		internal TimeSpan CalculateTotalTime()
 		{
 			var ticks = Tracks.Sum(t => t.Duration.Ticks);
 			return TimeSpan.FromTicks(ticks);

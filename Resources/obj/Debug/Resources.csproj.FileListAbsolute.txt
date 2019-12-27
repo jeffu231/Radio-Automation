@@ -3,7 +3,6 @@ C:\dev\Radio Automation\Resources\bin\Debug\Resources.pdb
 C:\dev\Radio Automation\Resources\obj\Debug\Resources.g.resources
 C:\dev\Radio Automation\Resources\obj\Debug\Resources.Properties.Resources.resources
 C:\dev\Radio Automation\Resources\obj\Debug\Resources.csproj.GenerateResource.cache
-C:\dev\Radio Automation\Resources\obj\Debug\Resources.csproj.CoreCompileInputs.cache
 C:\dev\Radio Automation\Resources\obj\Debug\Resources.dll
 C:\dev\Radio Automation\Resources\obj\Debug\Resources.pdb
 C:\dev\Radio Automation\Resources\obj\Debug\Resources.csprojAssemblyReference.cache

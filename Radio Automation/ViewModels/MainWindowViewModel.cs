@@ -51,14 +51,12 @@ namespace Radio_Automation.ViewModels
 		private readonly Queue<Event> _eventQueue = new Queue<Event>();
 		private Settings _settings = new Settings();
 		private readonly WunderGround _wg;
-		private IDisposable _validationToken;
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, 
 			ISaveFileService saveFileService, IMessageService messageService)
 		{
 			//f78420eccab34f098420eccab3cf091f
-			_validationToken = SuspendValidations();
 			_wg = new WunderGround();
 			CurrentTrackIndex = -1;
 			_selectDirectoryService = selectDirectoryService;
@@ -440,7 +438,6 @@ namespace Radio_Automation.ViewModels
 			success.Wait(TimeSpan.FromSeconds(1));
 			StopPlaying();
 			_audioPlayer?.Dispose();
-			_validationToken.Dispose();
 			await base.CloseAsync();
 		}
 
@@ -853,6 +850,7 @@ namespace Radio_Automation.ViewModels
 				case PlaybackState.Paused:
 					_playbackState = PlaybackState.Playing;
 					_audioPlayer.TogglePlayPause();
+					TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration - Position);
 					break;
 				case PlaybackState.Playing:
 					_playbackState = PlaybackState.Paused;
@@ -872,6 +870,7 @@ namespace Radio_Automation.ViewModels
 			if (CurrentTrack != null)
 			{
 				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
+				Log.Info($"Playing Track {CurrentTrack.FormattedName}");
 				_playbackState = PlaybackState.Playing;
 				var success = _audioPlayer.Load(CurrentTrack.Path);
 				if(success)
@@ -1154,14 +1153,24 @@ namespace Radio_Automation.ViewModels
 		{
 			if(CurrentTrack != null)
 			{
-				Position = TimeSpan.FromSeconds(_audioPlayer.Position);
-				if (CurrentTrack.Duration == TimeSpan.Zero)
+
+				try
 				{
-					TrackEndTime = Clock.CurrentDateTime;
+					var p = TimeSpan.FromSeconds(_audioPlayer.Position);
+					if (CurrentTrack.Duration == TimeSpan.Zero)
+					{
+						TrackEndTime = Clock.CurrentDateTime;
+					}
+					else
+					{
+						RemainingTime = CurrentTrack.Duration - p;
+					}
+
+					Position = p;
 				}
-				else
+				catch (Exception exception)
 				{
-					RemainingTime = CurrentTrack.Duration - Position;
+					Log.Error(exception, "Unable to update play position.");
 				}
 			}
 		}
@@ -1264,7 +1273,11 @@ namespace Radio_Automation.ViewModels
 					await PlayTime();
 					break;
 				case EventType.Temperature:
-					await PlayTemperature();
+					var status = await PlayTemperature();
+					if (status == false)
+					{
+						PlaybackEnded();
+					}
 					break;
 				case EventType.Stop:
 					StopPlayback();
@@ -1293,9 +1306,10 @@ namespace Radio_Automation.ViewModels
 			}
 		}
 
-		private async Task PlayTemperature()
+		private async Task<bool> PlayTemperature()
 		{
 			var player = _audioPlayer;
+			var success = false;
 			if (player.IsPaused() || player.IsPlaying())
 			{
 				player = new AudioPlayback(_settings.PrimaryOutputDevice);
@@ -1314,12 +1328,17 @@ namespace Radio_Automation.ViewModels
 			{
 				player.Load(temperaturePath);
 				player.TogglePlayPause();
+				success = true;
+			}
+			else
+			{
+				Log.Error($"Temperature file does not exist: {temperaturePath}");
 			}
 
-			await Task.CompletedTask;
+			return await Task.FromResult(success);
 		}
 
-		private async Task PlayTime()
+		private async Task<bool> PlayTime()
 		{
 			var player = _audioPlayer;
 			if (player.IsPaused() || player.IsPlaying())
@@ -1336,20 +1355,30 @@ namespace Radio_Automation.ViewModels
 			var time = DateTime.Now;
 			var hourSuffix = time.Minute == 0 ? @"_O" : string.Empty;
 			var hourPath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time",
-					$"HRS{time:hh}{hourSuffix}.mp3");
+					$"HRS{time:HH}{hourSuffix}.mp3");
+
+			var status = false;
+
 			if (time.Minute > 0)
 			{
 				var minutePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time", $"MIN{time:mm}.mp3");
-				player.Load(new[] { hourPath, minutePath });
+				status = player.Load(new[] { hourPath, minutePath });
 			}
 			else
 			{
-				player.Load(hourPath);
+				status = player.Load(hourPath);
 			}
 
-			player.TogglePlayPause();
-
-			await Task.CompletedTask;
+			if (status)
+			{
+				player.TogglePlayPause();
+			}
+			else
+			{
+				return await Task.FromResult(false);
+			}
+			
+			return await Task.FromResult(true);
 		}
 
 		private void FadeVolumeDown()

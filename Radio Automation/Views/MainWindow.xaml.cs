@@ -11,6 +11,8 @@ namespace Radio_Automation.Views
 		public MainWindow()
 		{
 			InitializeComponent();
+			Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
+			Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 		}
 	}
 }

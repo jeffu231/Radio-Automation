@@ -8,6 +8,6 @@
 
 		public const string DurationFormat = "mm\\:ss";
 
-		public const string LongDurationFormat = "h\\:mm\\:ss";
+		public const string LongDurationFormat = "d\\.hh\\:mm\\:ss";
 	}
 }

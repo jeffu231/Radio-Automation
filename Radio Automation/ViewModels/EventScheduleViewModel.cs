@@ -125,7 +125,7 @@ namespace Radio_Automation.ViewModels
 			e.Enabled = true;
 			e.Demand = Demand.Delayed;
 			e.EndDateTime = DateTime.UtcNow.AddDays(1);
-			e.CronExpression = new CronExpression("*/10 7-17 * * *");
+			e.CronExpression = new CronExpression("* */10 7-17 * * *", true);
 			EventSchedule.Events.Add(e);
 			await Task.CompletedTask;
 		}
