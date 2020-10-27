@@ -28,7 +28,7 @@
     <InstallUrl>\\nas.home.kb9kld.org\safe\Radio_Automation_Publish\</InstallUrl>
     <ProductName>Radio Automation</ProductName>
     <PublisherName>jtdev</PublisherName>
-    <ApplicationRevision>35</ApplicationRevision>
+    <ApplicationRevision>36</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -54,10 +54,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>30BA17A4F74D41ED343133B8216749E063AE40D2</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6ED44DB5204AE38EB3FA96EEB2586A40C92A5D73</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Radio Automation_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Radio Automation_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -231,7 +231,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Radio Automation_TemporaryKey.pfx" />
+    <None Include="Radio Automation_1_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -271,22 +271,25 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Catel.MVVM">
-      <Version>5.12.0</Version>
+      <Version>5.12.10</Version>
     </PackageReference>
     <PackageReference Include="Catel.Serialization.Json">
-      <Version>5.12.0</Version>
+      <Version>5.12.10</Version>
     </PackageReference>
     <PackageReference Include="Extended.Wpf.Toolkit">
-      <Version>3.7.0</Version>
+      <Version>4.0.1</Version>
     </PackageReference>
     <PackageReference Include="LiteDB">
-      <Version>4.1.4</Version>
+      <Version>5.0.9</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
+      <Version>1.1.19</Version>
     </PackageReference>
     <PackageReference Include="NCrontab">
       <Version>3.3.1</Version>
     </PackageReference>
     <PackageReference Include="NCrontab.Advanced">
-      <Version>1.3.21</Version>
+      <Version>1.3.28</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
@@ -298,10 +301,10 @@
       <Version>1.8.1</Version>
     </PackageReference>
     <PackageReference Include="System.Buffers">
-      <Version>4.5.0</Version>
+      <Version>4.5.1</Version>
     </PackageReference>
     <PackageReference Include="System.Collections.Immutable">
-      <Version>1.7.0</Version>
+      <Version>1.7.1</Version>
     </PackageReference>
     <PackageReference Include="System.ComponentModel.Annotations">
       <Version>4.7.0</Version>
@@ -313,7 +316,7 @@
       <Version>4.5.0</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>4.7.0</Version>
+      <Version>4.7.1</Version>
     </PackageReference>
     <PackageReference Include="taglib">
       <Version>2.1.0</Version>

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
-using Catel;
+using Microsoft.Xaml.Behaviors;
 
 namespace Radio_Automation.Behaviors
 {
