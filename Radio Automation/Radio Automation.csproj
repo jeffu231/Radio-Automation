@@ -29,7 +29,7 @@
     <InstallUrl>\\nas.home.kb9kld.org\safe\Radio_Automation_Publish\</InstallUrl>
     <ProductName>Radio Automation</ProductName>
     <PublisherName>jtdev</PublisherName>
-    <ApplicationRevision>37</ApplicationRevision>
+    <ApplicationRevision>38</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -281,7 +281,7 @@
       <Version>4.0.1</Version>
     </PackageReference>
     <PackageReference Include="LiteDB">
-      <Version>5.0.9</Version>
+      <Version>5.0.11</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.19</Version>
