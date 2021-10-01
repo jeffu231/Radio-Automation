@@ -84,7 +84,7 @@ namespace NAudioWrapper
 			return devices;
 		}
 
-		public static string DeviceId => CurrentDevice.ID;
+		public static string DeviceId => CurrentDevice?.ID;
 
 		/// <summary>
 		/// Registers a call back for Device Events
