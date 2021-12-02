@@ -29,7 +29,7 @@
     <InstallUrl>\\nas.home.kb9kld.org\safe\Radio_Automation_Publish\</InstallUrl>
     <ProductName>Radio Automation</ProductName>
     <PublisherName>jtdev</PublisherName>
-    <ApplicationRevision>39</ApplicationRevision>
+    <ApplicationRevision>40</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -55,10 +55,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6ED44DB5204AE38EB3FA96EEB2586A40C92A5D73</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>2AC721CA86734CBA60AFA9DE513EA012DD5CB2AE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Radio Automation_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Radio Automation_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -232,7 +232,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Radio Automation_1_TemporaryKey.pfx" />
+    <None Include="Radio Automation_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
