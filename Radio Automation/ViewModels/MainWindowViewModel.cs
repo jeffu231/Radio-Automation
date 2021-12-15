@@ -51,10 +51,11 @@ namespace Radio_Automation.ViewModels
 		private readonly Queue<Event> _eventQueue = new Queue<Event>();
 		private Settings _settings = new Settings();
 		private readonly WunderGround _wg;
+        private readonly IDispatcherService _dispatcherService;
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, 
-			ISaveFileService saveFileService, IMessageService messageService)
+			ISaveFileService saveFileService, IMessageService messageService, IDispatcherService dispatcherService)
 		{
 			//f78420eccab34f098420eccab3cf091f
 			_wg = new WunderGround();
@@ -66,6 +67,7 @@ namespace Radio_Automation.ViewModels
 			_persistenceService = persistenceService;
 			_pleaseWaitService = pleaseWaitService;
 			_messageService = messageService;
+            _dispatcherService = dispatcherService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
 
@@ -142,8 +144,8 @@ namespace Radio_Automation.ViewModels
 				_eventQueue.Enqueue(e);
 			}
 			else
-			{
-				DispatcherHelper.CurrentDispatcher.BeginInvoke(() => ExecuteEvent(e));
+            {
+                _dispatcherService.BeginInvoke(() => ExecuteEvent(e));
 			}
 		}
 
