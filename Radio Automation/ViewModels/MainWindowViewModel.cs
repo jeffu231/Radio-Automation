@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Deployment;
-using System.Deployment.Application;
+//using System.Deployment;
+//using System.Deployment.Application;
 using System.Windows.Threading;
 using Catel.Collections;
 using Catel.Data;
@@ -1120,11 +1120,11 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task ShowAboutAsync()
 		{
-			if (ApplicationDeployment.IsNetworkDeployed)
-			{
-				var version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
-				await _messageService.ShowInformationAsync(version, "Version");
-			}
+			//if (ApplicationDeployment.IsNetworkDeployed)
+			//{
+			//	var version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
+			//	await _messageService.ShowInformationAsync(version, "Version");
+			//}
 		}
 
 		#endregion
