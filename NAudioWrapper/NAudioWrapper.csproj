@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
@@ -14,13 +14,6 @@
     <OutputPath>bin\x64\Release\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Data.OracleClient" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Transactions" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Catel.Core" Version="5.12.22" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

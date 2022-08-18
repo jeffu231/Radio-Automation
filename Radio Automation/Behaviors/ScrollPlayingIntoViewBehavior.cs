@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
@@ -9,6 +10,7 @@ namespace Radio_Automation.Behaviors
 	{
 		private ListView _lv;
 
+		[SupportedOSPlatform("Windows7.0")]
 		protected override void OnAttached()
 		{
 			if (AssociatedObject is ListView lv)

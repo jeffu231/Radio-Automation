@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 //using System.Deployment;
@@ -35,7 +36,6 @@ namespace Radio_Automation.ViewModels
 		private readonly ISaveFileService _saveFileService;
 		private readonly IPersistenceService _persistenceService;
 		private readonly IPleaseWaitService _pleaseWaitService;
-		private readonly IMessageService _messageService;
 
 		//Logging
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
@@ -55,7 +55,7 @@ namespace Radio_Automation.ViewModels
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, 
-			ISaveFileService saveFileService, IMessageService messageService, IDispatcherService dispatcherService)
+			ISaveFileService saveFileService, IDispatcherService dispatcherService)
 		{
 			//f78420eccab34f098420eccab3cf091f
 			_wg = new WunderGround();
@@ -66,8 +66,7 @@ namespace Radio_Automation.ViewModels
 			_saveFileService = saveFileService;
 			_persistenceService = persistenceService;
 			_pleaseWaitService = pleaseWaitService;
-			_messageService = messageService;
-            _dispatcherService = dispatcherService;
+			_dispatcherService = dispatcherService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
 
@@ -1120,6 +1119,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task ShowAboutAsync()
 		{
+			await Task.CompletedTask;
 			//if (ApplicationDeployment.IsNetworkDeployed)
 			//{
 			//	var version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
@@ -1373,6 +1373,7 @@ namespace Radio_Automation.ViewModels
 			return await Task.FromResult(success);
 		}
 
+		[SupportedOSPlatform("Windows7.0")]
 		private async Task<bool> PlayTime()
 		{
 			var player = _audioPlayer;

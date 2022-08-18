@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 using Catel.Logging;
 using NAudio.CoreAudioApi;
@@ -116,7 +117,7 @@ namespace NAudioWrapper
             return OpenFile(fileName);
         }
 
-
+		[SupportedOSPlatform("Windows7.0")]
 		public bool Load(string[] files)
 		{
 			Stop();
@@ -138,7 +139,8 @@ namespace NAudioWrapper
 	        }
         }
 
-        private bool LoadFiles(string[] paths)
+		[SupportedOSPlatform("Windows7.0")]
+		private bool LoadFiles(string[] paths)
         {
 	        var status = false;
 	        try

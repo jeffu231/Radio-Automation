@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	   <UseWPF>true</UseWPF>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -13,44 +14,90 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <AdditionalFiles Remove="C:\Users\jeffu\.nuget\packages\microsoft.dotnet.upgradeassistant.extensions.default.analyzers\0.4.336902\build\\WebTypeReplacements.typemap" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <None Remove="Icons\arrow_switch.png" />
+    <None Remove="Icons\Close_6519.png" />
+    <None Remove="Icons\control_end_blue.png" />
+    <None Remove="Icons\control_fastforward_blue.png" />
+    <None Remove="Icons\control_pause_blue.png" />
+    <None Remove="Icons\control_play_blue.png" />
+    <None Remove="Icons\control_rewind_blue.png" />
+    <None Remove="Icons\control_start_blue.png" />
+    <None Remove="Icons\control_stop_blue.png" />
+    <None Remove="Icons\cut.png" />
+    <None Remove="Icons\delete_32.png" />
+    <None Remove="Icons\help.png" />
+    <None Remove="Icons\NewFile_6276.png" />
+    <None Remove="Icons\Open_6529.png" />
+    <None Remove="Icons\page_white_copy.png" />
+    <None Remove="Icons\page_white_paste.png" />
+    <None Remove="Icons\Save.png" />
+    <None Remove="Icons\SaveAs.png" />
+    <None Remove="Icons\Save_6530.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Close_6519.png" />
-    <Resource Include="Icons\delete_32.png" />
-    <Resource Include="Icons\help.png" />
-    <Resource Include="Icons\NewFile_6276.png" />
-    <Resource Include="Icons\Open_6529.png" />
-    <Resource Include="Icons\Save.png" />
-    <Resource Include="Icons\SaveAs.png" />
-    <Resource Include="Icons\Save_6530.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\cut.png" />
-    <Resource Include="Icons\page_white_copy.png" />
-    <Resource Include="Icons\page_white_paste.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\control_end_blue.png" />
-    <Resource Include="Icons\control_fastforward_blue.png" />
-    <Resource Include="Icons\control_pause_blue.png" />
-    <Resource Include="Icons\control_play_blue.png" />
-    <Resource Include="Icons\control_rewind_blue.png" />
-    <Resource Include="Icons\control_start_blue.png" />
-    <Resource Include="Icons\control_stop_blue.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\arrow_switch.png" />
+    <Resource Include="Icons\Close_6519.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\delete_32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\help.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\NewFile_6276.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Open_6529.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Save.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\SaveAs.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Save_6530.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  
+    <Resource Include="Icons\cut.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\page_white_copy.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\page_white_paste.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  
+    <Resource Include="Icons\control_end_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\control_fastforward_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\control_pause_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\control_play_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\control_rewind_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\control_start_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\control_stop_blue.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  
+    <Resource Include="Icons\arrow_switch.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -62,62 +109,6 @@
     <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Icons\arrow_switch.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\Close_6519.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_end_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_fastforward_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_pause_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_play_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_rewind_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_start_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\control_stop_blue.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\cut.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\delete_32.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\help.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\NewFile_6276.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\Open_6529.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\page_white_copy.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\page_white_paste.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\Save.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\SaveAs.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Icons\Save_6530.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 using NAudio.Wave;
 
 namespace NAudioWrapper
@@ -12,6 +13,7 @@ namespace NAudioWrapper
 
 		/// <summary>Creates a new ConcatenatingSampleProvider</summary>
 		/// <param name="providers">The source providers to play one after the other. Must all share the same sample rate and channel count</param>
+		[SupportedOSPlatform("Windows7.0")]
 		public ConcatenatingAudioFileReader(IEnumerable<AudioFileReader> providers)
 		{
 			if (providers == null)
@@ -30,6 +32,7 @@ namespace NAudioWrapper
 		#region Overrides of Stream
 
 		/// <inheritdoc />
+		[SupportedOSPlatform("Windows7.0")]
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			WaveBuffer waveBuffer = new WaveBuffer(buffer);
@@ -38,6 +41,7 @@ namespace NAudioWrapper
 		}
 
 		/// <inheritdoc />
+		[SupportedOSPlatform("Windows7.0")]
 		public int Read(float[] buffer, int offset, int count)
 		{
 			int offset1 = 0;
@@ -53,6 +57,7 @@ namespace NAudioWrapper
 		}
 
 		/// <summary>The WaveFormat of this Sample Provider</summary>
+		[SupportedOSPlatform("Windows7.0")]
 		public override WaveFormat WaveFormat => this.providers[0].WaveFormat;
 
 		/// <inheritdoc />

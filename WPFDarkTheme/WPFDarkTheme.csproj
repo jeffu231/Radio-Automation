@@ -15,9 +15,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Converter\" />
     <Folder Include="Properties\" />
   </ItemGroup>
