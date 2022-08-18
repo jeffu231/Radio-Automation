@@ -126,7 +126,7 @@
 				<Image Source="/Resources;component/Icons/control_end_blue.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
 			<Button Grid.Column="5" Margin="3" Command="{Binding PlayTemperatureCommand}">
-				<Image Source="/Resources;component/Icons/arrow_switch.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+				<Image Source="/Resources;component/Icons/temp.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
 			<Button Grid.Column="6" Margin="3" Command="{Binding ShuffleCommand}">
 				<Image Source="/Resources;component/Icons/arrow_switch.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>

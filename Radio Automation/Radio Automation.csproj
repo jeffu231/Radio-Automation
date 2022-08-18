@@ -2,8 +2,9 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
+	   <UseWPF>true</UseWPF>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>Y:\Radio_Automation_Publish\</PublishUrl>
+    <PublishUrl>Y:\ClickOnce\Radio_Automation\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Unc</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -13,17 +14,15 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>\\nas.home.kb9kld.org\safe\Radio_Automation_Publish\</InstallUrl>
+    <InstallUrl>\\nas.home.kb9kld.org\safe\ClickOnce\Radio_Automation\</InstallUrl>
+	   <PublisherName>jtdev</PublisherName>
     <ProductName>Radio Automation</ProductName>
-    <PublisherName>jtdev</PublisherName>
     <ApplicationRevision>40</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	   <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>2AC721CA86734CBA60AFA9DE513EA012DD5CB2AE</ManifestCertificateThumbprint>
@@ -45,6 +44,9 @@
     <OutputPath>bin\x64\Release\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\jeffu\.nuget\packages\microsoft.dotnet.upgradeassistant.extensions.default.analyzers\0.4.336902\build\\WebTypeReplacements.typemap" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="JobToolkit.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
