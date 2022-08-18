@@ -484,15 +484,22 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task OpenPlaylist()
 		{
-			_openFileService.IsMultiSelect = false;
-			_openFileService.CheckFileExists = true;
-			_openFileService.Title = @"Import Zara Playlist";
-			_openFileService.Filter = "Playlist (*.rpl) | *.rpl";
-			if (await _openFileService.DetermineFileAsync())
+			var determineOpenFileContext = new DetermineOpenFileContext
+			{
+				IsMultiSelect = false,
+				CheckFileExists = true,
+				Title = @"Import Zara Playlist",
+				Filter = "Playlist (*.rpl) | *.rpl"
+			};
+
+			var result = await _openFileService.DetermineFileAsync(determineOpenFileContext);
+
+
+			if (result.Result)
 			{
 				_pleaseWaitService.Show();
-				Playlist = await _persistenceService.LoadPlaylistAsync(_openFileService.FileName);
-				_settings.LastPlaylistPath = _openFileService.FileName;
+				Playlist = await _persistenceService.LoadPlaylistAsync(result.FileName);
+				_settings.LastPlaylistPath = result.FileName;
 				_pleaseWaitService.Hide();
 			}
 		}
@@ -516,15 +523,20 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task ImportZaraPlaylist()
 		{
-			_openFileService.IsMultiSelect = false;
-			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			_openFileService.CheckFileExists = true;
-			_openFileService.Title = @"Import Zara Playlist";
-			_openFileService.Filter = "ZaraRadio List (*.lst) | *.lst";
-			if (await _openFileService.DetermineFileAsync())
+			var dofc = new DetermineOpenFileContext
+			{
+				IsMultiSelect = false,
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				CheckFileExists = true,
+				Title = @"Import Zara Playlist",
+				Filter = "ZaraRadio List (*.lst) | *.lst"
+			};
+
+			var result = await _openFileService.DetermineFileAsync(dofc);
+			if (result.Result)
 			{
 				_pleaseWaitService.Show();
-				Playlist = await _persistenceService.ImportZaraPlaylistAsync(_openFileService.FileName);
+				Playlist = await _persistenceService.ImportZaraPlaylistAsync(result.FileName);
 				_pleaseWaitService.Hide();
 			}
 		}
@@ -548,15 +560,20 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task ImportM3UPlaylistAsync()
 		{
-			_openFileService.IsMultiSelect = false;
-			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			_openFileService.CheckFileExists = true;
-			_openFileService.Title = @"Import M3U Playlist";
-			_openFileService.Filter = "M3U Play List (*.m3u) | *.m3u";
-			if (await _openFileService.DetermineFileAsync())
+			var dofc = new DetermineOpenFileContext
+			{
+				IsMultiSelect = false,
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				CheckFileExists = true,
+				Title = @"Import M3U Playlist",
+				Filter = "M3U Play List (*.m3u) | *.m3u"
+			};
+
+			var result = await _openFileService.DetermineFileAsync(dofc);
+			if (result.Result)
 			{
 				_pleaseWaitService.Show();
-				Playlist = await _persistenceService.ImportM3UPlaylistAsync(_openFileService.FileName);
+				Playlist = await _persistenceService.ImportM3UPlaylistAsync(result.FileName);
 				_pleaseWaitService.Hide();
 			}
 		}
@@ -613,13 +630,19 @@ namespace Radio_Automation.ViewModels
 		{
 			var dependencyResolver = this.GetDependencyResolver();
 			var saveFileService = dependencyResolver.Resolve<ISaveFileService>();
-			saveFileService.Filter = "Playlist|*.rpl";
-			saveFileService.Title = @"Save Playlist";
-			if (await saveFileService.DetermineFileAsync())
+
+			var dsfc = new DetermineSaveFileContext
+			{
+				Filter = "Playlist|*.rpl",
+				Title = @"Save Playlist"
+			};
+
+			var result = await saveFileService.DetermineFileAsync(dsfc);
+			if (result.Result)
 			{
 				_pleaseWaitService.Show();
-				await _persistenceService.SavePlaylistAsync(Playlist, saveFileService.FileName);
-				_settings.LastPlaylistPath = _saveFileService.FileName;
+				await _persistenceService.SavePlaylistAsync(Playlist, result.FileName);
+				_settings.LastPlaylistPath = result.FileName;
 				_pleaseWaitService.Hide();
 			}
 		}
@@ -715,12 +738,17 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async void AddFile()
 		{
-			_openFileService.IsMultiSelect = true;
-			_openFileService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-			_openFileService.Filter = "Audio files (*.wav, *.mp3, *.wma, *.ogg, *.flac) | *.wav; *.mp3; *.wma; *.ogg; *.flac";
-			if (await _openFileService.DetermineFileAsync())
+			var dofc = new DetermineOpenFileContext
 			{
-				foreach (var fileName in _openFileService.FileNames)
+				IsMultiSelect = true,
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
+				Filter = "Audio files (*.wav, *.mp3, *.wma, *.ogg, *.flac) | *.wav; *.mp3; *.wma; *.ogg; *.flac"
+			};
+
+			var result = await _openFileService.DetermineFileAsync(dofc);
+			if (result.Result)
+			{
+				foreach (var fileName in result.FileNames)
 				{
 					AddFileToPlaylist(fileName);
 				}
@@ -755,11 +783,16 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async void AddFolder()
 		{
-			_selectDirectoryService.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-			_selectDirectoryService.ShowNewFolderButton = false;
-			if (await _selectDirectoryService.DetermineDirectoryAsync())
+			var ddc = new DetermineDirectoryContext
 			{
-				AddFolderToPlaylist(_selectDirectoryService.DirectoryName);
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
+				ShowNewFolderButton = false
+			};
+
+			var result = await _selectDirectoryService.DetermineDirectoryAsync(ddc);
+			if (result.Result)
+			{
+				AddFolderToPlaylist(result.DirectoryName);
 			}
 
 		}

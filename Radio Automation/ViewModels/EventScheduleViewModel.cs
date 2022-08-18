@@ -222,12 +222,16 @@ namespace Radio_Automation.ViewModels
 			var persistenceService = dependencyResolver.Resolve<IPersistenceService>();
 			if (string.IsNullOrEmpty(Path))
 			{
-				saveFileService.Filter = "Event Schedule|*.evs";
-				saveFileService.Title = @"Save Event Schedule";
-				
-				if (await saveFileService.DetermineFileAsync())
+				var dsfc = new DetermineSaveFileContext
 				{
-					Path = saveFileService.FileName;
+					Filter = "Event Schedule|*.evs",
+					Title = @"Save Event Schedule"
+			};
+
+				var result = await saveFileService.DetermineFileAsync(dsfc);
+				if (result.Result)
+				{
+					Path = result.FileName;
 				}
 			}
 
@@ -261,13 +265,18 @@ namespace Radio_Automation.ViewModels
 			var openFileService = dependencyResolver.Resolve<IOpenFileService>();
 			var pleaseWaitService = dependencyResolver.Resolve<IPleaseWaitService>();
 			var persistenceService = dependencyResolver.Resolve<IPersistenceService>();
-			openFileService.Filter = "Event Schedule|*.evs";
-			openFileService.Title = @"Open Event Schedule";
-			if (await openFileService.DetermineFileAsync())
+			var dofs = new DetermineOpenFileContext
+			{
+				Filter = "Event Schedule|*.evs",
+				Title = @"Open Event Schedule"
+			};
+
+			var result = await openFileService.DetermineFileAsync(dofs);
+			if (result.Result)
 			{
 				pleaseWaitService.Show();
-				EventSchedule = await persistenceService.LoadEventScheduleAsync(openFileService.FileName);
-				Path = openFileService.FileName;
+				EventSchedule = await persistenceService.LoadEventScheduleAsync(result.FileName);
+				Path = result.FileName;
 				pleaseWaitService.Hide();
 			}
 		}

@@ -201,10 +201,14 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task SelectCurrentSongPathAsync()
 		{
-			_saveFileService.CheckPathExists = true;
-			if (await _saveFileService.DetermineFileAsync())
+			var dsfc = new DetermineSaveFileContext
 			{
-				CurrentSongPath = _saveFileService.FileName;
+				CheckFileExists = true
+			};
+			var result = await _saveFileService.DetermineFileAsync(dsfc);
+			if (result.Result)
+			{
+				CurrentSongPath = result.FileName;
 			}
 		}
 

@@ -72,7 +72,6 @@ namespace Radio_Automation.Services
 			{
 				var totalTracks = lines.Length - 1;
 				List<Track> tracks = new List<Track>(totalTracks);
-				var index = 1;
 				foreach (var line in lines.Skip(1))
 				{
 					var items = line.Split(new[] { "\t" }, StringSplitOptions.None);
