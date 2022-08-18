@@ -76,16 +76,16 @@ namespace Radio_Automation.ViewModels
 			Clock = new Clock();
 			TrackEndTime = DateTime.MinValue;
 			_playPositionTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(1)};
-			_playPositionTimer.Tick += _playPositionTimer_Tick;
+			_playPositionTimer.Tick += PlayPositionTimer_Tick;
 			_playPositionTimer.IsEnabled = true;
 
 			_pendingEventTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(1)};
-			_pendingEventTimer.Tick += _pendingEventTimer_Tick;
+			_pendingEventTimer.Tick += PendingEventTimer_Tick;
 			_pendingEventTimer.IsEnabled = true;
 			_pendingEventTimer.Start();
 
 			_weatherUpdateTimer = new DispatcherTimer{Interval = TimeSpan.FromMinutes(10)};
-			_weatherUpdateTimer.Tick += _weatherUpdateTimer_Tick;
+			_weatherUpdateTimer.Tick += WeatherUpdateTimer_Tick;
 			_weatherUpdateTimer.IsEnabled = true;
 			_weatherUpdateTimer.Start();
 
@@ -126,7 +126,7 @@ namespace Radio_Automation.ViewModels
 			_audioPlayer.PlaybackPaused += PlaybackPaused;
 			_audioPlayer.PlaybackResumed += PlaybackResumed;
 			_audioPlayer.PlaybackEnded += PlaybackEnded;
-			_audioPlayer.OnSteamVolume += _audioPlayer_OnStreamVolume;
+			_audioPlayer.OnSteamVolume += AudioPlayer_OnStreamVolume;
 
 			VolumeChangedCommand.Execute();
 			Volume = _settings.Volume;
@@ -1184,7 +1184,7 @@ namespace Radio_Automation.ViewModels
 			UpdatePlayPauseStates();
 		}
 
-		private void _playPositionTimer_Tick(object sender, EventArgs e)
+		private void PlayPositionTimer_Tick(object sender, EventArgs e)
 		{
 			if(CurrentTrack != null)
 			{
@@ -1210,19 +1210,19 @@ namespace Radio_Automation.ViewModels
 			}
 		}
 
-		private void _pendingEventTimer_Tick(object sender, EventArgs e)
+		private void PendingEventTimer_Tick(object sender, EventArgs e)
 		{
 			var pending = _eventScheduler.UpNext(5);
 			PendingEvents.AddRange(pending.Except(PendingEvents));
 		}
 
-		private async void _weatherUpdateTimer_Tick(object sender, EventArgs e)
+		private async void WeatherUpdateTimer_Tick(object sender, EventArgs e)
 		{
 			await UpdateWeatherData();
 		}
 
 
-		private void _audioPlayer_OnStreamVolume(VolumeEventArgs e)
+		private void AudioPlayer_OnStreamVolume(VolumeEventArgs e)
 		{
 			LeftLevel = (int)(e.Left * 100);
 			RightLevel = (int)(e.Right * 100);

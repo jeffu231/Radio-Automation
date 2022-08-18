@@ -8,9 +8,8 @@ namespace Weather
 {
 	public class WunderGround
 	{
-		private readonly string _apiKey;
-		private static HttpClient _client = new HttpClient();
-		private static string _url = "https://api.weather.com/v2/pws/observations/current";
+		private static readonly HttpClient _client = new HttpClient();
+		private static readonly string _url = "https://api.weather.com/v2/pws/observations/current";
 
 		static WunderGround()
 		{
