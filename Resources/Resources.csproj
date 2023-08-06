@@ -12,10 +12,7 @@
     <OutputPath>bin\x64\Release\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <ItemGroup>
-    <AdditionalFiles Remove="C:\Users\jeffu\.nuget\packages\microsoft.dotnet.upgradeassistant.extensions.default.analyzers\0.4.336902\build\\WebTypeReplacements.typemap" />
-  </ItemGroup>
-  <ItemGroup>
+	<ItemGroup>
     <None Remove="Icons\arrow_switch.png" />
     <None Remove="Icons\Close_6519.png" />
     <None Remove="Icons\control_end_blue.png" />
@@ -100,15 +97,6 @@
     </Resource>
   
     <Resource Include="Icons\temp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.336902">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

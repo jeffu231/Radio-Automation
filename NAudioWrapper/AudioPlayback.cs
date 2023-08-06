@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Windows.Forms;
 using Catel.Logging;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
