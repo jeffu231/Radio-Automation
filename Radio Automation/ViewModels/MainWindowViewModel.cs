@@ -47,6 +47,7 @@ namespace Radio_Automation.ViewModels
 		private readonly DispatcherTimer _weatherUpdateTimer;
 		//private int _currentTrackIndex = -1;
 		private readonly EventScheduler _eventScheduler;
+		private readonly MqttEventListener _mqttEventListener;
 		private EventSchedule _eventSchedule;
 		private readonly Queue<Event> _eventQueue = new Queue<Event>();
 		private Settings _settings = new Settings();
@@ -92,6 +93,7 @@ namespace Radio_Automation.ViewModels
 
 			EventBus.EventTriggered += EventTriggered;
 			_eventScheduler = new EventScheduler();
+			_mqttEventListener = new MqttEventListener();
 			_eventSchedule = new EventSchedule();
 			
 		}
@@ -110,6 +112,10 @@ namespace Radio_Automation.ViewModels
 			_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
 
 			_eventScheduler.LoadSchedule(_eventSchedule);
+
+			await _mqttEventListener.Connect(_settings);
+
+			await _mqttEventListener.LoadSchedule(_eventSchedule);
 
 			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
 			{
@@ -692,7 +698,9 @@ namespace Radio_Automation.ViewModels
 			_settings.LastEventSchedulePath = viewModel.Path;
 			_eventSchedule = viewModel.EventSchedule;
 			PendingEvents.Clear();
+			await _mqttEventListener.Connect(_settings);
 			_eventScheduler.LoadSchedule(_eventSchedule);
+			await _mqttEventListener.LoadSchedule(_eventSchedule);
 		}
 
 		#endregion

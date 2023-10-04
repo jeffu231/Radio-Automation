@@ -52,9 +52,27 @@
 				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding WUndergroundStation}" Margin="5"/>
 			</Grid>
 		</GroupBox>
-		
-		
-	</Grid>
+
+		<GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Header="MQTT Info">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				
+				<TextBlock Grid.Row="1" Grid.Column="0" Text="MQTT Broker" Margin="5"/>
+				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MqttBroker}" Margin="5"/>
+				<TextBlock Grid.Row="2" Grid.Column="0" Text="MQTT Broker Port" Margin="5"/>
+				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding MqttBrokerPort}" Margin="5"/>
+			</Grid>
+		</GroupBox>
+				</Grid>
 </DockPanel>
     
     

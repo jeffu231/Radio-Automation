@@ -151,6 +151,44 @@ namespace Radio_Automation.ViewModels
 		public static readonly PropertyData CurrentSongPathProperty = RegisterProperty("CurrentSongPath", typeof(string), null);
 
 		#endregion
+
+		#region MqttBroker property
+
+		/// <summary>
+		/// Gets or sets the MqttBroker value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public string MqttBroker
+		{
+			get { return GetValue<string>(MqttBrokerProperty); }
+			set { SetValue(MqttBrokerProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttBroker property data.
+		/// </summary>
+		public static readonly PropertyData MqttBrokerProperty = RegisterProperty("MqttBroker", typeof(string), null);
+
+		#endregion
+
+		#region MqttBrokerPort property
+
+		/// <summary>
+		/// Gets or sets the MqttBrokerPort value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public int MqttBrokerPort
+		{
+			get { return GetValue<int>(MqttBrokerPortProperty); }
+			set { SetValue(MqttBrokerPortProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttBrokerPort property data.
+		/// </summary>
+		public static readonly PropertyData MqttBrokerPortProperty = RegisterProperty("MqttBrokerPort", typeof(object), null);
+
+		#endregion
 		
 		#region Ok command
 

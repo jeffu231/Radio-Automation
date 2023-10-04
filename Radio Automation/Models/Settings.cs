@@ -10,6 +10,7 @@ namespace Radio_Automation.Models
 			Volume = 50;
 			PrimaryOutputDevice = AudioPlayback.GetDefaultDevice();
 			UseWUnderground = true;
+			MqttBrokerPort = 1883;
 		}
 
 		#region LastPlaylistPath property
@@ -171,6 +172,42 @@ namespace Radio_Automation.Models
 		/// UseWUnderground property data.
 		/// </summary>
 		public static readonly PropertyData UseWUndergroundProperty = RegisterProperty("UseWUnderground", typeof(bool));
+
+		#endregion
+
+		#region MqttBroker property
+
+		/// <summary>
+		/// Gets or sets the MqttBroker value.
+		/// </summary>
+		public string MqttBroker
+		{
+			get { return GetValue<string>(MqttBrokerProperty); }
+			set { SetValue(MqttBrokerProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttBroker property data.
+		/// </summary>
+		public static readonly PropertyData MqttBrokerProperty = RegisterProperty("MqttBroker", typeof(string));
+
+		#endregion
+
+		#region MqttBrokerPort property
+
+		/// <summary>
+		/// Gets or sets the MqttBrokerPort value.
+		/// </summary>
+		public int MqttBrokerPort
+		{
+			get { return GetValue<int>(MqttBrokerPortProperty); }
+			set { SetValue(MqttBrokerPortProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttBrokerPort property data.
+		/// </summary>
+		public static readonly PropertyData MqttBrokerPortProperty = RegisterProperty("MqttBrokerPort", typeof(int));
 
 		#endregion
 	}

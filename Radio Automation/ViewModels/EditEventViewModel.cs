@@ -116,6 +116,44 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+		#region Trigger property
+
+		/// <summary>
+		/// Gets or sets the Trigger value.
+		/// </summary>
+		[ViewModelToModel("Event")]
+		public Trigger Trigger
+		{
+			get { return GetValue<Trigger>(TriggerProperty); }
+			set { SetValue(TriggerProperty, value); }
+		}
+
+		/// <summary>
+		/// Trigger property data.
+		/// </summary>
+		public static readonly PropertyData TriggerProperty = RegisterProperty("Trigger", typeof(Trigger), null);
+
+		#endregion
+
+		#region MqttExpression property
+
+		/// <summary>
+		/// Gets or sets the MqttExpression value.
+		/// </summary>
+		[ViewModelToModel("Event")]
+		public MqttExpression MqttExpression
+		{
+			get { return GetValue<MqttExpression>(MqttExpressionProperty); }
+			set { SetValue(MqttExpressionProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttExpression property data.
+		/// </summary>
+		public static readonly PropertyData MqttExpressionProperty = RegisterProperty("MqttExpression", typeof(MqttExpression), null);
+
+		#endregion
+
 		#region Demand property
 
 		/// <summary>
@@ -172,6 +210,7 @@ namespace Radio_Automation.ViewModels
 		public static readonly PropertyData ExpiresProperty = RegisterProperty("Expires", typeof(bool), null);
 
 		#endregion
+
 
 		public DateTime DefaultDateTime => DateTime.Now;
 

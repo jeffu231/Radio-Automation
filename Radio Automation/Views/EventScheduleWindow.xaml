@@ -15,6 +15,7 @@
 
 		<Window.Resources>
 			<converters:PercentageConverter x:Key="PercentageConverter" />
+			<catel:EnumToCollapsingVisibilityConverter x:Key="EnumToCollapsingVisibilityConverter"/>
 		</Window.Resources>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -43,11 +44,24 @@
 					</GridViewColumn>
 					<GridViewColumn Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView},Path=ActualWidth, Converter={StaticResource PercentageConverter}, ConverterParameter=.15}">
 						<GridViewColumn.Header>
-							<GridViewColumnHeader>Cron Expression</GridViewColumnHeader>
+							<GridViewColumnHeader>Trigger</GridViewColumnHeader>
 						</GridViewColumn.Header>
 						<GridViewColumn.CellTemplate>
 							<DataTemplate DataType="{x:Type models:Event}">
-								<TextBlock Text="{Binding CronExpression}"/>
+								<TextBlock Text="{Binding Trigger}"/>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+										<GridViewColumn Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView},Path=ActualWidth, Converter={StaticResource PercentageConverter}, ConverterParameter=.15}">
+						<GridViewColumn.Header>
+														<GridViewColumnHeader>Expression</GridViewColumnHeader>
+						</GridViewColumn.Header>
+						<GridViewColumn.CellTemplate>
+							<DataTemplate DataType="{x:Type models:Event}">
+								<StackPanel>
+										<TextBlock Text="{Binding CronExpression}" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Cron}"/>
+										<TextBlock Text="{Binding MqttExpression.Topic}" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Mqtt}"/>
+								</StackPanel>
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
@@ -63,7 +77,7 @@
 					</GridViewColumn>
 					<GridViewColumn Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView},Path=ActualWidth, Converter={StaticResource PercentageConverter}, ConverterParameter=.14}">
 						<GridViewColumn.Header>
-							<GridViewColumnHeader>Type</GridViewColumnHeader>
+							<GridViewColumnHeader>Action</GridViewColumnHeader>
 						</GridViewColumn.Header>
 						<GridViewColumn.CellTemplate>
 							<DataTemplate DataType="{x:Type models:Event}">

@@ -82,7 +82,7 @@ namespace Radio_Automation.Events
 				_jm.Dequeue(job.Id);
 			}
 
-			foreach (var e in _schedule.Events.Where(x => x.Enabled))
+			foreach (var e in _schedule.Events.Where(x => x.Enabled && x.Trigger == Trigger.Cron))
 			{
 				try
 				{

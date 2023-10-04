@@ -10,85 +10,123 @@
                   WindowStartupLocation="CenterOwner"
                   Background="{StaticResource BackColorBrush}"
                   Foreground="{StaticResource ForeColorBrush}">
-	<DockPanel>
-		<WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
-			<Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
-			<Button Content="Cancel" IsCancel="True"  Style="{StaticResource RowButtonStyle}"/>
-		</WrapPanel>
-		
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width=".5*"/>
-				<ColumnDefinition Width=".5*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-			<WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-				<TextBlock Text="Event Name" Margin="5"/>
-				<TextBox Text="{Binding Name}" Margin="5"/>
-			</WrapPanel>
-			<GroupBox Grid.Row="1" Grid.Column="0" Name="Schedule" Header="Schedule" HorizontalContentAlignment="Stretch" Margin="5">
-				<StackPanel>
-					<TextBlock Text="Start Date and Time" HorizontalAlignment="Stretch" Margin="5"/>
-					<xctk:DateTimeUpDown AllowSpin="True" Format="FullDateTime" Kind="Local"
+		<DockPanel>
+				<WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
+						<Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
+						<Button Content="Cancel" IsCancel="True"  Style="{StaticResource RowButtonStyle}"/>
+				</WrapPanel>
+
+				<Grid>
+						<Grid.ColumnDefinitions>
+								<ColumnDefinition Width=".5*"/>
+								<ColumnDefinition Width=".5*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+								<TextBlock Text="Event Name" Margin="5"/>
+								<TextBox Text="{Binding Name}" Margin="5"/>
+						</WrapPanel>
+						<GroupBox Grid.Row="1" Grid.Column="0" Name="Schedule" Header="Schedule" HorizontalContentAlignment="Stretch" Margin="5">
+								<StackPanel>
+										<TextBlock Text="Start Date and Time" HorizontalAlignment="Stretch" Margin="5"/>
+										<xctk:DateTimeUpDown AllowSpin="True" Format="FullDateTime" Kind="Local"
 					                     Value="{Binding StartDateTime}" 
 					                     DefaultValue="{Binding DefaultDateTime}"  Margin="5"
 					                     Background="{StaticResource BackColorBrush}"
 					                     Foreground="{StaticResource ForeColorBrush}"/>
-					<CheckBox IsChecked="{Binding Expires}" Name="ExpiresCheck" Margin="5,10,5,0">Expires</CheckBox>
-					<TextBlock Text="Expire Date and Time" HorizontalAlignment="Stretch" Margin="5"/>
-					<xctk:DateTimeUpDown AllowSpin="True" Format="FullDateTime" Kind="Local"
+										<CheckBox IsChecked="{Binding Expires}" Name="ExpiresCheck" Margin="5,10,5,0">Expires</CheckBox>
+										<TextBlock Text="Expire Date and Time" HorizontalAlignment="Stretch" Margin="5"/>
+										<xctk:DateTimeUpDown AllowSpin="True" Format="FullDateTime" Kind="Local"
 					                     Value="{Binding EndDateTime}" 
 					                     IsEnabled="{Binding ElementName=ExpiresCheck, Path=IsChecked}"
 					                     DefaultValue="{Binding DefaultDateTime}" Margin="5"
 					                     Background="{StaticResource BackColorBrush}"
 					                     Foreground="{StaticResource ForeColorBrush}">
-						
-					</xctk:DateTimeUpDown>
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
-						<TextBlock Grid.Column="0" Grid.Row="0" Text="Cron Expression" Margin="5"/>
-						<TextBox Grid.Column="1" Grid.Row="0" Text="{Binding CronExpression}" Margin="5"/>
-						<TextBlock Grid.Column="0" Grid.Row="1" Text="Demand Type" Margin="5"/>
-						<ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:Demand}}}"
-						          DisplayMemberPath="Description"
-						          SelectedValue="{Binding Demand}"
-						          SelectedValuePath="Value"
-						          Margin="5"/>
-					</Grid>
-				</StackPanel>
-			</GroupBox>
-			<GroupBox Header="Event Type" Grid.Row="1" Grid.Column="1" Margin="5">
-				<Grid Margin="5">
-					<Grid.Resources>
-						<converters:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
-					</Grid.Resources>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
-					<RadioButton Grid.Row="0" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Play}">Play</RadioButton>
-					<RadioButton Grid.Row="1" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Stop}">Stop</RadioButton>
-					<RadioButton Grid.Row="2" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Pause}">Pause</RadioButton>
-					<RadioButton Grid.Row="3" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Time}">Time Announcement</RadioButton>
-					<RadioButton Grid.Row="4" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Temperature}">Temperature Announcement</RadioButton>
-					<RadioButton Grid.Row="5" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Humidity}">Humidity Announcement</RadioButton>
+
+										</xctk:DateTimeUpDown>
+										<Grid>
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="Auto"/>
+												<ColumnDefinition Width="*"/>
+											</Grid.ColumnDefinitions>
+											<Grid.RowDefinitions>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+											</Grid.RowDefinitions>
+
+												<TextBlock Grid.Column="0" Grid.Row="0" Text="Demand Type" Margin="5"/>
+												<ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:Demand}}}"
+					          DisplayMemberPath="Description"
+					          SelectedValue="{Binding Demand}"
+					          SelectedValuePath="Value"
+					          Margin="5"/>
+
+												<GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="5">
+
+														<Grid>
+																<Grid.ColumnDefinitions>
+																		<ColumnDefinition Width="Auto"/>
+																		<ColumnDefinition Width="*"/>
+																</Grid.ColumnDefinitions>
+																<Grid.RowDefinitions>
+																		<RowDefinition Height="Auto"/>
+																		<RowDefinition Height="Auto"/>
+																		<RowDefinition Height="Auto"/>
+																		<RowDefinition Height="Auto"/>
+																</Grid.RowDefinitions>
+															<Grid.Resources>
+																		<catel:EnumToCollapsingVisibilityConverter x:Key="EnumToCollapsingVisibilityConverter"/>
+															</Grid.Resources>
+																<TextBlock Grid.Column="0" Grid.Row="0" Text="Trigger Type" Margin="5"/>
+															<ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:Trigger}}}"
+															          DisplayMemberPath="Description"
+															          SelectedValue="{Binding Trigger}"
+															          SelectedValuePath="Value"
+															          Margin="5"/>
+
+																<TextBlock Grid.Column="0" Grid.Row="1" Text="Cron Expression" Margin="5" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Cron}"/>
+																<TextBox Grid.Column="1" Grid.Row="1" Text="{Binding CronExpression}" Margin="5" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Cron}"/>
+
+																<TextBlock Grid.Column="0" Grid.Row="2" Text="Topic" Margin="5" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Mqtt}"></TextBlock>
+																		<TextBox Grid.Column="1" Grid.Row="2" Text="{Binding MqttExpression.Topic}" Margin="5" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Mqtt}"/>
+
+																<TextBlock Grid.Column="0" Grid.Row="3" Text="Message" Margin="5" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Mqtt}"></TextBlock>
+																<TextBox Grid.Column="1" Grid.Row="3" Text="{Binding MqttExpression.Message}" Margin="5" Visibility="{Binding Trigger, Converter={StaticResource EnumToCollapsingVisibilityConverter}, ConverterParameter=Mqtt}"/>
+														</Grid>
+												</GroupBox>
+
+
+
+
+
+										</Grid>
+								</StackPanel>
+						</GroupBox>
+						<GroupBox Header="Event Type" Grid.Row="1" Grid.Column="1" Margin="5">
+								<Grid Margin="5">
+										<Grid.Resources>
+												<converters:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
+										</Grid.Resources>
+										<Grid.RowDefinitions>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+												<RowDefinition Height="Auto"/>
+										</Grid.RowDefinitions>
+										<RadioButton Grid.Row="0" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Play}">Play</RadioButton>
+										<RadioButton Grid.Row="1" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Stop}">Stop</RadioButton>
+										<RadioButton Grid.Row="2" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Pause}">Pause</RadioButton>
+										<RadioButton Grid.Row="3" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Time}">Time Announcement</RadioButton>
+										<RadioButton Grid.Row="4" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Temperature}">Temperature Announcement</RadioButton>
+										<RadioButton Grid.Row="5" IsChecked="{Binding Path=EventType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Humidity}">Humidity Announcement</RadioButton>
+								</Grid>
+						</GroupBox>
 				</Grid>
-			</GroupBox>
-		</Grid>
-	</DockPanel>
-    
+		</DockPanel>
+
 </catel:Window>

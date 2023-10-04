@@ -1,6 +1,5 @@
 ﻿using System;
 using Catel.Data;
-using JobToolkit.Core;
 
 namespace Radio_Automation.Models
 {
@@ -11,6 +10,8 @@ namespace Radio_Automation.Models
 			Id = Guid.NewGuid();
 			StartDateTime = DateTime.Now;
 			EndDateTime = DateTime.Now.AddYears(1);
+			Trigger = Trigger.Cron;
+			MqttExpression = new();
 		}
 
 		public Event(EventType eventType):this()
@@ -53,6 +54,25 @@ namespace Radio_Automation.Models
 		public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
 
 		#endregion
+
+		#region Trigger property
+
+		/// <summary>
+		/// Gets or sets the Trigger value.
+		/// </summary>
+		public Trigger Trigger
+		{
+			get { return GetValue<Trigger>(TriggerProperty); }
+			set { SetValue(TriggerProperty, value); } 
+		}
+
+		/// <summary>
+		/// Trigger property data.
+		/// </summary>
+		public static readonly PropertyData TriggerProperty = RegisterProperty("Trigger", typeof(Trigger));
+
+		#endregion
+
 
 		#region EventType property
 
@@ -107,6 +127,25 @@ namespace Radio_Automation.Models
 		public static readonly PropertyData CronExpressionProperty = RegisterProperty("CronExpression", typeof(string));
 
 		#endregion
+
+		#region MqttExpression property
+
+		/// <summary>
+		/// Gets or sets the MqttExpression value.
+		/// </summary>
+		public MqttExpression MqttExpression
+		{
+			get { return GetValue<MqttExpression>(MqttExpressionProperty); }
+			set { SetValue(MqttExpressionProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttExpression property data.
+		/// </summary>
+		public static readonly PropertyData MqttExpressionProperty = RegisterProperty("MqttExpression", typeof(MqttExpression));
+
+		#endregion
+
 
 		#region StartDateTime property
 
@@ -210,6 +249,12 @@ namespace Radio_Automation.Models
 		Humidity,
 		Playlist,
 		SingleTrack
+	}
+
+	public enum Trigger
+	{
+		Cron,
+		Mqtt
 	}
 
 	public enum Demand
