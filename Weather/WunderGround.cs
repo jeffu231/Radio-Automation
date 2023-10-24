@@ -24,16 +24,25 @@ namespace Weather
 				WundergroundObservations obs = null;
 				var precision = highPrecision ? "&numericPrecision=decimal" : String.Empty;
 				var request = $"{_url}?stationId={stationId}&format=json&units=e&apiKey={apiKey}{precision}";
-				HttpResponseMessage response = await _client.GetAsync(request);
-				if (response.IsSuccessStatusCode)
-				{
-					obs = await response.Content.ReadAsAsync<WundergroundObservations>();
-				}
 
-				if (obs != null && obs.Observations.Any())
+				try
 				{
-					return obs.Observations.First();
+					HttpResponseMessage response = await _client.GetAsync(request);
+					if (response.IsSuccessStatusCode)
+					{
+						obs = await response.Content.ReadAsAsync<WundergroundObservations>();
+					}
+
+					if (obs != null && obs.Observations.Any())
+					{
+						return obs.Observations.First();
+					}
 				}
+				catch (Exception ex)
+				{
+					return await Task.FromException<IObservation>(ex);
+				}
+				
 			}
 
 			return new WunderGroundObservation();

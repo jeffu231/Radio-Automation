@@ -1335,9 +1335,17 @@ namespace Radio_Automation.ViewModels
 		{
 			if (_settings.UseWUnderground)
 			{
-				var obs = await _wg.GetObservationAsync(_settings.WUndergroundStation, _settings.WUndergroundKey);
-				Temperature = (int)Math.Round(obs.Temp);
-				Humidity = (int) Math.Round(obs.Humidity);
+				try
+				{
+					var obs = await _wg.GetObservationAsync(_settings.WUndergroundStation, _settings.WUndergroundKey);
+					Temperature = (int)Math.Round(obs.Temp);
+					Humidity = (int)Math.Round(obs.Humidity);
+				}
+				catch (Exception e)
+				{
+					Log.Error(e, "An error occurred requesting a weather update. Reading may be stale.");
+				}
+				
 			}
 		}
 
