@@ -107,6 +107,11 @@ namespace Radio_Automation.ViewModels
 
 			ConfigurePrimaryAudioPlayer();
 
+			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
+			{
+				Playlist = await _persistenceService.LoadPlaylistAsync(_settings.LastPlaylistPath);
+			}
+
 			await UpdateWeatherData();
 
 			_eventSchedule = await _persistenceService.LoadEventScheduleAsync(_settings.LastEventSchedulePath);
@@ -117,10 +122,6 @@ namespace Radio_Automation.ViewModels
 
 			await _mqttEventListener.LoadSchedule(_eventSchedule);
 
-			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
-			{
-				Playlist = await _persistenceService.LoadPlaylistAsync(_settings.LastPlaylistPath);
-			}
 		}
 
 		private void ConfigurePrimaryAudioPlayer()
@@ -144,6 +145,14 @@ namespace Radio_Automation.ViewModels
 
 		private void EventTriggered(Event e)
 		{
+			if (_playbackState != PlaybackState.Playing && (e.EventType == EventType.Humidity || e.EventType == EventType.Temperature ||
+			    e.EventType == EventType.Time))
+			{
+				PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
+				// Don't play Time, Temp, or Humidity events if the player is stopped.
+				return;
+			}
+
 			if (_playbackState != PlaybackState.Stopped && e.Demand == Demand.Delayed)
 			{
 				_eventQueue.Enqueue(e);
@@ -1310,6 +1319,8 @@ namespace Radio_Automation.ViewModels
 		{
 			PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
 
+			Log.Info($"Executing pending event {e.Trigger} - {e.EventType}: State {_playbackState}");
+
 			switch (e.EventType)
 			{
 				case EventType.Time:
@@ -1326,7 +1337,10 @@ namespace Radio_Automation.ViewModels
 					StopPlayback();
 					break;
 				case EventType.Play:
-					PlayPause();
+					if (_playbackState == PlaybackState.Stopped || _playbackState == PlaybackState.Paused)
+					{
+						PlayPause();
+					}
 					break;
 			}
 		}

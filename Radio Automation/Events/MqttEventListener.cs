@@ -44,15 +44,19 @@ namespace Radio_Automation.Events
 			_events.Clear();
 			foreach (var e in eventSchedule.Events.Where(x => x.Enabled && x.Trigger == Trigger.Mqtt))
 			{
-				var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-					.WithTopicFilter(
-						f =>
-						{
-							f.WithTopic(e.MqttExpression.Topic);
-						})
-					.Build();
-				await _mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-
+				if (!_events.ContainsKey(e.MqttExpression.Topic))
+				{
+					Log.Info($"Subscribing to topic {e.MqttExpression.Topic}");
+					var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
+						.WithTopicFilter(
+							f =>
+							{
+								f.WithTopic(e.MqttExpression.Topic);
+							})
+						.Build();
+					await _mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+				}
+				
 				if(_events.TryGetValue(e.MqttExpression.Topic, out var events))
 				{
 					events.Add(e);
