@@ -32,6 +32,24 @@ namespace Radio_Automation.Models
 
 		#endregion
 
+		#region TimeTempFilePath
+
+		/// <summary>
+		/// Gets or sets the Time and Temperature file path.
+		/// </summary>
+		public string TimeTempFilePath
+		{
+			get { return GetValue<string>(TimeTempFilePathProperty); }
+			set { SetValue(TimeTempFilePathProperty, value); }
+		}
+
+		/// <summary>
+		/// EventSchedulePath property data.
+		/// </summary>
+		public static readonly IPropertyData TimeTempFilePathProperty = RegisterProperty<string>(nameof(TimeTempFilePath));
+
+		#endregion
+
 		#region EventSchedulePath property
 
 		/// <summary>

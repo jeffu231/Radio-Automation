@@ -145,13 +145,13 @@ namespace Radio_Automation.ViewModels
 
 		private void EventTriggered(Event e)
 		{
-			if (_playbackState != PlaybackState.Playing && (e.EventType == EventType.Humidity || e.EventType == EventType.Temperature ||
-			    e.EventType == EventType.Time))
-			{
-				PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
-				// Don't play Time, Temp, or Humidity events if the player is stopped.
-				return;
-			}
+			//if (_playbackState != PlaybackState.Playing && (e.EventType == EventType.Humidity || e.EventType == EventType.Temperature ||
+			//	e.EventType == EventType.Time))
+			//{
+			//	PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
+			//	// Don't play Time, Temp, or Humidity events if the player is stopped.
+			//	return;
+			//}
 
 			if (_playbackState != PlaybackState.Stopped && e.Demand == Demand.Delayed)
 			{
@@ -863,9 +863,12 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task PreferencesAsync()
 		{
-			PreferencesViewModel viewModel = new PreferencesViewModel(_settings, _saveFileService);
+		
 			var dependencyResolver = this.GetDependencyResolver();
 			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
+			var openFileService = dependencyResolver.Resolve<IOpenFileService>();
+			var selectDirectoryService = dependencyResolver.Resolve<ISelectDirectoryService>();
+			PreferencesViewModel viewModel = new PreferencesViewModel(_settings, openFileService, selectDirectoryService);
 			var ok = await uiVisualizerService.ShowDialogAsync(viewModel);
 			if (ok.DialogResult.HasValue && ok.DialogResult.Value)
 			{
@@ -1388,7 +1391,7 @@ namespace Radio_Automation.ViewModels
 			}
 			var format = "000";
 			var tempFile = Temperature < 0 ? $"TMPN{Temperature.ToString(format)}.mp3" : $"TMP{Temperature.ToString(format)}.mp3";
-			var temperaturePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Temperature",tempFile);
+			var temperaturePath = Path.Combine($"{_settings.TimeTempFilePath}\\Temperature", tempFile);
 			if (File.Exists(temperaturePath))
 			{
 				player.Load(temperaturePath);
@@ -1420,14 +1423,14 @@ namespace Radio_Automation.ViewModels
 			}
 			var time = DateTime.Now;
 			var hourSuffix = time.Minute == 0 ? @"_O" : string.Empty;
-			var hourPath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time",
+			var hourPath = Path.Combine($"{_settings.TimeTempFilePath}\\Time",
 					$"HRS{time:HH}{hourSuffix}.mp3");
 
 			var status = false;
 
 			if (time.Minute > 0)
 			{
-				var minutePath = Path.Combine(@"C:\Program Files (x86)\ZaraSoft\ZaraRadio\Time", $"MIN{time:mm}.mp3");
+				var minutePath = Path.Combine($"{_settings.TimeTempFilePath}\\Time", $"MIN{time:mm}.mp3");
 				status = player.Load(new[] { hourPath, minutePath });
 			}
 			else

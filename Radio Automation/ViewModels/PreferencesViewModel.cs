@@ -10,11 +10,13 @@ namespace Radio_Automation.ViewModels
 {
 	public class PreferencesViewModel: ViewModelBase
 	{
-		private readonly ISaveFileService _saveFileService;
+		private readonly IOpenFileService _openFileService;
+		private readonly ISelectDirectoryService _selectDirectoryService;
 
-		public PreferencesViewModel(Settings settings, ISaveFileService saveFileService)
+		public PreferencesViewModel(Settings settings, IOpenFileService saveFileService, ISelectDirectoryService selectDirectoryService)
 		{
-			_saveFileService = saveFileService;
+			_openFileService = saveFileService;
+			_selectDirectoryService = selectDirectoryService;
 			Devices = AudioPlayback.GetActiveDevices();
 			Settings = settings; 
 			Title = "Preferences";
@@ -189,7 +191,26 @@ namespace Radio_Automation.ViewModels
 		public static readonly IPropertyData MqttBrokerPortProperty = RegisterProperty<int>(nameof(MqttBrokerPort));
 
 		#endregion
-		
+
+		#region TimeTempPath property
+
+		/// <summary>
+		/// Gets or sets the CurrentSongPath value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public string TimeTempFilePath
+		{
+			get { return GetValue<string>(TimeTempFilePathProperty); }
+			set { SetValue(TimeTempFilePathProperty, value); }
+		}
+
+		/// <summary>
+		/// CurrentSongPath property data.
+		/// </summary>
+		public static readonly IPropertyData TimeTempFilePathProperty = RegisterProperty<string>(nameof(TimeTempFilePath));
+
+		#endregion
+
 		#region Ok command
 
 		private TaskCommand _okCommand;
@@ -239,14 +260,41 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task SelectCurrentSongPathAsync()
 		{
-			var dsfc = new DetermineSaveFileContext
+			var dofc = new DetermineOpenFileContext
 			{
 				CheckFileExists = true
 			};
-			var result = await _saveFileService.DetermineFileAsync(dsfc);
+			var result = await _openFileService.DetermineFileAsync(dofc);
 			if (result.Result)
 			{
 				CurrentSongPath = result.FileName;
+			}
+		}
+
+		#endregion
+
+		#region SelectTimeTempPath command
+
+		private TaskCommand _selectTimeTempPathCommand;
+
+		/// <summary>
+		/// Gets the SelectTimeTempPath command.
+		/// </summary>
+		public TaskCommand SelectTimeTempFilePathCommand
+		{
+			get { return _selectTimeTempPathCommand ?? (_selectTimeTempPathCommand = new TaskCommand(SelectTimeTempPathAsync)); }
+		}
+
+		/// <summary>
+		/// Method to invoke when the SelectTimeTempPath command is executed.
+		/// </summary>
+		private async Task SelectTimeTempPathAsync()
+		{
+			var dsfc = new DetermineDirectoryContext();
+			var result = await _selectDirectoryService.DetermineDirectoryAsync(dsfc);
+			if (result.Result)
+			{
+				TimeTempFilePath = result.DirectoryName;
 			}
 		}
 
