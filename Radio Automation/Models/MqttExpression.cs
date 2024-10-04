@@ -18,7 +18,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Topic property data.
 		/// </summary>
-		public static readonly PropertyData TopicProperty = RegisterProperty("Topic", typeof(string));
+		public static readonly IPropertyData TopicProperty = RegisterProperty<string>(nameof(Topic));
 
 		#endregion
 
@@ -36,7 +36,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Message property data.
 		/// </summary>
-		public static readonly PropertyData MessageProperty = RegisterProperty("Message", typeof(string));
+		public static readonly IPropertyData MessageProperty = RegisterProperty<string>(nameof(Message));
 
 		#endregion
 

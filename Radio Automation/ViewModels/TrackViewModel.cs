@@ -61,7 +61,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Track property data.
 		/// </summary>
-		public static readonly PropertyData TrackProperty = RegisterProperty("Track", typeof(Track));
+		public static readonly IPropertyData TrackProperty = RegisterProperty<Track>(nameof(Track));
 
 		#endregion
 
@@ -79,7 +79,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// IsPlaying property data.
 		/// </summary>
-		public static readonly PropertyData IsPlayingProperty = RegisterProperty("IsPlaying", typeof(bool));
+		public static readonly IPropertyData IsPlayingProperty = RegisterProperty<bool>(nameof(IsPlaying));
 
 		#endregion
 
@@ -97,7 +97,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// IsSelected property data.
 		/// </summary>
-		public static readonly PropertyData IsSelectedProperty = RegisterProperty("IsSelected", typeof(bool));
+		public static readonly IPropertyData IsSelectedProperty = RegisterProperty<bool>(nameof(IsSelected));
 
 		#endregion
 

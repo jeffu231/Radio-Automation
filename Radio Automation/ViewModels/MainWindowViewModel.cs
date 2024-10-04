@@ -35,7 +35,7 @@ namespace Radio_Automation.ViewModels
 		private readonly IOpenFileService _openFileService;
 		private readonly ISaveFileService _saveFileService;
 		private readonly IPersistenceService _persistenceService;
-		private readonly IPleaseWaitService _pleaseWaitService;
+		private readonly IBusyIndicatorService _busyIndicatorService;
 
 		//Logging
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
@@ -55,7 +55,7 @@ namespace Radio_Automation.ViewModels
         private readonly IDispatcherService _dispatcherService;
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
-			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IPleaseWaitService pleaseWaitService, 
+			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IBusyIndicatorService busyIndicatorService, 
 			ISaveFileService saveFileService, IDispatcherService dispatcherService)
 		{
 			//f78420eccab34f098420eccab3cf091f
@@ -66,7 +66,7 @@ namespace Radio_Automation.ViewModels
 			_openFileService = openFileService;
 			_saveFileService = saveFileService;
 			_persistenceService = persistenceService;
-			_pleaseWaitService = pleaseWaitService;
+			_busyIndicatorService = busyIndicatorService;
 			_dispatcherService = dispatcherService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
@@ -189,7 +189,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Playlist property data.
 		/// </summary>
-		public static readonly PropertyData PlaylistProperty = RegisterProperty("Playlist", typeof(Playlist));
+		public static readonly IPropertyData PlaylistProperty = RegisterProperty<Playlist>(nameof(Playlist));
 
 		#endregion
 
@@ -207,7 +207,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// PendingEvents property data.
 		/// </summary>
-		public static readonly PropertyData PendingEventsProperty = RegisterProperty("PendingEvents", typeof(ObservableCollection<PendingEvent>));
+		public static readonly IPropertyData PendingEventsProperty = RegisterProperty<ObservableCollection<PendingEvent>>(nameof(PendingEvents));
 
 		#endregion
 
@@ -225,7 +225,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// PlayPauseImageSource property data.
 		/// </summary>
-		public static readonly PropertyData PlayPauseImageSourceProperty = RegisterProperty("PlayPauseImageSource", typeof(string));
+		public static readonly IPropertyData PlayPauseImageSourceProperty = RegisterProperty<string>(nameof(PlayPauseImageSource));
 
 		#endregion
 
@@ -243,7 +243,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Clock property data.
 		/// </summary>
-		public static readonly PropertyData ClockProperty = RegisterProperty("Clock", typeof(Clock));
+		public static readonly IPropertyData ClockProperty = RegisterProperty<Clock>(nameof(Clock));
 
 		#endregion
 
@@ -261,7 +261,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// NextTrack property data.
 		/// </summary>
-		public static readonly PropertyData NextTrackProperty = RegisterProperty("NextTrack", typeof(Track));
+		public static readonly IPropertyData NextTrackProperty = RegisterProperty<Track>(nameof(NextTrack));
 
 		#endregion
 
@@ -279,7 +279,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// CurrentTrack property data.
 		/// </summary>
-		public static readonly PropertyData CurrentTrackProperty = RegisterProperty("CurrentTrack", typeof(Track));
+		public static readonly IPropertyData CurrentTrackProperty = RegisterProperty<Track>(nameof(CurrentTrack));
 
 		#endregion
 
@@ -297,7 +297,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// CurrentTrackIndex property data.
 		/// </summary>
-		public static readonly PropertyData CurrentTrackIndexProperty = RegisterProperty("CurrentTrackIndex", typeof(int));
+		public static readonly IPropertyData CurrentTrackIndexProperty = RegisterProperty<int>(nameof(CurrentTrackIndex));
 
 		#endregion
 
@@ -315,7 +315,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Position property data.
 		/// </summary>
-		public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(TimeSpan));
+		public static readonly IPropertyData PositionProperty = RegisterProperty<TimeSpan>(nameof(Position));
 
 		#endregion
 
@@ -333,7 +333,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// RemainingTime property data.
 		/// </summary>
-		public static readonly PropertyData RemainingTimeProperty = RegisterProperty("RemainingTime", typeof(TimeSpan));
+		public static readonly IPropertyData RemainingTimeProperty = RegisterProperty<TimeSpan>(nameof(RemainingTime));
 
 		#endregion
 
@@ -351,7 +351,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// TrackEndTime property data.
 		/// </summary>
-		public static readonly PropertyData TrackEndTimeProperty = RegisterProperty("TrackEndTime", typeof(DateTime));
+		public static readonly IPropertyData TrackEndTimeProperty = RegisterProperty<DateTime>(nameof(TrackEndTime));
 
 		#endregion
 
@@ -369,7 +369,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Temperature property data.
 		/// </summary>
-		public static readonly PropertyData TemperatureProperty = RegisterProperty("Temperature", typeof(int));
+		public static readonly IPropertyData TemperatureProperty = RegisterProperty<int>(nameof(Temperature));
 
 		#endregion
 
@@ -387,7 +387,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Humidity property data.
 		/// </summary>
-		public static readonly PropertyData HumidityProperty = RegisterProperty("Humidity", typeof(int));
+		public static readonly IPropertyData HumidityProperty = RegisterProperty<int>(nameof(Humidity));
 
 		#endregion
 
@@ -405,7 +405,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Volume property data.
 		/// </summary>
-		public static readonly PropertyData VolumeProperty = RegisterProperty("Volume", typeof(float));
+		public static readonly IPropertyData VolumeProperty = RegisterProperty<float>(nameof(Volume));
 
 		#endregion
 
@@ -423,7 +423,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// LeftLevel property data.
 		/// </summary>
-		public static readonly PropertyData LeftLevelProperty = RegisterProperty("LeftLevel", typeof(int));
+		public static readonly IPropertyData LeftLevelProperty = RegisterProperty<int>(nameof(LeftLevel));
 
 		#endregion
 
@@ -441,7 +441,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// RightLevel property data.
 		/// </summary>
-		public static readonly PropertyData RightLevelProperty = RegisterProperty("RightLevel", typeof(int));
+		public static readonly IPropertyData RightLevelProperty = RegisterProperty<int>(nameof(RightLevel));
 
 		#endregion
 
@@ -511,10 +511,10 @@ namespace Radio_Automation.ViewModels
 
 			if (result.Result)
 			{
-				_pleaseWaitService.Show();
+				_busyIndicatorService.Show();
 				Playlist = await _persistenceService.LoadPlaylistAsync(result.FileName);
 				_settings.LastPlaylistPath = result.FileName;
-				_pleaseWaitService.Hide();
+				_busyIndicatorService.Hide();
 			}
 		}
 
@@ -549,9 +549,9 @@ namespace Radio_Automation.ViewModels
 			var result = await _openFileService.DetermineFileAsync(dofc);
 			if (result.Result)
 			{
-				_pleaseWaitService.Show();
+				_busyIndicatorService.Show();
 				Playlist = await _persistenceService.ImportZaraPlaylistAsync(result.FileName);
-				_pleaseWaitService.Hide();
+				_busyIndicatorService.Hide();
 			}
 		}
 
@@ -586,9 +586,9 @@ namespace Radio_Automation.ViewModels
 			var result = await _openFileService.DetermineFileAsync(dofc);
 			if (result.Result)
 			{
-				_pleaseWaitService.Show();
+				_busyIndicatorService.Show();
 				Playlist = await _persistenceService.ImportM3UPlaylistAsync(result.FileName);
-				_pleaseWaitService.Hide();
+				_busyIndicatorService.Hide();
 			}
 		}
 
@@ -613,9 +613,9 @@ namespace Radio_Automation.ViewModels
 		{
 			if (File.Exists(_settings.LastPlaylistPath))
 			{
-				_pleaseWaitService.Show();
+				_busyIndicatorService.Show();
 				await _persistenceService.SavePlaylistAsync(Playlist, _settings.LastPlaylistPath);
-				_pleaseWaitService.Hide();
+				_busyIndicatorService.Hide();
 			}
 			else
 			{
@@ -654,10 +654,10 @@ namespace Radio_Automation.ViewModels
 			var result = await saveFileService.DetermineFileAsync(dsfc);
 			if (result.Result)
 			{
-				_pleaseWaitService.Show();
+				_busyIndicatorService.Show();
 				await _persistenceService.SavePlaylistAsync(Playlist, result.FileName);
 				_settings.LastPlaylistPath = result.FileName;
-				_pleaseWaitService.Hide();
+				_busyIndicatorService.Hide();
 			}
 		}
 
@@ -867,7 +867,7 @@ namespace Radio_Automation.ViewModels
 			var dependencyResolver = this.GetDependencyResolver();
 			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
 			var ok = await uiVisualizerService.ShowDialogAsync(viewModel);
-			if (ok.HasValue && ok.Value)
+			if (ok.DialogResult.HasValue && ok.DialogResult.Value)
 			{
 				if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
 				{

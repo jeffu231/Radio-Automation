@@ -1,4 +1,5 @@
 ﻿using Catel.Data;
+using Microsoft.VisualBasic.Logging;
 using NAudioWrapper;
 
 namespace Radio_Automation.Models
@@ -27,7 +28,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// LastPlaylistPath property data.
 		/// </summary>
-		public static readonly PropertyData LastPlaylistPathProperty = RegisterProperty("LastPlaylistPath", typeof(string));
+		public static readonly IPropertyData LastPlaylistPathProperty = RegisterProperty<string>(nameof(LastPlaylistPath));
 
 		#endregion
 
@@ -45,7 +46,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// EventSchedulePath property data.
 		/// </summary>
-		public static readonly PropertyData EventSchedulePathProperty = RegisterProperty("LastEventSchedulePath", typeof(string));
+		public static readonly IPropertyData EventSchedulePathProperty = RegisterProperty<string>(nameof(LastEventSchedulePath));
 
 		#endregion
 
@@ -63,7 +64,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// ShufflePlaylist property data.
 		/// </summary>
-		public static readonly PropertyData ShufflePlaylistProperty = RegisterProperty("ShufflePlaylist", typeof(bool));
+		public static readonly IPropertyData ShufflePlaylistProperty = RegisterProperty<bool>(nameof(ShufflePlaylist));
 
 		#endregion
 
@@ -81,7 +82,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Volume property data.
 		/// </summary>
-		public static readonly PropertyData VolumeProperty = RegisterProperty("Volume", typeof(float));
+		public static readonly IPropertyData VolumeProperty = RegisterProperty<float>(nameof(Volume));
 
 		#endregion
 
@@ -99,7 +100,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// PrimaryOutputDevice property data.
 		/// </summary>
-		public static readonly PropertyData PrimaryOutputDeviceProperty = RegisterProperty("PrimaryOutputDevice", typeof(Device));
+		public static readonly IPropertyData PrimaryOutputDeviceProperty = RegisterProperty<Device>(nameof(PrimaryOutputDevice));
 
 		#endregion
 
@@ -117,7 +118,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// WUndergroundKey property data.
 		/// </summary>
-		public static readonly PropertyData WUndergroundKeyProperty = RegisterProperty("WUndergroundKey", typeof(string));
+		public static readonly IPropertyData WUndergroundKeyProperty = RegisterProperty<string>(nameof(WUndergroundKey));
 
 		#endregion
 
@@ -135,7 +136,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// WUndergroundStation property data.
 		/// </summary>
-		public static readonly PropertyData WUndergroundStationProperty = RegisterProperty("WUndergroundStation", typeof(string));
+		public static readonly IPropertyData WUndergroundStationProperty = RegisterProperty<string>(nameof(WUndergroundStation));
 
 		#endregion
 
@@ -153,7 +154,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// CurrentSongPath property data.
 		/// </summary>
-		public static readonly PropertyData CurrentSongPathProperty = RegisterProperty("CurrentSongPath", typeof(string));
+		public static readonly IPropertyData CurrentSongPathProperty = RegisterProperty<string>(nameof(CurrentSongPath));
 
 		#endregion
 
@@ -171,7 +172,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// UseWUnderground property data.
 		/// </summary>
-		public static readonly PropertyData UseWUndergroundProperty = RegisterProperty("UseWUnderground", typeof(bool));
+		public static readonly IPropertyData UseWUndergroundProperty = RegisterProperty<bool>(nameof(UseWUnderground));
 
 		#endregion
 
@@ -189,7 +190,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// MqttBroker property data.
 		/// </summary>
-		public static readonly PropertyData MqttBrokerProperty = RegisterProperty("MqttBroker", typeof(string));
+		public static readonly IPropertyData MqttBrokerProperty = RegisterProperty<string>(nameof(MqttBroker));
 
 		#endregion
 
@@ -207,7 +208,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// MqttBrokerPort property data.
 		/// </summary>
-		public static readonly PropertyData MqttBrokerPortProperty = RegisterProperty("MqttBrokerPort", typeof(int));
+		public static readonly IPropertyData MqttBrokerPortProperty = RegisterProperty<int>(nameof(MqttBrokerPort));
 
 		#endregion
 	}

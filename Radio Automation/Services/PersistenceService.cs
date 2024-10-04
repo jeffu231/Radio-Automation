@@ -26,7 +26,7 @@ namespace Radio_Automation.Services
 			_serializer = serializer;
 			_serializer.WriteTypeInfo = false;
 			_serializer.PreserveReferences = false;
-			_serializationConfiguration = new JsonSerializationConfiguration{Formatting = Formatting.Indented};
+			_serializationConfiguration = new JsonSerializationConfiguration { Formatting = Formatting.Indented };
 			_settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Radio Automation", @"settings.json");
 			EnsureTempPath();
 		}

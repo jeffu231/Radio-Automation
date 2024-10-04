@@ -33,7 +33,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Id property data.
 		/// </summary>
-		public static readonly PropertyData IdProperty = RegisterProperty("Id", typeof(Guid));
+		public static readonly IPropertyData IdProperty = RegisterProperty<Guid>(nameof(Id));
 
 		#endregion
 
@@ -51,7 +51,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Name property data.
 		/// </summary>
-		public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+		public static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
 
 		#endregion
 
@@ -69,7 +69,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Trigger property data.
 		/// </summary>
-		public static readonly PropertyData TriggerProperty = RegisterProperty("Trigger", typeof(Trigger));
+		public static readonly IPropertyData TriggerProperty = RegisterProperty<Trigger>(nameof(Trigger));
 
 		#endregion
 
@@ -88,7 +88,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// EventType property data.
 		/// </summary>
-		public static readonly PropertyData EventTypeProperty = RegisterProperty("EventType", typeof(EventType));
+		public static readonly IPropertyData EventTypeProperty = RegisterProperty<EventType>(nameof(EventType));
 
 		#endregion
 		
@@ -106,7 +106,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Demand property data.
 		/// </summary>
-		public static readonly PropertyData DemandProperty = RegisterProperty("Demand", typeof(Demand));
+		public static readonly IPropertyData DemandProperty = RegisterProperty<Demand>(nameof(Demand));
 
 		#endregion
 
@@ -124,7 +124,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// CronExpression property data.
 		/// </summary>
-		public static readonly PropertyData CronExpressionProperty = RegisterProperty("CronExpression", typeof(string));
+		public static readonly IPropertyData CronExpressionProperty = RegisterProperty<string>(nameof(CronExpression));
 
 		#endregion
 
@@ -142,7 +142,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// MqttExpression property data.
 		/// </summary>
-		public static readonly PropertyData MqttExpressionProperty = RegisterProperty("MqttExpression", typeof(MqttExpression));
+		public static readonly IPropertyData MqttExpressionProperty = RegisterProperty<MqttExpression>(nameof(MqttExpression));
 
 		#endregion
 
@@ -161,7 +161,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// StartDateTime property data.
 		/// </summary>
-		public static readonly PropertyData StartDateTimeProperty = RegisterProperty("StartDateTime", typeof(DateTime));
+		public static readonly IPropertyData StartDateTimeProperty = RegisterProperty<DateTime>(nameof(StartDateTime));
 
 		#endregion
 
@@ -179,7 +179,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Expires property data.
 		/// </summary>
-		public static readonly PropertyData ExpiresProperty = RegisterProperty("Expires", typeof(bool));
+		public static readonly IPropertyData ExpiresProperty = RegisterProperty<bool>(nameof(Expires));
 
 		#endregion
 
@@ -197,7 +197,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// EndDateTime property data.
 		/// </summary>
-		public static readonly PropertyData EndDateTimeProperty = RegisterProperty("EndDateTime", typeof(DateTime));
+		public static readonly IPropertyData EndDateTimeProperty = RegisterProperty<DateTime>(nameof(EndDateTime));
 
 		#endregion
 
@@ -215,7 +215,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Enabled property data.
 		/// </summary>
-		public static readonly PropertyData EnabledProperty = RegisterProperty("Enabled", typeof(bool));
+		public static readonly IPropertyData EnabledProperty = RegisterProperty<bool>(nameof(Enabled));
 
 		#endregion
 
@@ -233,7 +233,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// File property data.
 		/// </summary>
-		public static readonly PropertyData FileProperty = RegisterProperty("File", typeof(string));
+		public static readonly IPropertyData FileProperty = RegisterProperty<string>(nameof(File));
 
 		#endregion
 

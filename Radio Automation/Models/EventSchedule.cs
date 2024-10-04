@@ -23,7 +23,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Name property data.
 		/// </summary>
-		public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+		public static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
 
 		#endregion
 
@@ -41,7 +41,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Events property data.
 		/// </summary>
-		public static readonly PropertyData EventsProperty = RegisterProperty("Events", typeof(ObservableCollection<Event>));
+		public static readonly IPropertyData EventsProperty = RegisterProperty<ObservableCollection<Event>>(nameof(Events));
 
 		#endregion
 

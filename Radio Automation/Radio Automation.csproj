@@ -25,16 +25,7 @@
 	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2AC721CA86734CBA60AFA9DE513EA012DD5CB2AE</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>Radio Automation_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -61,19 +52,19 @@
   </ItemGroup>
 	<ItemGroup>
     <PackageReference Include="Catel.MVVM">
-      <Version>5.12.22</Version>
+      <Version>6.0.3</Version>
     </PackageReference>
     <PackageReference Include="Catel.Serialization.Json">
-      <Version>5.12.22</Version>
+      <Version>6.0.3</Version>
     </PackageReference>
     <PackageReference Include="LiteDB">
-      <Version>5.0.17</Version>
+      <Version>5.0.21</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
-      <Version>1.1.39</Version>
+      <Version>1.1.135</Version>
     </PackageReference>
-    <PackageReference Include="MQTTnet" Version="4.3.1.873" />
-    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.1.873" />
+    <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
+    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.7.1207" />
     <PackageReference Include="NCrontab">
       <Version>3.3.3</Version>
     </PackageReference>

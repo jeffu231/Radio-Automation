@@ -35,7 +35,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Settings property data.
 		/// </summary>
-		public static readonly PropertyData SettingsProperty = RegisterProperty("Settings", typeof(Settings));
+		public static readonly IPropertyData SettingsProperty = RegisterProperty<Settings>(nameof(Settings));
 
 		#endregion
 		
@@ -53,7 +53,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Devices property data.
 		/// </summary>
-		public static readonly PropertyData DevicesProperty = RegisterProperty("Devices", typeof(List<Device>));
+		public static readonly IPropertyData DevicesProperty = RegisterProperty<List<Device>>(nameof(Devices));
 
 		#endregion
 
@@ -72,7 +72,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// PrimaryOutputDevice property data.
 		/// </summary>
-		public static readonly PropertyData PrimaryOutputDeviceProperty = RegisterProperty("PrimaryOutputDevice", typeof(Device), null);
+		public static readonly IPropertyData PrimaryOutputDeviceProperty = RegisterProperty<Device>(nameof(PrimaryOutputDevice));
 
 		#endregion
 
@@ -91,7 +91,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// UseWUnderground property data.
 		/// </summary>
-		public static readonly PropertyData UseWUndergroundProperty = RegisterProperty("UseWUnderground", typeof(bool), null);
+		public static readonly IPropertyData UseWUndergroundProperty = RegisterProperty<bool>(nameof(UseWUnderground));
 
 		#endregion
 
@@ -110,7 +110,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// WUndergroundKey property data.
 		/// </summary>
-		public static readonly PropertyData WUndergroundKeyProperty = RegisterProperty("WUndergroundKey", typeof(string), null);
+		public static readonly IPropertyData WUndergroundKeyProperty = RegisterProperty<string>(nameof(WUndergroundKey));
 
 		#endregion
 
@@ -129,7 +129,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// WUndergroundStation property data.
 		/// </summary>
-		public static readonly PropertyData WUndergroundStationProperty = RegisterProperty("WUndergroundStation", typeof(string), null);
+		public static readonly IPropertyData WUndergroundStationProperty = RegisterProperty<string>(nameof(WUndergroundStation));
 
 		#endregion
 
@@ -148,7 +148,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// CurrentSongPath property data.
 		/// </summary>
-		public static readonly PropertyData CurrentSongPathProperty = RegisterProperty("CurrentSongPath", typeof(string), null);
+		public static readonly IPropertyData CurrentSongPathProperty = RegisterProperty<string>(nameof(CurrentSongPath));
 
 		#endregion
 
@@ -167,7 +167,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// MqttBroker property data.
 		/// </summary>
-		public static readonly PropertyData MqttBrokerProperty = RegisterProperty("MqttBroker", typeof(string), null);
+		public static readonly IPropertyData MqttBrokerProperty = RegisterProperty<string>(nameof(MqttBroker));
 
 		#endregion
 
@@ -186,7 +186,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// MqttBrokerPort property data.
 		/// </summary>
-		public static readonly PropertyData MqttBrokerPortProperty = RegisterProperty("MqttBrokerPort", typeof(object), null);
+		public static readonly IPropertyData MqttBrokerPortProperty = RegisterProperty<int>(nameof(MqttBrokerPort));
 
 		#endregion
 		

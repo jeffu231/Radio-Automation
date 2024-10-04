@@ -49,7 +49,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Id property data.
 		/// </summary>
-		public static readonly PropertyData IdProperty = RegisterProperty("Id", typeof(Guid));
+		public static readonly IPropertyData IdProperty = RegisterProperty<Guid>(nameof(Id));
 
 		#endregion
 
@@ -67,7 +67,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Name property data.
 		/// </summary>
-		public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+		public static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
 
 		#endregion
 
@@ -85,7 +85,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Artist property data.
 		/// </summary>
-		public static readonly PropertyData ArtistProperty = RegisterProperty("Artist", typeof(string));
+		public static readonly IPropertyData ArtistProperty = RegisterProperty<string>(nameof(Artist));
 
 		#endregion
 
@@ -103,7 +103,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Album property data.
 		/// </summary>
-		public static readonly PropertyData AlbumProperty = RegisterProperty("Album", typeof(string));
+		public static readonly IPropertyData AlbumProperty = RegisterProperty<string>(nameof(Album));
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Year property data.
 		/// </summary>
-		public static readonly PropertyData YearProperty = RegisterProperty("Year", typeof(uint));
+		public static readonly IPropertyData YearProperty = RegisterProperty<uint>(nameof(Year));
 
 		#endregion
 
@@ -144,7 +144,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Duration property data.
 		/// </summary>
-		public static readonly PropertyData DurationProperty = RegisterProperty("Duration", typeof(TimeSpan));
+		public static readonly IPropertyData DurationProperty = RegisterProperty<TimeSpan>(nameof(Duration));
 
 		#endregion
 
@@ -162,7 +162,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Tags property data.
 		/// </summary>
-		public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(List<Tag>));
+		public static readonly IPropertyData TagsProperty = RegisterProperty<List<Tag>>(nameof(Tags));
 
 		#endregion
 
@@ -180,7 +180,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Genres property data.
 		/// </summary>
-		public static readonly PropertyData GenresProperty = RegisterProperty("Genres", typeof(List<Genre>));
+		public static readonly IPropertyData GenresProperty = RegisterProperty<List<Genre>>(nameof(Genres));
 
 		#endregion
 
@@ -198,7 +198,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Path property data.
 		/// </summary>
-		public static readonly PropertyData PathProperty = RegisterProperty("Path", typeof(string));
+		public static readonly IPropertyData PathProperty = RegisterProperty<string>(nameof(Path));
 
 		#endregion
 

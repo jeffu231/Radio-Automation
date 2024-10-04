@@ -32,7 +32,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Name property data.
 		/// </summary>
-		public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+		public static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
 
 		#endregion
 	}

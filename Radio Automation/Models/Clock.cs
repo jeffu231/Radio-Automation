@@ -35,7 +35,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// DateTime property data.
 		/// </summary>
-		public static readonly PropertyData CurrentDateTimeProperty = RegisterProperty("CurrentDateTime", typeof(DateTime));
+		public static readonly IPropertyData CurrentDateTimeProperty = RegisterProperty<DateTime>(nameof(CurrentDateTime));
 
 		#endregion
 

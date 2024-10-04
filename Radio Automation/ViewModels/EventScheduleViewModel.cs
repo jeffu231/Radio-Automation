@@ -40,7 +40,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Name property data.
 		/// </summary>
-		public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+		public static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
 
 		#endregion
 
@@ -59,7 +59,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// EventSchedule property data.
 		/// </summary>
-		public static readonly PropertyData EventScheduleProperty = RegisterProperty("EventSchedule", typeof(EventSchedule));
+		public static readonly IPropertyData EventScheduleProperty = RegisterProperty<EventSchedule>(nameof(EventSchedule));
 
 		#endregion
 
@@ -77,7 +77,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Path property data.
 		/// </summary>
-		public static readonly PropertyData PathProperty = RegisterProperty("Path", typeof(string));
+		public static readonly IPropertyData PathProperty = RegisterProperty<string>(nameof(Path));
 
 		#endregion
 
@@ -99,7 +99,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// SelectedItem property data.
 		/// </summary>
-		public static readonly PropertyData SelectedItemProperty = RegisterProperty("SelectedItem", typeof(Event));
+		public static readonly IPropertyData SelectedItemProperty = RegisterProperty<Event>(nameof(SelectedItem));
 
 		#endregion
 
@@ -218,7 +218,7 @@ namespace Radio_Automation.ViewModels
 		{
 			var dependencyResolver = this.GetDependencyResolver();
 			var saveFileService = dependencyResolver.Resolve<ISaveFileService>();
-			var pleaseWaitService = dependencyResolver.Resolve<IPleaseWaitService>();
+			var busyIndicatorService = dependencyResolver.Resolve<IBusyIndicatorService>();
 			var persistenceService = dependencyResolver.Resolve<IPersistenceService>();
 			if (string.IsNullOrEmpty(Path))
 			{
@@ -235,9 +235,9 @@ namespace Radio_Automation.ViewModels
 				}
 			}
 
-			pleaseWaitService.Show();
+			busyIndicatorService.Show();
 			var success = await persistenceService.SaveEventScheduleAsync(EventSchedule, Path);
-			pleaseWaitService.Hide();
+			busyIndicatorService.Hide();
 			
 			return success;
 		}
@@ -263,7 +263,7 @@ namespace Radio_Automation.ViewModels
 		{
 			var dependencyResolver = this.GetDependencyResolver();
 			var openFileService = dependencyResolver.Resolve<IOpenFileService>();
-			var pleaseWaitService = dependencyResolver.Resolve<IPleaseWaitService>();
+			var busyIndicatorService = dependencyResolver.Resolve<IBusyIndicatorService>();
 			var persistenceService = dependencyResolver.Resolve<IPersistenceService>();
 			var dofs = new DetermineOpenFileContext
 			{
@@ -274,10 +274,10 @@ namespace Radio_Automation.ViewModels
 			var result = await openFileService.DetermineFileAsync(dofs);
 			if (result.Result)
 			{
-				pleaseWaitService.Show();
+				busyIndicatorService.Show();
 				EventSchedule = await persistenceService.LoadEventScheduleAsync(result.FileName);
 				Path = result.FileName;
-				pleaseWaitService.Hide();
+				busyIndicatorService.Hide();
 			}
 		}
 
@@ -302,7 +302,7 @@ namespace Radio_Automation.ViewModels
 		{
 			EventSchedule = new EventSchedule();
 			Path = string.Empty;
-			await TaskHelper.Completed;
+			await Task.CompletedTask;
 		}
 
 		#endregion
