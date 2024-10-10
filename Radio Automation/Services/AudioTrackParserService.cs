@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Catel.Logging;
 using Radio_Automation.Models;
 using TagLib;
 using Tag = Radio_Automation.Models.Tag;
@@ -10,6 +11,8 @@ namespace Radio_Automation.Services
 {
 	public class AudioTrackParserService:IAudioTrackParserService
 	{
+		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
+
 		#region Implementation of IAudioTrackParserService
 
 		/// <inheritdoc />
@@ -83,7 +86,7 @@ namespace Radio_Automation.Services
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
+				Log.Error(e, $"Error creating track from file {file}");
 				return null;
 			}
 			

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Catel;
+using Catel.Logging;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
 using Newtonsoft.Json;
@@ -19,6 +20,7 @@ namespace Radio_Automation.Services
 		private readonly IJsonSerializer _serializer;
 		private readonly ISerializationConfiguration _serializationConfiguration;
 		private string _settingsPath;
+		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
 		public PersistenceService(IJsonSerializer serializer)
 		{
@@ -119,6 +121,10 @@ namespace Radio_Automation.Services
 						if (track != null)
 						{
 							tracks.Add(track);
+						}
+						else
+						{
+							Log.Error($"Error creating track from path {m3UMediaInfo.Uri.LocalPath}");
 						}
 
 					}
