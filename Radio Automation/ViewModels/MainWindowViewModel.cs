@@ -872,6 +872,7 @@ namespace Radio_Automation.ViewModels
 			var ok = await uiVisualizerService.ShowDialogAsync(viewModel);
 			if (ok.DialogResult.HasValue && ok.DialogResult.Value)
 			{
+				await SaveSettingsAsync();
 				if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
 				{
 					ConfigurePrimaryAudioPlayer();

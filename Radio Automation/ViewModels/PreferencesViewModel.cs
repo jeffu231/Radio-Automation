@@ -195,7 +195,7 @@ namespace Radio_Automation.ViewModels
 		#region TimeTempPath property
 
 		/// <summary>
-		/// Gets or sets the CurrentSongPath value.
+		/// Gets or sets the TimeTempFilePath value.
 		/// </summary>
 		[ViewModelToModel("Settings")]
 		public string TimeTempFilePath
@@ -205,7 +205,7 @@ namespace Radio_Automation.ViewModels
 		}
 
 		/// <summary>
-		/// CurrentSongPath property data.
+		/// TimeTempFilePath property data.
 		/// </summary>
 		public static readonly IPropertyData TimeTempFilePathProperty = RegisterProperty<string>(nameof(TimeTempFilePath));
 
