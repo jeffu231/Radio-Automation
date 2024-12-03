@@ -52,6 +52,7 @@ namespace Radio_Automation.Events
 							f =>
 							{
 								f.WithTopic(e.MqttExpression.Topic);
+								f.WithAtLeastOnceQoS();
 							})
 						.Build();
 					await _mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
