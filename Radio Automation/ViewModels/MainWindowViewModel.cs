@@ -145,13 +145,12 @@ namespace Radio_Automation.ViewModels
 
 		private void EventTriggered(Event e)
 		{
-			//if (_playbackState != PlaybackState.Playing && (e.EventType == EventType.Humidity || e.EventType == EventType.Temperature ||
-			//	e.EventType == EventType.Time))
-			//{
-			//	PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
-			//	// Don't play Time, Temp, or Humidity events if the player is stopped.
-			//	return;
-			//}
+			if (_playbackState != PlaybackState.Playing && e.Demand == Demand.Delayed)
+			{
+				PendingEvents.Remove(PendingEvents.FirstOrDefault(x => x.Event == e));
+				// Don't play delayed events if the player is stopped.
+				return;
+			}
 
 			if (_playbackState != PlaybackState.Stopped && e.Demand == Demand.Delayed)
 			{
@@ -1371,7 +1370,12 @@ namespace Radio_Automation.ViewModels
 		{
 			if(Directory.Exists(Path.GetDirectoryName(_settings.CurrentSongPath)))
 			{
-				File.WriteAllLines(_settings.CurrentSongPath, new []{CurrentTrack !=null ? CurrentTrack.FormattedName: "Nothing Playing"});
+				var currentSong = CurrentTrack != null ? CurrentTrack.FormattedName : "Nothing Playing";
+				File.WriteAllLines(_settings.CurrentSongPath, new []{currentSong});
+			}
+			else if(!string.IsNullOrEmpty(_settings.CurrentSongPath))
+			{
+				Log.Error("Specified current song directory does not exist.");
 			}
 		}
 
