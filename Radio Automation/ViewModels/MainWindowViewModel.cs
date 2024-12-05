@@ -6,8 +6,6 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Deployment;
-//using System.Deployment.Application;
 using System.Windows.Threading;
 using Catel.Collections;
 using Catel.Data;
@@ -16,7 +14,6 @@ using Catel.Logging;
 using Catel.MVVM;
 using Catel.Services;
 using Catel.Windows;
-using Catel.Windows.Threading;
 using NAudioWrapper;
 using Radio_Automation.Events;
 using Radio_Automation.Extensions;
@@ -45,7 +42,6 @@ namespace Radio_Automation.ViewModels
 		private readonly DispatcherTimer _playPositionTimer;
 		private readonly DispatcherTimer _pendingEventTimer;
 		private readonly DispatcherTimer _weatherUpdateTimer;
-		//private int _currentTrackIndex = -1;
 		private readonly EventScheduler _eventScheduler;
 		private readonly MqttEventListener _mqttEventListener;
 		private EventSchedule _eventSchedule;
@@ -58,7 +54,6 @@ namespace Radio_Automation.ViewModels
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IBusyIndicatorService busyIndicatorService, 
 			ISaveFileService saveFileService, IDispatcherService dispatcherService)
 		{
-			//f78420eccab34f098420eccab3cf091f
 			_wg = new WunderGround();
 			CurrentTrackIndex = -1;
 			_selectDirectoryService = selectDirectoryService;
