@@ -20,7 +20,7 @@ namespace Radio_Automation.Models
 
 		private void Tracks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			TotalTime = CalculateTotalTime();
+			CalculateTotalTime();
 		}
 
 		#region Id property
@@ -108,7 +108,10 @@ namespace Radio_Automation.Models
 		internal TimeSpan CalculateTotalTime()
 		{
 			var ticks = Tracks.Sum(t => t.Duration.Ticks);
-			return TimeSpan.FromTicks(ticks);
+
+			TotalTime = TimeSpan.FromTicks(ticks);
+
+			return TotalTime;
 		}
 	}
 }
