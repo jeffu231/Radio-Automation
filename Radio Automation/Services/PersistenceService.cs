@@ -19,7 +19,7 @@ namespace Radio_Automation.Services
 	{
 		private readonly IJsonSerializer _serializer;
 		private readonly ISerializationConfiguration _serializationConfiguration;
-		private string _settingsPath;
+		private readonly string _settingsPath;
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
 		public PersistenceService(IJsonSerializer serializer)
@@ -89,7 +89,7 @@ namespace Radio_Automation.Services
 						}
 						else
 						{
-							Console.Out.WriteLineAsync($"{items[1]} not found!");
+							Log.Error($"Error importing Zara playlist: {items[1]} not found!");
 						}
 					}
 				}
@@ -150,7 +150,7 @@ namespace Radio_Automation.Services
 						}
 						catch
 						{
-							//TODO Log this
+							Log.Error($"Error loading settings from path {_settingsPath}");
 						}
 						
 					}
@@ -191,7 +191,7 @@ namespace Radio_Automation.Services
 						}
 						catch
 						{
-							//TODO log this
+							Log.Error($"Error loading event schedule from path {path}");
 						}
 
 					}
