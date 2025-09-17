@@ -193,7 +193,8 @@ namespace NAudioWrapper
 
 		private void PostVolumeMeter_StreamVolume(object sender, StreamVolumeEventArgs e)
 		{
-			OnSteamVolume?.Invoke(new VolumeEventArgs(e.MaxSampleValues.Length > 0 ? e.MaxSampleValues[0] : 0, e.MaxSampleValues.Length> 1?e.MaxSampleValues[1]:0));
+			OnSteamVolume?.Invoke(new VolumeEventArgs(e.MaxSampleValues.Length > 0 ? e.MaxSampleValues[0] : 0, 
+                e.MaxSampleValues.Length> 1?e.MaxSampleValues[1]: e.MaxSampleValues.Length > 0 ? e.MaxSampleValues[0] : 0));
 		}
 
 		private void SampleChannelOnPreVolumeMeter(object sender, StreamVolumeEventArgs e)
