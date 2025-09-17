@@ -170,8 +170,11 @@ namespace NAudioWrapper
             try
             {
                 var inputStream = new MediaFoundationReader(fileName);
+               
 				_fileStream = inputStream;
-                Initialize(inputStream.ToSampleProvider());
+                var sp = _fileStream.WaveFormat.Channels == 1 ? new MonoToStereoSampleProvider(_fileStream.ToSampleProvider()):
+                        _fileStream.ToSampleProvider();
+                Initialize(sp);
                 status = true;
             }
             catch (Exception e)
@@ -194,7 +197,7 @@ namespace NAudioWrapper
 		private void PostVolumeMeter_StreamVolume(object sender, StreamVolumeEventArgs e)
 		{
 			OnSteamVolume?.Invoke(new VolumeEventArgs(e.MaxSampleValues.Length > 0 ? e.MaxSampleValues[0] : 0, 
-                e.MaxSampleValues.Length> 1?e.MaxSampleValues[1]: e.MaxSampleValues.Length > 0 ? e.MaxSampleValues[0] : 0));
+                e.MaxSampleValues.Length> 1?e.MaxSampleValues[1]: 0));
 		}
 
 		private void SampleChannelOnPreVolumeMeter(object sender, StreamVolumeEventArgs e)
