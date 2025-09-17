@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MQTTnet.Client;
 using MQTTnet;
 using Radio_Automation.Models;
 using Catel.Logging;
@@ -31,7 +30,7 @@ namespace Radio_Automation.Events
 		public async Task LoadSchedule(EventSchedule eventSchedule)
 		{
 			
-			var mqttFactory = new MqttFactory();
+			var mqttFactory = new MqttClientFactory();
 
 			foreach (var e in _events.Keys)
 			{
@@ -86,7 +85,7 @@ namespace Radio_Automation.Events
 				await _mqttClient.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
 			}
 
-			var mqttFactory = new MqttFactory();
+			var mqttFactory = new MqttClientFactory();
 
 			_mqttClient = mqttFactory.CreateMqttClient();
 			
