@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Catel.Logging;
 using JobToolkit.Core;
-using NCrontab;
 using Radio_Automation.Models;
 
 namespace Radio_Automation.Events
