@@ -445,7 +445,7 @@ namespace Radio_Automation.ViewModels
 		protected override async Task CloseAsync()
 		{
 			var success = SaveSettingsAsync();
-			success.Wait(TimeSpan.FromSeconds(1));
+			success.Wait(TimeSpan.FromSeconds(10));
 			StopPlaying();
 			_audioPlayer?.Dispose();
 			await base.CloseAsync();
