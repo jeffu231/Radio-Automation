@@ -15,8 +15,9 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>\\nas.home.kb9kld.org\safe\ClickOnce\Radio_Automation\</InstallUrl>
-	   <PublisherName>jtdev</PublisherName>
+	<PublisherName>jtdev</PublisherName>
     <ProductName>Radio Automation</ProductName>
+	<Company>jtdev</Company>
     <ApplicationRevision>40</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>

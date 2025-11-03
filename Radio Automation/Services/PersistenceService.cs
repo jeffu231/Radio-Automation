@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Catel;
 using Catel.Logging;
+using Catel.Reflection;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
 using Newtonsoft.Json;
@@ -29,7 +31,9 @@ namespace Radio_Automation.Services
 			_serializer.WriteTypeInfo = false;
 			_serializer.PreserveReferences = false;
 			_serializationConfiguration = new JsonSerializationConfiguration { Formatting = Formatting.Indented };
-			_settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Radio Automation", @"settings.json");
+			var assembly = AssemblyHelper.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+
+			_settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), assembly.Company()??@"jtdev", assembly.Product() ?? @"Radio Automation", @"settings.json");
 			EnsureTempPath();
 		}
 
