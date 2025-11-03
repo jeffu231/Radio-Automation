@@ -112,7 +112,9 @@
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="40"/>
 				<ColumnDefinition Width="40"/>
-			</Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="40"/>
+            </Grid.ColumnDefinitions>
 			<Button Grid.Column="0" Margin="3" Command="{Binding RewindToStartCommand}">
 				<Image Source="/Resources;component/Icons/control_start_blue.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
@@ -125,13 +127,19 @@
 			<Button Grid.Column="3" Margin="3" Command="{Binding ForwardToEndCommand}">
 				<Image Source="/Resources;component/Icons/control_end_blue.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
-			<Button Grid.Column="5" Margin="3" Command="{Binding PlayTemperatureCommand}">
+			<Button Grid.Column="5" Margin="3" Command="{Binding PlayTemperatureCommand}" ToolTip="Play Temperature">
 				<Image Source="/Resources;component/Icons/temp.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
-			<Button Grid.Column="6" Margin="3" Command="{Binding ShuffleCommand}">
+			<Button Grid.Column="6" Margin="3" Command="{Binding ShuffleCommand}" ToolTip="Shuffle Playlist">
 				<Image Source="/Resources;component/Icons/arrow_switch.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 			</Button>
-		</Grid>
+            <Button Grid.Column="7" Margin="3" Command="{Binding SortTrackArtistCommand}" ToolTip="Sort Playlist By Track Artist">
+                <Image Source="/Resources;component/Icons/table_sort.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+            <Button Grid.Column="8" Margin="3" Command="{Binding SortTrackNameCommand}" ToolTip="Sort Playlist By Track Name">
+                <Image Source="/Resources;component/Icons/data_sort.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+        </Grid>
 		
 		<Grid x:Name="GridContainer">
 			<Grid.ColumnDefinitions>

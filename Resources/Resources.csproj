@@ -23,6 +23,7 @@
     <None Remove="Icons\control_start_blue.png" />
     <None Remove="Icons\control_stop_blue.png" />
     <None Remove="Icons\cut.png" />
+    <None Remove="Icons\data_sort.png" />
     <None Remove="Icons\delete_32.png" />
     <None Remove="Icons\help.png" />
     <None Remove="Icons\NewFile_6276.png" />
@@ -32,12 +33,14 @@
     <None Remove="Icons\Save.png" />
     <None Remove="Icons\SaveAs.png" />
     <None Remove="Icons\Save_6530.png" />
+    <None Remove="Icons\table_sort.png" />
     <None Remove="Icons\temp.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\Close_6519.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\data_sort.png" />
     <Resource Include="Icons\delete_32.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -95,6 +98,8 @@
     <Resource Include="Icons\arrow_switch.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+  
+    <Resource Include="Icons\table_sort.png" />
   
     <Resource Include="Icons\temp.png" />
   </ItemGroup>

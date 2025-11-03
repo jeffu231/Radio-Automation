@@ -1106,6 +1106,74 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+        #region SortTrackArtist command
+
+        private Command _sortTrackArtistCommand;
+
+        /// <summary>
+        /// Gets the SortTrackArtist command.
+        /// </summary>
+        public Command SortTrackArtistCommand
+        {
+            get
+            {
+                return _sortTrackArtistCommand ??= new Command(OnSortTrackArtistExecute, OnSortTrackArtistCanExecute);
+            }
+        }
+
+        /// <summary>
+        /// Method to invoke when the SortTrackArtist command is executed.
+        /// </summary>
+        private void OnSortTrackArtistExecute()
+        {
+            Playlist.Tracks.SortTrackArtist();
+        }
+
+        /// <summary>
+        /// Method to check whether the SortTrackArtist command can be executed.
+        /// </summary>
+        /// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+        private bool OnSortTrackArtistCanExecute()
+        {
+            return _playbackState == PlaybackState.Stopped;
+        }
+
+        #endregion
+
+        #region SortTrackName command
+
+        private Command _sortTrackNameCommand;
+
+        /// <summary>
+        /// Gets the SortTrackName command.
+        /// </summary>
+        public Command SortTrackNameCommand
+        {
+            get
+            {
+                return _sortTrackNameCommand ??= new Command(OnSortTrackNameExecute, OnSortTrackNameCanExecute);
+            }
+        }
+
+        /// <summary>
+        /// Method to invoke when the SortTrackName command is executed.
+        /// </summary>
+        private void OnSortTrackNameExecute()
+        {
+            Playlist.Tracks.SortTrackName();
+        }
+
+        /// <summary>
+        /// Method to check whether the SortTrackName command can be executed.
+        /// </summary>
+        /// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+        private bool OnSortTrackNameCanExecute()
+        {
+            return _playbackState == PlaybackState.Stopped;
+        }
+
+        #endregion
+
 		#region VolumeChanged command
 
 		private Command _volumeChangedCommand;

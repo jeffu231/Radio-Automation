@@ -1,8 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Security.Cryptography;
-using Catel.Collections;
+﻿using Catel.Collections;
+using Microsoft.VisualBasic;
+using Radio_Automation.Models;
 using Radio_Automation.Utils;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace Radio_Automation.Extensions
 {
@@ -37,5 +40,44 @@ namespace Radio_Automation.Extensions
 			}
 			//disposable.Dispose();
 		}
+
+		public static void SortTrackArtist(this FastObservableCollection<Track> list)
+		{
+			using (list.SuspendChangeNotifications(SuspensionMode.None))
+			{
+				var sortedList = list.OrderBy(item => item.Artist).ToList();
+
+				// Reorder the original collection using the Move() method to update indices efficiently
+				for (int i = 0; i < sortedList.Count; ++i)
+				{
+					var actualItemIndex = list.IndexOf(sortedList[i]);
+					if (actualItemIndex != i)
+					{
+						// Move the item to its sorted position. This fires a single Move notification internally.
+						list.Move(actualItemIndex, i);
+					}
+				}
+			}
+		}
+
+		public static void SortTrackName(this FastObservableCollection<Track> list)
+		{
+			using (list.SuspendChangeNotifications(SuspensionMode.None))
+			{
+				var sortedList = list.OrderBy(item => item.Name).ToList();
+
+				// Reorder the original collection using the Move() method to update indices efficiently
+				for (int i = 0; i < sortedList.Count; ++i)
+				{
+					var actualItemIndex = list.IndexOf(sortedList[i]);
+					if (actualItemIndex != i)
+					{
+						// Move the item to its sorted position. This fires a single Move notification internally.
+						list.Move(actualItemIndex, i);
+					}
+				}
+			}
+		}
+
 	}
 }
