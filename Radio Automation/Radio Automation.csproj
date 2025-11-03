@@ -27,6 +27,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
+    <ApplicationIcon>RadioAutomation.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -41,6 +42,9 @@
     <EmbeddedResource Remove="Controls\**" />
     <None Remove="Controls\**" />
     <Page Remove="Controls\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="RadioAutomation.ico" />
   </ItemGroup>
 	<ItemGroup>
     <Reference Include="JobToolkit.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
