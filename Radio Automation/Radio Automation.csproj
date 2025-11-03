@@ -68,6 +68,7 @@
     </PackageReference>
     <PackageReference Include="MQTTnet" Version="5.0.1.1416" />
     <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.7.1207" />
+    <PackageReference Include="NCrontab.Advanced" Version="1.3.28" />
     <PackageReference Include="OneWay.M3U">
       <Version>1.0.3</Version>
     </PackageReference>
