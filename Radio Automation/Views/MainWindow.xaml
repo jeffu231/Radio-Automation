@@ -301,7 +301,7 @@
 						<views:TrackView DataContext="{Binding}"/>
 					</DataTemplate>
 				</ListView.ItemTemplate>
-			</ListView>
+            </ListView>
 		</Grid>
 	</DockPanel>
 </catel:Window>

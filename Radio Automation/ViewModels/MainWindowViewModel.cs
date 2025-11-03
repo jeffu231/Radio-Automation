@@ -116,6 +116,8 @@ namespace Radio_Automation.ViewModels
 			await _mqttEventListener.Connect(_settings);
 
 			await _mqttEventListener.LoadSchedule(_eventSchedule);
+			
+			PlaylistMessage.Register(this, PlaylistAction);
 
 		}
 
@@ -136,9 +138,18 @@ namespace Radio_Automation.ViewModels
 		/// <inheritdoc />
 		public override string Title => @"Radio Automation";
 
-		#endregion
+        #endregion
 
-		private void EventTriggered(Event e)
+        private void PlaylistAction(PlaylistMessage message)
+        {
+            if (message.Data.PlaylistAction == Messaging.PlaylistAction.Remove)
+            {
+                Playlist.Tracks.Remove(message.Data.Track);
+				Log.Info($"Track {message.Data.Track.Name} removed from playlist.");
+            }
+        }
+
+        private void EventTriggered(Event e)
 		{
 			if (_playbackState != PlaybackState.Playing && e.Demand == Demand.Delayed)
 			{

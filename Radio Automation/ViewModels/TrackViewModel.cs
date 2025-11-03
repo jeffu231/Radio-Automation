@@ -1,10 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Catel;
+﻿using Catel;
 using Catel.Data;
 using Catel.MVVM;
 using Radio_Automation.Messaging;
 using Radio_Automation.Models;
+using System;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Radio_Automation.ViewModels
 {
@@ -14,7 +15,7 @@ namespace Radio_Automation.ViewModels
 		{
 			Argument.IsNotNull("track", track);
 			Track = track;
-		}
+        }
 
 		#region Overrides of ViewModelBase
 
@@ -101,6 +102,26 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+        #region Remove command
 
+        private Command _removeCommand;
+
+        /// <summary>
+        /// Gets the Remove command.
+        /// </summary>
+        public Command RemoveCommand
+        {
+            get { return _removeCommand ??= new Command(OnRemoveExecute); }
+        }
+
+        /// <summary>
+        /// Method to invoke when the Remove command is executed.
+        /// </summary>
+        private void OnRemoveExecute()
+        {
+            PlaylistMessage.SendWith(new PlaylistMessageData(Track, PlaylistAction.Remove));
+        }
+
+        #endregion
 	}
 }

@@ -33,8 +33,14 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="Auto"/>
 		</Grid.ColumnDefinitions>
-		<TextBlock Grid.Column="0" Text="{Binding Track.FormattedName}" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="0" TextTrimming="WordEllipsis"
-		           Style="{StaticResource CurrentTrackStyle}"/>
+        <TextBlock Grid.Column="0" Text="{Binding Track.FormattedName}" TextAlignment="Left" HorizontalAlignment="Stretch" Margin="0" TextTrimming="WordEllipsis"
+		           Style="{StaticResource CurrentTrackStyle}">
+            <TextBlock.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove" Command="{Binding RemoveCommand}"/>
+                </ContextMenu>
+            </TextBlock.ContextMenu>
+        </TextBlock>
 		<TextBlock Grid.Column="1" Text="{Binding Track.Duration, StringFormat={x:Static constants:Formatters.DurationFormat}}" TextAlignment="Right" 
 		           Margin="5,0" Style="{StaticResource CurrentTrackStyle}"/>
     </Grid>
