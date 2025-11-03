@@ -292,11 +292,10 @@
 			</ListView>
 
 			<ListView x:Name="PlaylistView" Grid.Column="1" Grid.Row="2" 
-			          ItemsSource="{Binding Playlist.Tracks}"  Margin="0,5,5,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+			          ItemsSource="{Binding Playlist.Tracks}" Margin="0,5,5,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<b:Interaction.Behaviors>
-					<behaviors:ScrollPlayingIntoViewBehavior CurrentTrackIndex="{Binding CurrentTrackIndex}">
-
-					</behaviors:ScrollPlayingIntoViewBehavior>
+					<behaviors:ScrollPlayingIntoViewBehavior CurrentTrackIndex="{Binding CurrentTrackIndex}"/>
+                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedTracks}" />
 				</b:Interaction.Behaviors>
 				
 				<ListView.ItemContainerStyle>

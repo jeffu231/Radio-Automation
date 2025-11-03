@@ -65,6 +65,7 @@ namespace Radio_Automation.ViewModels
 			_dispatcherService = dispatcherService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
+			SelectedTracks = new ObservableCollection<Track>();
 
 			UpdatePlayPauseStates();
 
@@ -144,8 +145,11 @@ namespace Radio_Automation.ViewModels
         {
             if (message.Data.PlaylistAction == Messaging.PlaylistAction.Remove)
             {
-                Playlist.Tracks.Remove(message.Data.Track);
-				Log.Info($"Track {message.Data.Track.Name} removed from playlist.");
+	            foreach (var selectedTrack in SelectedTracks.ToList())
+	            {
+					Playlist.Tracks.Remove(selectedTrack);
+					Log.Info($"Track {selectedTrack.FormattedName} removed from playlist.");
+				}
             }
         }
 
@@ -447,6 +451,24 @@ namespace Radio_Automation.ViewModels
 		/// RightLevel property data.
 		/// </summary>
 		public static readonly IPropertyData RightLevelProperty = RegisterProperty<int>(nameof(RightLevel));
+
+		#endregion
+
+		#region SelectedTracks property
+
+		/// <summary>
+		/// Gets or sets the SelectedTracks value.
+		/// </summary>
+		public ObservableCollection<Track> SelectedTracks
+		{
+			get { return GetValue<ObservableCollection<Track>>(SelectedTracksProperty); }
+			set { SetValue(SelectedTracksProperty, value); }
+		}
+
+		/// <summary>
+		/// SelectedTracks property data.
+		/// </summary>
+		public static readonly IPropertyData SelectedTracksProperty = RegisterProperty<ObservableCollection<Track>>(nameof(SelectedTracks));
 
 		#endregion
 
