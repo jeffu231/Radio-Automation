@@ -71,11 +71,17 @@ jobs:
             
       - name: Build
         if: steps.versionize.outcome == 'success'
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Publish
         if: steps.versionize.outcome == 'success'
-        run: dotnet publish --configuration Release --no-build --property:publishDir=publish
+        run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml --no-build 
+
+      - name: Zip files
+        shell: bash # Or use 'bash' for Linux
+        run: |
+          zip -r Radio-Automation.zip "Radio Automation/publish"
+          
 
       - name: Upload artifact
         id: artifact-upload-step
@@ -83,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "Radio Automation"
-          path:  "Radio Automation/publish/*.exe"
+          path:  "Radio-Automation.zip"
           
       - name: Download Artifact
         uses: actions/download-artifact@v5
