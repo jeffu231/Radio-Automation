@@ -23,7 +23,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	  <Version>1.0.0</Version>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
