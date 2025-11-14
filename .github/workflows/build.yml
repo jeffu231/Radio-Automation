@@ -71,11 +71,11 @@ jobs:
             
       - name: Build
         if: steps.versionize.outcome == 'success'
-        run: dotnet build -c Release --no-restore
+        run: dotnet build -c Release --no-restore /p:EnableWindowsTargeting=true
 
       - name: Publish
         if: steps.versionize.outcome == 'success'
-        run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml --no-build 
+        run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml --no-build /p:EnableWindowsTargeting=true
 
       - name: Zip files
         shell: bash # Or use 'bash' for Linux
