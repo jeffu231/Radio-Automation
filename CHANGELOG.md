@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.0.3"></a>
+## [1.0.3](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.3) (2025-11-14)
+
+### Bug Fixes
+
+* remove unused Schedule project ([810f057](https://www.github.com/jeffu231/Radio-Automation/commit/810f0574552664465687ecc11b45dc627d391d01))
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.2) (2025-11-14)
 
