@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-	   <UseWPF>true</UseWPF>
+    <UseWPF>true</UseWPF>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>Y:\ClickOnce\Radio_Automation\</PublishUrl>
     <Install>true</Install>
@@ -15,15 +15,15 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>\\nas.home.kb9kld.org\safe\ClickOnce\Radio_Automation\</InstallUrl>
-	<PublisherName>jtdev</PublisherName>
+    <PublisherName>jtdev</PublisherName>
     <ProductName>Radio Automation</ProductName>
-	<Company>jtdev</Company>
+    <Company>jtdev</Company>
     <ApplicationRevision>40</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -46,7 +46,7 @@
   <ItemGroup>
     <Content Include="RadioAutomation.ico" />
   </ItemGroup>
-	<ItemGroup>
+  <ItemGroup>
     <Reference Include="JobToolkit.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Library\JobToolkit.Core.dll</HintPath>
@@ -58,7 +58,7 @@
     <ProjectReference Include="..\Weather\Weather.csproj" />
     <ProjectReference Include="..\WPFDarkTheme\WPFDarkTheme.csproj" />
   </ItemGroup>
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Catel.MVVM">
       <Version>6.1.4</Version>
     </PackageReference>
@@ -84,4 +84,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+  <Target Name="Husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0">
+    <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
+    <Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory=".." />
+  </Target>
 </Project>
