@@ -81,9 +81,9 @@ jobs:
         if: steps.versionize.outcome == 'success'
         shell: bash
         run: |
-          zip -r Radio-Automation.zip "Radio Automation/publish"
+          cd "Radio Automation/publish"
+          zip -r ../../Radio-Automation.zip "Radio Automation"
           
-
       - name: Upload artifact
         id: artifact-upload-step
         if: steps.versionize.outcome == 'success'
