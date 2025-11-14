@@ -93,12 +93,14 @@ jobs:
           path:  "Radio-Automation.zip"
           
       - name: Download Artifact
+        if: steps.versionize.outcome == 'success'
         uses: actions/download-artifact@v5
         with:
           artifact-ids: ${{ steps.artifact-upload-step.outputs.artifact-id }}
           path: downloaded-artifact
 
       - name: Create Release
+        if: steps.versionize.outcome == 'success'
         uses: softprops/action-gh-release@v2
         with:
           files: downloaded-artifact/*.* # Path to the downloaded artifact
