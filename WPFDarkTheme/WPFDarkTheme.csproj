@@ -3,7 +3,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
 	  <OutputType>Library</OutputType>
 	  <UseWPF>true</UseWPF>
-	  <Version>1.0.3</Version>
+	  <Version>1.0.4</Version>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
