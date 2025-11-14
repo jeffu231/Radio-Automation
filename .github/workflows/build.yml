@@ -1,0 +1,102 @@
+﻿name: Build and Publish Radio Automation
+
+on:
+  # trigger manual
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Radio Automation/**'
+env:
+  HUSKY: 0
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Display dotnet version
+        run: dotnet --version
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Setup git
+        run: |
+          git config --local user.email "git@k9kld.org"
+          git config --local user.name "git"
+
+      - name: Install Versionize
+        run: dotnet tool install --global Versionize
+
+      - name: Versioning
+        id: versionize
+        run: versionize --aggregate-pre-releases --skip-dirty
+        continue-on-error: true
+
+      - name: Test if release required
+        if: steps.versionize.outcome != 'success'
+        run: echo "Skipping Release. No release required."
+        
+      - name: Push changes to GitHub
+        if: steps.versionize.outcome == 'success'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          tags: true
+           
+      - name: Get current version
+        if: steps.versionize.outcome == 'success'
+        run: echo "VERSION=v$(versionize inspect)" >> $GITHUB_ENV
+
+      - name: Get current changelog
+        if: steps.versionize.outcome == 'success'
+        run: |
+          echo "$(versionize changelog)" > latest_changelog.md
+          cat latest_changelog.md
+            
+      - name: Build
+        if: steps.versionize.outcome == 'success'
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish
+        if: steps.versionize.outcome == 'success'
+        run: dotnet publish --configuration Release --no-build --property:publishDir=publish
+
+      - name: Upload artifact
+        id: artifact-upload-step
+        if: steps.versionize.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Radio Automation"
+          path:  "Radio Automation/publish/*.exe"
+          
+      - name: Download Artifact
+        uses: actions/download-artifact@v5
+        with:
+          artifact-ids: ${{ steps.artifact-upload-step.outputs.artifact-id }}
+          path: downloaded-artifact
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: downloaded-artifact/*.* # Path to the downloaded artifact
+          body_path: latest_changelog.md
+          name: "Release ${{env.VERSION}}"
+          tag_name: ${{env.VERSION}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
