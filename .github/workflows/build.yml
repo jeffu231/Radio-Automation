@@ -78,7 +78,8 @@ jobs:
         run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml --no-build /p:EnableWindowsTargeting=true
 
       - name: Zip files
-        shell: bash # Or use 'bash' for Linux
+        if: steps.versionize.outcome == 'success'
+        shell: bash
         run: |
           zip -r Radio-Automation.zip "Radio Automation/publish"
           
