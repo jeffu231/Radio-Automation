@@ -1,28 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
+	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>Y:\ClickOnce\Radio_Automation\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Unc</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>\\nas.home.kb9kld.org\safe\ClickOnce\Radio_Automation\</InstallUrl>
     <PublisherName>jtdev</PublisherName>
     <ProductName>Radio Automation</ProductName>
     <Company>jtdev</Company>
-    <ApplicationRevision>40</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
 	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	  <Version>1.0.2</Version>
   </PropertyGroup>

@@ -1,9 +1,0 @@
-C:\dev\Radio Automation\Schedule\obj\Debug\netstandard2.0\Schedule.csprojAssemblyReference.cache
-C:\dev\Radio Automation\Schedule\obj\Debug\netstandard2.0\Schedule.csproj.CoreCompileInputs.cache
-C:\dev\Radio Automation\Schedule\obj\Debug\netstandard2.0\Schedule.AssemblyInfoInputs.cache
-C:\dev\Radio Automation\Schedule\obj\Debug\netstandard2.0\Schedule.AssemblyInfo.cs
-C:\dev\Radio Automation\Schedule\bin\Debug\netstandard2.0\Schedule.deps.json
-C:\dev\Radio Automation\Schedule\bin\Debug\netstandard2.0\Schedule.dll
-C:\dev\Radio Automation\Schedule\bin\Debug\netstandard2.0\Schedule.pdb
-C:\dev\Radio Automation\Schedule\obj\Debug\netstandard2.0\Schedule.dll
-C:\dev\Radio Automation\Schedule\obj\Debug\netstandard2.0\Schedule.pdb
