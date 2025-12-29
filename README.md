@@ -1,6 +1,8 @@
-![GitHub release (with filter)](https://img.shields.io/github/v/release/jeffu231/Radio-Automation?logo=GitHub)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/jeffu231/Radio-Automation?logo=GitHub)](https://github.com/jeffu231/Radio-Automation/releases/latest)
 [![Static Badge](https://img.shields.io/badge/issue-tracker-blue.svg)](https://github.com/jeffu231/Radio-Automation/issues)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/jeffu231/Radio-Automation?link=https%3A%2F%2Fgithub.com%2Fjeffu231%2FRadio-Automation%2Fissues)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/jeffu231/Radio-Automation?link=https%3A%2F%2Fgithub.com%2Fjeffu231%2FRadio-Automation%2Fissues)](https://github.com/jeffu231/Radio-Automation/issues)
+
+
 
 # Radio-Automation
 
