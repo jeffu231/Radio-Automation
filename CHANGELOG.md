@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.0.5"></a>
+## [1.0.5](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.5) (2025-12-29)
+
+### Bug Fixes
+
+* Add logic to handle current song file in use without crashing ([2653cc8](https://www.github.com/jeffu231/Radio-Automation/commit/2653cc81879d72aa349f64003ca56324151184d1))
+
 <a name="1.0.4"></a>
 ## [1.0.4](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.4) (2025-11-14)
 

@@ -10,7 +10,7 @@
     <Company>jtdev</Company>
     <UseApplicationTrust>false</UseApplicationTrust>
 	  <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-	  <Version>1.0.4</Version>
+	  <Version>1.0.5</Version>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
