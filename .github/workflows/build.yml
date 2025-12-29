@@ -8,6 +8,10 @@ on:
       - master
     paths:
       - 'Radio Automation/**'
+    paths-ignore:
+      - '**/.gitignore'
+      - '**/README.md'
+      - '**/ClickOnceProfile.pubxml'
 env:
   HUSKY: 0
 
