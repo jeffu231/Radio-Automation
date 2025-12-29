@@ -1464,12 +1464,37 @@ namespace Radio_Automation.ViewModels
 
 		private void UpdateCurrentSong()
 		{
-			if(Directory.Exists(Path.GetDirectoryName(_settings.CurrentSongPath)))
+			if (Directory.Exists(Path.GetDirectoryName(_settings.CurrentSongPath)))
 			{
 				var currentSong = CurrentTrack != null ? CurrentTrack.FormattedName : "Nothing Playing";
-				File.WriteAllLines(_settings.CurrentSongPath, new []{currentSong});
+				try
+				{
+					var tryCount = 0;
+					using (FileStream fs = new FileStream(_settings.CurrentSongPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+					{
+						
+						while (!fs.CanWrite || tryCount > 10)
+						{
+							tryCount++;
+							Thread.Sleep(500);
+						}
+						// If we get here, the file is not in use by another process and we have permissions.
+					}
+					if (tryCount < 10)
+					{
+						File.WriteAllLines(_settings.CurrentSongPath, new[] { currentSong });
+					}
+					else
+					{
+						Log.Error("Unable to write current song file after multiple attempts. It may be in use by another process.");
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, "Unable to write current song file.");
+				}
 			}
-			else if(!string.IsNullOrEmpty(_settings.CurrentSongPath))
+			else if (!string.IsNullOrEmpty(_settings.CurrentSongPath))
 			{
 				Log.Error("Specified current song directory does not exist.");
 			}
