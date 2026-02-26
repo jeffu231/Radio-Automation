@@ -38,7 +38,7 @@ jobs:
         run: dotnet --version
 
       - name: Restore dependencies
-        run: dotnet restore --runtime win-x64
+        run: dotnet restore --runtime win-x64 /p:EnableWindowsTargeting=true
 
       - name: Setup git
         run: |
@@ -77,7 +77,7 @@ jobs:
             
       - name: Publish
         if: steps.versionize.outcome == 'success'
-        run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml
+        run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml /p:EnableWindowsTargeting=true
 
       - name: Zip files
         if: steps.versionize.outcome == 'success'
