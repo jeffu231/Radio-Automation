@@ -1,0 +1,45 @@
+{
+  "changelog": {
+    "header": "BuildTestConsole Changelog",
+    "includeAllCommits": false,
+    "skipDirty": true,
+    "aggregatePreReleases": true,
+    "sections": [
+      {
+        "type": "feat",
+        "section": "Features",
+        "hidden": false
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes",
+        "hidden": false
+      },
+      {
+        "type": "perf",
+        "section": "Performance",
+        "hidden": false
+      },
+      {
+         "type": "ci",
+         "section": "Continuous Integration",
+         "hidden": false
+      },
+      {
+          "type": "docs",
+          "section": "Documentation",
+          "hidden": false
+       },
+       {
+           "type": "log",
+           "section": "Logging",
+           "hidden": false
+        },
+        {
+            "type": "wip",
+            "section": "Work in Progress",
+            "hidden": false
+         }
+    ]
+  }
+}
