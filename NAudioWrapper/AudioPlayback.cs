@@ -45,16 +45,24 @@ namespace NAudioWrapper
 
 		public AudioPlayback(Device device)
 		{
-			var mmDevice = DeviceEnumerator.GetDevice(device.Id);
-			if (mmDevice != null && mmDevice.State == DeviceState.Active)
+			try
 			{
-				CurrentDevice = mmDevice;
+				var mmDevice = DeviceEnumerator.GetDevice(device.Id);
+				if (mmDevice != null && mmDevice.State == DeviceState.Active)
+				{
+					CurrentDevice = mmDevice;
+				}
+				else
+				{
+					CurrentDevice = mmDevice ??
+					                DeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+				}
 			}
-			else
+			catch (Exception e)
 			{
-				CurrentDevice = mmDevice ?? DeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+				Log.Error(e, $"An error occurred while initializing the audio device. Falling back to default device.");
+				CurrentDevice = DeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
 			}
-			
 		}
 
 		public static Device GetDefaultDevice()

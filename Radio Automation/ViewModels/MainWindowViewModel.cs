@@ -73,7 +73,7 @@ namespace Radio_Automation.ViewModels
 			TrackEndTime = DateTime.MinValue;
 			_playPositionTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(1)};
 			_playPositionTimer.Tick += PlayPositionTimer_Tick;
-			_playPositionTimer.IsEnabled = true;
+			_playPositionTimer.IsEnabled = false;
 
 			_pendingEventTimer = new DispatcherTimer{Interval = TimeSpan.FromSeconds(1)};
 			_pendingEventTimer.Tick += PendingEventTimer_Tick;
@@ -101,7 +101,7 @@ namespace Radio_Automation.ViewModels
 		{
 			await RestoreSettingsAsync();
 
-			ConfigurePrimaryAudioPlayer();
+			await ConfigurePrimaryAudioPlayer();
 
 			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
 			{
@@ -122,7 +122,7 @@ namespace Radio_Automation.ViewModels
 
 		}
 
-		private void ConfigurePrimaryAudioPlayer()
+		private async Task ConfigurePrimaryAudioPlayer()
 		{
 			_audioPlayer?.Dispose();
 
@@ -134,6 +134,12 @@ namespace Radio_Automation.ViewModels
 
 			VolumeChangedCommand.Execute();
 			Volume = _settings.Volume;
+
+			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
+			{
+				_settings.PrimaryOutputDevice = new Device(AudioPlayback.CurrentDevice, AudioPlayback.GetDefaultDevice().Id == AudioPlayback.CurrentDevice.ID);
+				await SaveSettingsAsync();
+			}
 		}
 
 		/// <inheritdoc />
@@ -902,7 +908,7 @@ namespace Radio_Automation.ViewModels
 				await SaveSettingsAsync();
 				if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
 				{
-					ConfigurePrimaryAudioPlayer();
+					await ConfigurePrimaryAudioPlayer();
 				}
 			}
 		}
@@ -1213,7 +1219,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private void VolumeChanged()
 		{
-			_audioPlayer.Volume = Volume/100;
+			_audioPlayer?.Volume = Volume/100;
 		}
 
 		#endregion
@@ -1250,6 +1256,7 @@ namespace Radio_Automation.ViewModels
 
 		private void PlaybackEnded()
 		{
+			_playPositionTimer.Stop();
 			TrackEndTime = DateTime.MinValue;
 			TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, false));
 			if (_playbackState == PlaybackState.Stopped)
