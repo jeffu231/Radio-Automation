@@ -16,6 +16,11 @@ namespace Radio_Automation.Models
 			_clockTimer.Start();
 		}
 
+		public void Stop()
+		{
+			_clockTimer.Stop();
+		}
+
 		private void _clockTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
 			UpdateTime();

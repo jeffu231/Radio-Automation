@@ -483,9 +483,13 @@ namespace Radio_Automation.ViewModels
 		/// <inheritdoc />
 		protected override async Task CloseAsync()
 		{
+			StopPlaying();
+			Clock.Stop();
+			_pendingEventTimer.Stop();
+			_weatherUpdateTimer.Stop();
+
 			var success = SaveSettingsAsync();
 			success.Wait(TimeSpan.FromSeconds(10));
-			StopPlaying();
 			_audioPlayer?.Dispose();
 			await base.CloseAsync();
 		}
