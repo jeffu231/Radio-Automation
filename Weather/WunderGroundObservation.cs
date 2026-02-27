@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Weather
 {
@@ -10,25 +10,26 @@ namespace Weather
 		    Imperial = new Imperial();
 	    }
 
-	    [JsonProperty("imperial")]
+	    [JsonInclude]
+		[JsonPropertyName("imperial")]
 		internal Imperial Imperial { get; set; }
 
-	    [JsonProperty("stationID")]
+	    [JsonPropertyName("stationID")]
 	    public string StationId { get; set; }
 
-	    [JsonProperty("obsTimeUtc")]
+	    [JsonPropertyName("obsTimeUtc")]
 	    public DateTime ObservationTime { get; set; }
 
-	    [JsonProperty("neighborhood")]
+	    [JsonPropertyName("neighborhood")]
 	    public string Name { get; set; }
 
-	    [JsonProperty("country")]
+	    [JsonPropertyName("country")]
 	    public string Country { get; set; }
 
-	    [JsonProperty("humidity")]
+	    [JsonPropertyName("humidity")]
 	    public double Humidity { get; set; }
 
-	    [JsonProperty("winddir")]
+	    [JsonPropertyName("winddir")]
 	    public uint WindDirection { get; set; }
 
 	    /// <inheritdoc />
@@ -61,31 +62,31 @@ namespace Weather
 
     class Imperial
     {
-	    [JsonProperty("temp")]
+	    [JsonPropertyName("temp")]
 	    public double Temp { get; set; }
 
-	    [JsonProperty("dewpt")]
+	    [JsonPropertyName("dewpt")]
 	    public double DewPoint { get; set; }
 	    
-	    [JsonProperty("heatIndex")]
+	    [JsonPropertyName("heatIndex")]
 	    public double HeatIndex { get; set; }
 
-	    [JsonProperty("windChill")]
+	    [JsonPropertyName("windChill")]
 	    public double WindChill { get; set; }
 
-	    [JsonProperty("windSpeed")]
+	    [JsonPropertyName("windSpeed")]
 	    public double WindSpeed { get; set; }
 
-	    [JsonProperty("windGust")]
+	    [JsonPropertyName("windGust")]
 	    public double WindGust { get; set; }
 
-	    [JsonProperty("pressure")]
+	    [JsonPropertyName("pressure")]
 	    public double Pressure { get; set; }
 
-	    [JsonProperty("precipRate")]
+	    [JsonPropertyName("precipRate")]
 	    public double PrecipRate { get; set; }
 
-	    [JsonProperty("precipTotal")]
+	    [JsonPropertyName("precipTotal")]
 	    public double PrecipTotal { get; set; }
     }
 }

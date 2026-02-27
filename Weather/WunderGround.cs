@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Weather
@@ -27,12 +28,8 @@ namespace Weather
 
 				try
 				{
-					HttpResponseMessage response = await _client.GetAsync(request);
-					if (response.IsSuccessStatusCode)
-					{
-						obs = await response.Content.ReadAsAsync<WundergroundObservations>();
-					}
-
+					obs = await _client.GetFromJsonAsync<WundergroundObservations>(request);
+					
 					if (obs != null && obs.Observations.Any())
 					{
 						return obs.Observations.First();
