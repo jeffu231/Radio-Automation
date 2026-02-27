@@ -1,36 +1,30 @@
-﻿using System;
+﻿using Catel;
+using Catel.Logging;
+using Catel.Reflection;
+using OneWay.M3U;
+using Radio_Automation.Extensions;
+using Radio_Automation.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Catel;
-using Catel.Logging;
-using Catel.Reflection;
-using Catel.Runtime.Serialization;
-using Catel.Runtime.Serialization.Json;
-using Newtonsoft.Json;
-using OneWay.M3U;
-using Radio_Automation.Extensions;
-using Radio_Automation.Models;
 using FileMode = System.IO.FileMode;
 
 namespace Radio_Automation.Services
 {
 	public class PersistenceService:IPersistenceService
 	{
-		private readonly IJsonSerializer _serializer;
-		private readonly ISerializationConfiguration _serializationConfiguration;
+		private readonly JsonSerializerOptions _serializerOptions;
 		private readonly string _settingsPath;
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-		public PersistenceService(IJsonSerializer serializer)
+		public PersistenceService(JsonSerializerOptions serializerOptions)
 		{
-			Argument.IsNotNull(() => serializer);
-			_serializer = serializer;
-			_serializer.WriteTypeInfo = false;
-			_serializer.PreserveReferences = false;
-			_serializationConfiguration = new JsonSerializationConfiguration { Formatting = Formatting.Indented };
+			Argument.IsNotNull(() => serializerOptions);
+			_serializerOptions = serializerOptions;
 			var assembly = AssemblyHelper.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
 
 			_settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), assembly.Company()??@"jtdev", assembly.Product() ?? @"Radio Automation", @"settings.json");
@@ -42,31 +36,32 @@ namespace Radio_Automation.Services
 		/// <inheritdoc />
 		public async Task<Playlist> LoadPlaylistAsync(string path)
 		{
-			return await Task.Factory.StartNew(() =>
+			if (File.Exists(path))
 			{
-				using (var fileStream = File.Open(path, FileMode.Open))
+				await using var fileStream = File.Open(path, FileMode.Open);
+				try
 				{
-					var pl = _serializer.Deserialize<Playlist>(fileStream, _serializationConfiguration);
+					var pl = await JsonSerializer.DeserializeAsync<Playlist>(fileStream, _serializerOptions);
 					pl?.CalculateTotalTime();
 					return pl;
 				}
-			});
+				catch
+				{
+					Log.Error($"Error loading playlist from path {path}");
+				}
+			}
+
+			return new Playlist();
 		}
 
 		/// <inheritdoc />
 		public async Task<bool> SavePlaylistAsync(Playlist p, string path)
 		{
-			return await Task.Factory.StartNew(() =>
-			{
-				using (var fileStream = File.Open(path, FileMode.Create))
-				{
-					_serializer.Serialize(p, fileStream, _serializationConfiguration);
-				}
-
-				return true;
-				
-			});
-
+			string jsonString = JsonSerializer.Serialize(p, _serializerOptions);
+			await using var fileStream2 = File.Open(path, FileMode.Create);
+			await using var writer = new StreamWriter(fileStream2); 
+			await writer.WriteAsync(jsonString);
+			return true;
 		}
 
 		/// <inheritdoc />
@@ -142,83 +137,59 @@ namespace Radio_Automation.Services
 		/// <inheritdoc />
 		public async Task<Settings> LoadSettingsAsync()
 		{
-			return await Task.Factory.StartNew(() =>
+			if (File.Exists(_settingsPath))
 			{
-				if (File.Exists(_settingsPath))
+				await using var fileStream = File.Open(_settingsPath, FileMode.Open);
+				try
 				{
-					using (var fileStream = File.Open(_settingsPath, FileMode.Open))
-					{
-						try
-						{
-							return _serializer.Deserialize<Settings>(fileStream, _serializationConfiguration);
-						}
-						catch
-						{
-							Log.Error($"Error loading settings from path {_settingsPath}");
-						}
-						
-					}
+					return await JsonSerializer.DeserializeAsync<Settings>(fileStream, _serializerOptions);
 				}
+				catch
+				{
+					Log.Error($"Error loading settings from path {_settingsPath}");
+				}
+			}
 
-				return new Settings();
-
-			});
+			return new Settings();
 		}
 
 		/// <inheritdoc />
 		public async Task<bool> SaveSettingsAsync(Settings settings)
 		{
-			return await Task.Factory.StartNew(() =>
-			{
-				using (var fileStream = File.Open(_settingsPath, FileMode.Create))
-				{
-					_serializer.Serialize(settings, fileStream, _serializationConfiguration);
-				}
-
-				return true;
-
-			});
+			string jsonString = JsonSerializer.Serialize(settings, _serializerOptions);
+			await using var fileStream2 = File.Open(_settingsPath, FileMode.Create);
+			await using var writer = new StreamWriter(fileStream2); 
+			await writer.WriteAsync(jsonString);
+			return true;
 		}
 
 		/// <inheritdoc />
 		public async Task<EventSchedule> LoadEventScheduleAsync(string path)
 		{
-			return await Task.Factory.StartNew(() =>
+			if (File.Exists(path))
 			{
-				if (File.Exists(path))
+				await using var fileStream = File.Open(path, FileMode.Open);
+				try
 				{
-					using (var fileStream = File.Open(path, FileMode.Open))
-					{
-						try
-						{
-							return _serializer.Deserialize<EventSchedule>(fileStream, _serializationConfiguration);
-						}
-						catch
-						{
-							Log.Error($"Error loading event schedule from path {path}");
-						}
-
-					}
+					return await JsonSerializer.DeserializeAsync<EventSchedule>(fileStream, _serializerOptions);
 				}
+				catch
+				{
+					Log.Error($"Error loading event schedule from path {path}");
+				}
+			}
 
-				return new EventSchedule();
-
-			});
+			return new EventSchedule();
 		}
 
 		/// <inheritdoc />
 		public async Task<bool> SaveEventScheduleAsync(EventSchedule eventSchedule, string path)
 		{
-			return await Task.Factory.StartNew(() =>
-			{
-				using (var fileStream = File.Open(path, FileMode.Create))
-				{
-					_serializer.Serialize(eventSchedule, fileStream, _serializationConfiguration);
-				}
-
-				return true;
-
-			});
+			string jsonString = JsonSerializer.Serialize(eventSchedule, _serializerOptions);
+			await using var fileStream2 = File.Open(path, FileMode.Create);
+			await using var writer = new StreamWriter(fileStream2);
+			await writer.WriteAsync(jsonString);
+			return true;
 		}
 
 		#endregion

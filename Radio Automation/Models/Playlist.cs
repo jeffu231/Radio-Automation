@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Catel.Collections;
 using Catel.Data;
 
@@ -82,6 +83,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Gets or sets the Tracks value.
 		/// </summary>
+		[JsonInclude]
 		public FastObservableCollection<Track> Tracks
 		{
 			get { return GetValue<FastObservableCollection<Track>>(TracksProperty); }

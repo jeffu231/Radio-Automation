@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 using Catel.Data;
 
 namespace Radio_Automation.Models
@@ -110,6 +111,7 @@ namespace Radio_Automation.Models
 		/// <summary>
 		/// Formatted track name
 		/// </summary>
+		[JsonIgnore]
 		public string FormattedName => $"{Artist} - {Name}";
 
 		#region Year property

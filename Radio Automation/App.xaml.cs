@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Catel.IoC;
+using Catel.Logging;
+using Radio_Automation.Services;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Catel.IoC;
-using Catel.Logging;
-using Catel.Runtime.Serialization.Json;
-using Radio_Automation.Services;
+using System.Xml.Serialization;
 
 namespace Radio_Automation
 {
@@ -26,7 +29,21 @@ namespace Radio_Automation
 			var serviceLocator = ServiceLocator.Default;//this.GetServiceLocator();
 			serviceLocator.RegisterType<IAudioTrackParserService, AudioTrackParserService>();
 			serviceLocator.RegisterType<IPersistenceService, PersistenceService>();
-			serviceLocator.RegisterType<IJsonSerializer, JsonSerializer>();
+
+			var options = new JsonSerializerOptions
+			{
+				WriteIndented = true,
+				DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+				TypeInfoResolver = new DefaultJsonTypeInfoResolver
+				{
+					//This ignores properties in the Catel ModelBase that are marked with XmlIgnore so 
+					//they will not be serialized by the Json serializer. They are ignored in Catels serializer, but we 
+					//want to use the System.TextJson serializer.
+					Modifiers = { IgnoreXmlIgnoredProperties }
+				},
+				Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+			};
+			serviceLocator.RegisterInstance(options);
 		}
 
 		#endregion
@@ -77,5 +94,21 @@ namespace Radio_Automation
 	        var message = string.Concat(exceptionMessage, terminatingMessage);
 	        Log.Error(exception, message);
 	    }
+
+		public static Action<JsonTypeInfo> IgnoreXmlIgnoredProperties { get; } = typeInfo =>
+		{
+			if (typeInfo.Kind != JsonTypeInfoKind.Object)
+				return;
+
+			foreach (var property in typeInfo.Properties)
+			{
+				// Check if the property has the XmlIgnoreAttribute
+				if (property.AttributeProvider?.IsDefined(typeof(XmlIgnoreAttribute), inherit: false) == true)
+				{
+					// Set the ShouldSerialize predicate to always return false (ignore)
+					property.ShouldSerialize = (obj, val) => false;
+				}
+			}
+		};
 	}
 }
