@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.1.0"></a>
+## [1.1.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.1.0) (2026-02-27)
+
+### Features
+
+* Preference for controlling shuffle when playlist rolls over ([bbd7db8](https://www.github.com/jeffu231/Radio-Automation/commit/bbd7db8f1afeca0bffc25a47f1d5fe9efa208fd2))
+
+### Continuous Integration
+
+* **Publish:** Bump Click Once Version ([c54ae80](https://www.github.com/jeffu231/Radio-Automation/commit/c54ae80b46e38babdeaed2772131eeed62897cc6))
+* **Publish:** Click Once version Update ([82cac6f](https://www.github.com/jeffu231/Radio-Automation/commit/82cac6fe9093eb7d260a5d9b4935078b9d035127))
+
 <a name="1.0.7"></a>
 ## [1.0.7](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.7) (2026-02-27)
 
