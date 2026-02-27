@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.0.7"></a>
+## [1.0.7](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.7) (2026-02-27)
+
+### Bug Fixes
+
+* Fix delay when closing the application ([7c9bf07](https://www.github.com/jeffu231/Radio-Automation/commit/7c9bf0777f663a71b668aade2cac664a34a7b272))
+* **Cleanup:** Remove unecessary code ([f03ba9e](https://www.github.com/jeffu231/Radio-Automation/commit/f03ba9e825fe229ebe645b77db7bc82d05e59a0e))
+* **Serialization:** Replace Catel Json Serializer with System.Text.Json ([e150a09](https://www.github.com/jeffu231/Radio-Automation/commit/e150a09272f1eac098c1e0c52c98cf9547fb38dd))
+
 <a name="1.0.6"></a>
 ## [1.0.6](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.0.6) (2026-02-26)
 
