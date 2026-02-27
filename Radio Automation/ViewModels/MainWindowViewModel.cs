@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -31,7 +30,6 @@ namespace Radio_Automation.ViewModels
 		private readonly ISelectDirectoryService _selectDirectoryService;
 		private readonly IAudioTrackParserService _audioTrackParserService;
 		private readonly IOpenFileService _openFileService;
-		private readonly ISaveFileService _saveFileService;
 		private readonly IPersistenceService _persistenceService;
 		private readonly IBusyIndicatorService _busyIndicatorService;
 
@@ -53,14 +51,13 @@ namespace Radio_Automation.ViewModels
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IBusyIndicatorService busyIndicatorService, 
-			ISaveFileService saveFileService, IDispatcherService dispatcherService)
+			IDispatcherService dispatcherService)
 		{
 			_wg = new WunderGround();
 			CurrentTrackIndex = -1;
 			_selectDirectoryService = selectDirectoryService;
 			_audioTrackParserService = audioTrackParserService;
 			_openFileService = openFileService;
-			_saveFileService = saveFileService;
 			_persistenceService = persistenceService;
 			_busyIndicatorService = busyIndicatorService;
 			_dispatcherService = dispatcherService;

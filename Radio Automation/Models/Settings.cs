@@ -1,5 +1,4 @@
 ﻿using Catel.Data;
-using Microsoft.VisualBasic.Logging;
 using NAudioWrapper;
 
 namespace Radio_Automation.Models
