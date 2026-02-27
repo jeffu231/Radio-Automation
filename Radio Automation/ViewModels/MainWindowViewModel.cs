@@ -1275,7 +1275,10 @@ namespace Radio_Automation.ViewModels
 				if (++CurrentTrackIndex >= Playlist.Tracks.Count)
 				{
 					CurrentTrackIndex = 0;
-					Shuffle();
+					if (_settings.ShufflePlaylist)
+					{
+						Shuffle();
+					}
 				}
 
 				StartPlay();

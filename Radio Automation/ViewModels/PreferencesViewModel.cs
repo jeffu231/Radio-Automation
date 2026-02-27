@@ -211,6 +211,25 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+		#region ShufflePlaylist property
+
+		/// <summary>
+		/// Gets or sets the ShufflePlaylist value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public bool ShufflePlaylist
+		{
+			get { return GetValue<bool>(ShufflePlaylistProperty); }
+			set { SetValue(ShufflePlaylistProperty, value); }
+		}
+
+		/// <summary>
+		/// ShufflePlaylist property data.
+		/// </summary>
+		public static readonly IPropertyData ShufflePlaylistProperty = RegisterProperty<bool>(nameof(ShufflePlaylist));
+
+		#endregion
+
 		#region Ok command
 
 		private TaskCommand _okCommand;
