@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -487,9 +488,7 @@ namespace Radio_Automation.ViewModels
 			Clock.Stop();
 			_pendingEventTimer.Stop();
 			_weatherUpdateTimer.Stop();
-
-			var success = SaveSettingsAsync();
-			success.Wait(TimeSpan.FromSeconds(10));
+			await SaveSettingsAsync().WaitAsync(TimeSpan.FromSeconds(10));
 			_audioPlayer?.Dispose();
 			await base.CloseAsync();
 		}
