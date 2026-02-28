@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.2.1"></a>
+## [1.2.1](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.2.1) (2026-02-28)
+
+### Continuous Integration
+
+* **Build:** Switch to windows-latest ([1b8c8c4](https://www.github.com/jeffu231/Radio-Automation/commit/1b8c8c4780a446b8e385db300965e4466bcc569a))
+
 <a name="1.2.0"></a>
 ## [1.2.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.2.0) (2026-02-28)
 
