@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.2.0"></a>
+## [1.2.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.2.0) (2026-02-28)
+
+### Features
+
+* **Serialization:** Remove Newtonsoft from Weather project ([66b6dee](https://www.github.com/jeffu231/Radio-Automation/commit/66b6deede32f99b111848319edd33d5928778c83))
+
+### Bug Fixes
+
+* **Serialization:** Clean up Newtonsoft redirects ([5d8202e](https://www.github.com/jeffu231/Radio-Automation/commit/5d8202e287c9db52eb8fd715421640da76b96450))
+
+### Continuous Integration
+
+* Remove pdb files from release builds ([7a1f39b](https://www.github.com/jeffu231/Radio-Automation/commit/7a1f39bd32068f26b9567f6d187ea565ca331afd))
+* **Build:** Update build and output paths ([335f2c3](https://www.github.com/jeffu231/Radio-Automation/commit/335f2c3e35837fa87c1d9c8e407eada20a7100ea))
+* **Installer:** Create a simple installer ([6ff1158](https://www.github.com/jeffu231/Radio-Automation/commit/6ff115858e090d633c4e15d51de9d39f6c615ca2))
+* **Publish:** Create true single file publish config ([8087577](https://www.github.com/jeffu231/Radio-Automation/commit/80875772ab3a1a50fa861d567663cc5d900c0085))
+
 <a name="1.1.0"></a>
 ## [1.1.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.1.0) (2026-02-27)
 
