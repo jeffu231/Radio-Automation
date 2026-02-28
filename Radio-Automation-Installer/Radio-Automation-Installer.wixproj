@@ -1,6 +1,6 @@
 ﻿<Project Sdk="WixToolset.Sdk/5.0.2">
   <PropertyGroup>
-	  <Version>1.1.0</Version>
+	  <Version>0.0.0</Version>
     <DefineConstants>
 		Manufacturer=JTDev;
 		ProductName=Radio Automation;

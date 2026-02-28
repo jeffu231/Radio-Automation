@@ -67,7 +67,7 @@ jobs:
            
       - name: Get current version
         if: steps.versionize.outcome == 'success'
-        run: echo "VERSION=v$(versionize inspect)" >> $GITHUB_ENV
+        run: echo "VERSION=$(versionize inspect)" >> $GITHUB_ENV
 
       - name: Get current changelog
         if: steps.versionize.outcome == 'success'
@@ -81,7 +81,7 @@ jobs:
         
       - name: Installer
         if: steps.versionize.outcome == 'success'
-        run: dotnet build -c Release /p:EnableWindowsTargeting=true
+        run: dotnet build -c Release /p:Version=${{env.VERSION}}
 
       - name: Upload artifact
         id: artifact-upload-step
@@ -105,6 +105,6 @@ jobs:
           files: downloaded-artifact/*.* # Path to the downloaded artifact
           body_path: latest_changelog.md
           name: "Release ${{env.VERSION}}"
-          tag_name: ${{env.VERSION}}
+          tag_name: "v${{env.VERSION}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
