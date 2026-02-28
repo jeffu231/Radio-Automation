@@ -5,5 +5,5 @@ bin
 obj
 packages
 /.vs
-*/publish
+publish
 Release

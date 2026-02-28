@@ -78,21 +78,18 @@ jobs:
       - name: Publish
         if: steps.versionize.outcome == 'success'
         run: dotnet publish '.\Radio Automation\Radio Automation.csproj' -p:PublishProfile=BuildProfile.pubxml /p:EnableWindowsTargeting=true
-
-      - name: Zip files
+        
+      - name: Installer
         if: steps.versionize.outcome == 'success'
-        shell: bash
-        run: |
-          cd "Radio Automation/publish"
-          zip -r ../../Radio-Automation.zip "Radio Automation"
-          
+        run: dotnet build -c Release /p:EnableWindowsTargeting=true
+
       - name: Upload artifact
         id: artifact-upload-step
         if: steps.versionize.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: "Radio Automation"
-          path:  "Radio-Automation.zip"
+          path:  "./Release/en-US/*.msi"
           
       - name: Download Artifact
         if: steps.versionize.outcome == 'success'

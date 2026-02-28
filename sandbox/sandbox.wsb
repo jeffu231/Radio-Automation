@@ -1,13 +1,8 @@
 <Configuration>
     <MappedFolders>
 		<MappedFolder>
-            <HostFolder>c:\Dev\Radio-Automation\Radio Automation\publish</HostFolder>
-            <SandboxFolder>c:\Dev\Radio-Automation\publish</SandboxFolder>
-            <ReadOnly>false</ReadOnly>
-        </MappedFolder>
-		<MappedFolder>
-            <HostFolder>c:\Dev\Radio-Automation\Radio Automation\Release</HostFolder>
-            <SandboxFolder>c:\Dev\Radio-Automation\Release</SandboxFolder>
+            <HostFolder>c:\Dev\Radio-Automation\</HostFolder>
+            <SandboxFolder>c:\Dev\Radio-Automation\</SandboxFolder>
             <ReadOnly>false</ReadOnly>
         </MappedFolder>
 		 <MappedFolder>

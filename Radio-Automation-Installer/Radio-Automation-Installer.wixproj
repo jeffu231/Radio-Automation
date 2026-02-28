@@ -1,14 +1,14 @@
 ﻿<Project Sdk="WixToolset.Sdk/5.0.2">
   <PropertyGroup>
-	  <Version>1.0.7</Version>
+	  <Version>1.1.0</Version>
     <DefineConstants>
 		Manufacturer=JTDev;
 		ProductName=Radio Automation;
-		PublishFolder=$(SolutionDir)\Radio Automation\publish\Radio Automation;
+		PublishFolder=$(SolutionDir)\publish\Radio Automation;
 		Version=$(Version);
 		ReleaseType=$(Environment)
 	</DefineConstants>
-	  <OutputPath>$(SolutionDir)\Radio Automation\Release</OutputPath>
+	  <OutputPath>$(SolutionDir)\Release</OutputPath>
 	  <OutputName>Radio-Automation-v$(Version)-$(Platform)</OutputName>
   </PropertyGroup>
 
