@@ -1,0 +1,14 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<StandardDirectory Id="ProgramFiles64Folder">
+			<Directory Id="ManufacturerFolder" Name="$(var.Manufacturer)">
+				<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
+			</Directory>
+		</StandardDirectory>
+		<StandardDirectory Id="ProgramMenuFolder">
+			<Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)"/>
+		</StandardDirectory>
+		<Icon Id="AppIcon" SourceFile="$(SolutionDir)\Assets\RadioAutomation.ico" />
+
+	</Fragment>
+</Wix>

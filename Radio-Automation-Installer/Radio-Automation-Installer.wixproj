@@ -1,0 +1,23 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+	  <Version>1.0.7</Version>
+    <DefineConstants>
+		Manufacturer=JTDev;
+		ProductName=Radio Automation;
+		PublishFolder=$(SolutionDir)\Radio Automation\publish\Radio Automation;
+		Version=$(Version);
+		ReleaseType=$(Environment)
+	</DefineConstants>
+	  <OutputPath>$(SolutionDir)\Radio Automation\Release</OutputPath>
+	  <OutputName>Radio-Automation-v$(Version)-$(Platform)</OutputName>
+  </PropertyGroup>
+
+	<Target Name="EchoVariables" BeforeTargets="Build">
+		<Message Text="Configuration: $(Configuration)" Importance="high" />
+		<Message Text="PublishFolder: $(PublishFolder)" Importance="high" />
+	</Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Radio Automation\Radio Automation.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,21 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package  
+		   Name="$(var.ProductName)" 
+		   Manufacturer="$(var.Manufacturer)" 
+		   Version="$(var.Version)"
+		   UpgradeCode="6E2AD06A-1289-4BDD-AF11-0C1774BCBF61">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+	<MediaTemplate EmbedCab="yes"/>
+
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <Feature Id="Main" Title="$(var.ProductName)" >
+	    <!-- Harvest a directory, excluding unnecessary files -->
+		<Files Include="$(var.PublishFolder)\**">
+			<Exclude Files="**\*.pdb"/>
+		</Files>
+	    <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+  </Package>
+</Wix>

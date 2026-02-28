@@ -1,0 +1,25 @@
+<Configuration>
+    <MappedFolders>
+		<MappedFolder>
+            <HostFolder>c:\Dev\Radio-Automation\Radio Automation\publish</HostFolder>
+            <SandboxFolder>c:\Dev\Radio-Automation\publish</SandboxFolder>
+            <ReadOnly>false</ReadOnly>
+        </MappedFolder>
+		<MappedFolder>
+            <HostFolder>c:\Dev\Radio-Automation\Radio Automation\Release</HostFolder>
+            <SandboxFolder>c:\Dev\Radio-Automation\Release</SandboxFolder>
+            <ReadOnly>false</ReadOnly>
+        </MappedFolder>
+		 <MappedFolder>
+            <HostFolder>c:\Dev\Radio-Automation\sandbox\scripts</HostFolder>
+            <SandboxFolder>c:\Dev\Radio-Automation\scripts</SandboxFolder>
+            <ReadOnly>true</ReadOnly>
+        </MappedFolder>
+    </MappedFolders>
+    <Networking>true</Networking>
+    <LogonCommand>
+		<Command>powershell -ExecutionPolicy Bypass -File c:\Dev\Radio-Automation\scripts\patch-sandbox.ps1</Command>
+        <Command>explorer "c:\Dev\Radio-Automation\scripts\startup.bat"</Command>
+    </LogonCommand>
+	<VGpu>Enable</VGpu>
+</Configuration>

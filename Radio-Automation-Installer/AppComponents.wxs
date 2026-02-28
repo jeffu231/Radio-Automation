@@ -1,0 +1,17 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+	  <DirectoryRef Id="ApplicationProgramsFolder">
+		  <Component Id="ApplicationShortcut" Guid="6E2AD06A-1289-4BDD-AF11-0C1774BCBF61">
+			  <Shortcut Id="ApplicationStartMenuShortcut"
+			            Name="$(var.ProductName)"
+			            Description="Software to automate playing songs"
+						Directory="ApplicationProgramsFolder"
+			            WorkingDirectory="INSTALLFOLDER"
+						Target="[INSTALLFOLDER]$(var.ProductName).exe"
+						Icon="AppIcon"/>
+			  <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+			  <RegistryValue Root="HKCU" Key="Software\$(Manufacturer)\$(ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+		  </Component>
+	  </DirectoryRef>
+  </Fragment>
+</Wix>
