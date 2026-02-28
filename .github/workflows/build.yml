@@ -67,7 +67,12 @@ jobs:
            
       - name: Get current version
         if: steps.versionize.outcome == 'success'
-        run: echo "VERSION=$(versionize inspect)" >> $GITHUB_ENV
+        run: |
+            APPVERSION=$(versionize inspect)
+            echo "VERSION is: $APPVERSION"
+            echo "VERSION=$APPVERSION" >> $GITHUB_ENV
+            echo "VERSION=$APPVERSION" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Get current changelog
         if: steps.versionize.outcome == 'success'
