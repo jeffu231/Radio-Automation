@@ -79,6 +79,7 @@ jobs:
         run: |
           echo "$(versionize changelog)" > latest_changelog.md
           cat latest_changelog.md
+        shell: bash
             
       - name: Publish
         if: steps.versionize.outcome == 'success'
