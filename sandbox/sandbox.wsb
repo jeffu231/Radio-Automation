@@ -13,7 +13,7 @@
     </MappedFolders>
     <Networking>true</Networking>
     <LogonCommand>
-		<Command>powershell -ExecutionPolicy Bypass -File c:\Dev\Radio-Automation\scripts\patch-sandbox.ps1</Command>
+	    <Command>cmd.exe /c reg add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Policy" /v VerifiedAndReputablePolicyState /t REG_DWORD /d 0 /f &amp;&amp; C:\Windows\System32\CiTool.exe -r</Command>
         <Command>explorer "c:\Dev\Radio-Automation\scripts\startup.bat"</Command>
     </LogonCommand>
 	<VGpu>Enable</VGpu>
