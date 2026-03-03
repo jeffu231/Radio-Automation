@@ -67,9 +67,8 @@ namespace NAudioWrapper
 
 		public static bool HasDefaultDevice()
 		{
-			return false;
-			//var device = GetDefaultMMDevice();
-			//return device is not null;
+			var device = GetDefaultMMDevice();
+			return device is not null;
 		}
 
 		public static Device GetDefaultDevice()
