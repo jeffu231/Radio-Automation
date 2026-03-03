@@ -8,7 +8,10 @@ namespace Radio_Automation.Models
 		public Settings()
 		{
 			Volume = 50;
-			PrimaryOutputDevice = AudioPlayback.GetDefaultDevice();
+			if (AudioPlayback.HasDefaultDevice())
+			{
+				PrimaryOutputDevice = AudioPlayback.GetDefaultDevice();
+			}
 			UseWUnderground = true;
 			MqttBrokerPort = 1883;
 		}

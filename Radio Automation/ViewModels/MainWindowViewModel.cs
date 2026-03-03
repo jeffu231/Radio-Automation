@@ -124,6 +124,11 @@ namespace Radio_Automation.ViewModels
 		{
 			_audioPlayer?.Dispose();
 
+			if (_settings.PrimaryOutputDevice == null)
+			{
+				UpdateCommandStates();
+				return;
+			}
 			_audioPlayer = new AudioPlayback(_settings.PrimaryOutputDevice);
 			_audioPlayer.PlaybackPaused += PlaybackPaused;
 			_audioPlayer.PlaybackResumed += PlaybackResumed;
@@ -138,6 +143,7 @@ namespace Radio_Automation.ViewModels
 				_settings.PrimaryOutputDevice = new Device(AudioPlayback.CurrentDevice, AudioPlayback.GetDefaultDevice().Id == AudioPlayback.CurrentDevice.ID);
 				await SaveSettingsAsync();
 			}
+			UpdateCommandStates();
 		}
 
 		/// <inheritdoc />
@@ -980,7 +986,7 @@ namespace Radio_Automation.ViewModels
 		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
 		private bool CanPlayPause()
 		{
-			return true;
+			return AudioPlayback.CurrentDevice != null && Playlist.Tracks.Count > 0;
 		}
 
 		#endregion

@@ -65,16 +65,28 @@ namespace NAudioWrapper
 			}
 		}
 
+		public static bool HasDefaultDevice()
+		{
+			return false;
+			//var device = GetDefaultMMDevice();
+			//return device is not null;
+		}
+
 		public static Device GetDefaultDevice()
 		{
 			var mmDevice = GetDefaultMMDevice();
 			return new Device(mmDevice, true);
 		}
 
-		private static MMDevice GetDefaultMMDevice()
+		private static MMDevice? GetDefaultMMDevice()
 		{
 			var deviceEnumerator = new MMDeviceEnumerator();
-			return deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+			if (deviceEnumerator.HasDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia))
+			{
+				return deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+			}
+
+			return null;
 		}
 
 		public static List<Device> GetActiveDevices()
