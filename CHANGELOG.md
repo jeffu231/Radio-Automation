@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.4.1"></a>
+## [1.4.1](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.1) (2026-03-03)
+
+### Bug Fixes
+
+* Fix hard crash when no default audio devies are available ([2220af5](https://www.github.com/jeffu231/Radio-Automation/commit/2220af5afaf533d3e01305c8583dac887e6ce908))
+
 <a name="1.4.0"></a>
 ## [1.4.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.0) (2026-02-28)
 
