@@ -1,0 +1,37 @@
+﻿<catel:Window x:Class="Radio_Automation.Views.InternetStreamEntryWindow"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:catel="http://schemas.catelproject.com"
+              xmlns:viewModels="clr-namespace:Radio_Automation.ViewModels"
+              mc:Ignorable="d"
+              Title="{Binding Title}" Height="200" Width="500" SizeToContent="Height"
+              WindowStartupLocation="CenterOwner"
+              Background="{StaticResource BackColorBrush}"
+              Foreground="{StaticResource ForeColorBrush}">
+    <DockPanel d:DataContext="{d:DesignInstance Type=viewModels:InternetStreamEntryViewModel, IsDesignTimeCreatable=True}">
+        <WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
+            <Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
+            <Button Content="Cancel" IsCancel="True"  Style="{StaticResource RowButtonStyle}"/>
+        </WrapPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <catel:InfoBarMessageControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <Label Content="Stream Name:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding StreamName, UpdateSourceTrigger=PropertyChanged,
+                ValidatesOnDataErrors=True, NotifyOnValidationError=True}"/>
+            <Label Content="Stream URL:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Text="{Binding StreamUrl, UpdateSourceTrigger=PropertyChanged,
+                ValidatesOnDataErrors=True, NotifyOnValidationError=True}"/>
+        </Grid>
+    </DockPanel>
+</catel:Window>

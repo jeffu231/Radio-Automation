@@ -679,6 +679,7 @@
                             <Setter Property="utils:TextBoxExtender.SelectAllOnFocus" Value="False"/>
                         </Trigger>
                         <Trigger Property="Validation.HasError" Value="true">
+                            <Setter Property="BorderBrush" TargetName="Background" Value="Red"/>
                             <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self},
                                         Path=(Validation.Errors)[0].ErrorContent}"/>
                         </Trigger>

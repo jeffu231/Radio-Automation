@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Threading;
+using Radio_Automation.Views;
 using Weather;
 
 namespace Radio_Automation.ViewModels
@@ -760,23 +761,30 @@ namespace Radio_Automation.ViewModels
 
 		#region AddInternetStream command
 
-		private Command _addInternetStreamCommand;
+		private TaskCommand _addInternetStreamCommand;
 
 		/// <summary>
 		/// Gets the AddInternetStream command.
 		/// </summary>
-		public Command AddInternetStreamCommand
+		public TaskCommand AddInternetStreamCommand
 		{
-			get { return _addInternetStreamCommand ?? (_addInternetStreamCommand = new Command(AddInternetStream)); }
+			get { return _addInternetStreamCommand ??= new TaskCommand(AddInternetStream); }
 		}
 
 		/// <summary>
 		/// Method to invoke when the AddInternetStream command is executed.
 		/// </summary>
-		private void AddInternetStream()
+		private async Task AddInternetStream()
 		{
-			var stream = new Track("HalloweenRadio.net", "http://stream.zenolive.com/3yaezmm1h3quv");
-			Playlist.Tracks.Add(stream);
+			var dependencyResolver = this.GetDependencyResolver();
+			var uiVisualizerService = dependencyResolver.Resolve<IUIVisualizerService>();
+			InternetStreamEntryViewModel viewModel = new InternetStreamEntryViewModel();
+			var ok = await uiVisualizerService.ShowDialogAsync(viewModel);
+			if (ok.DialogResult.HasValue && ok.DialogResult.Value)
+			{
+				var stream = new Track(viewModel.StreamName, viewModel.StreamUrl);
+				Playlist.Tracks.Add(stream);
+			}
 		}
 
 		#endregion
