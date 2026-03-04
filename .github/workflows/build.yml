@@ -38,7 +38,7 @@ jobs:
         run: dotnet --version
 
       - name: Restore dependencies
-        run: dotnet restore --runtime win-x64 /p:EnableWindowsTargeting=true
+        run: dotnet restore --runtime win-x64
 
       - name: Setup git
         run: |
@@ -114,3 +114,9 @@ jobs:
           tag_name: "v${{env.VERSION}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: JTDev.RadioAutomation
+          installers-regex: '\.msi$' # Only .msi files
+          token: ${{ secrets.WINGET_TOKEN }}
