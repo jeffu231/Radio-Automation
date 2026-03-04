@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.4.3"></a>
+## [1.4.3](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.3) (2026-03-04)
+
+### Continuous Integration
+
+* Remove click once publishing now that we have a proper msi ([8a54a38](https://www.github.com/jeffu231/Radio-Automation/commit/8a54a385055e74ea9e050e10dd8bfd49daa388cb))
+* Specify version in winget releaser action ([6eb26f1](https://www.github.com/jeffu231/Radio-Automation/commit/6eb26f1c9083aca747e38f5d662684f37d1dff3e))
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.2) (2026-03-04)
 
