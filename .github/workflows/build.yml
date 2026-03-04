@@ -98,7 +98,7 @@ jobs:
           
       - name: Download Artifact
         if: steps.versionize.outcome == 'success'
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           artifact-ids: ${{ steps.artifact-upload-step.outputs.artifact-id }}
           path: downloaded-artifact
