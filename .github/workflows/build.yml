@@ -114,9 +114,13 @@ jobs:
           tag_name: "v${{env.VERSION}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: vedantmgoyal9/winget-releaser@main
+      
+      - name: Publish to Winget
+        if: steps.versionize.outcome == 'success'
+        uses: vedantmgoyal9/winget-releaser@main
         with:
           identifier: JTDev.RadioAutomation
           installers-regex: '\.msi$' # Only .msi files
           token: ${{ secrets.WINGET_TOKEN }}
+          version: ${{env.VERSION}}
+          release-tag: v${{env.VERSION}}
