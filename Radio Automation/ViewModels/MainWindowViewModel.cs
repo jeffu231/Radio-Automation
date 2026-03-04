@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.Versioning;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using Catel.Collections;
+﻿using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.Logging;
@@ -20,6 +11,17 @@ using Radio_Automation.Extensions;
 using Radio_Automation.Messaging;
 using Radio_Automation.Models;
 using Radio_Automation.Services;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Versioning;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Automation;
+using System.Windows.Threading;
 using Weather;
 
 namespace Radio_Automation.ViewModels
@@ -32,6 +34,7 @@ namespace Radio_Automation.ViewModels
 		private readonly IOpenFileService _openFileService;
 		private readonly IPersistenceService _persistenceService;
 		private readonly IBusyIndicatorService _busyIndicatorService;
+		private readonly IMessageService _messageService;
 
 		//Logging
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
@@ -51,7 +54,7 @@ namespace Radio_Automation.ViewModels
 
 		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
 			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IBusyIndicatorService busyIndicatorService, 
-			IDispatcherService dispatcherService)
+			IDispatcherService dispatcherService, IMessageService messageService)
 		{
 			_wg = new WunderGround();
 			CurrentTrackIndex = -1;
@@ -61,6 +64,7 @@ namespace Radio_Automation.ViewModels
 			_persistenceService = persistenceService;
 			_busyIndicatorService = busyIndicatorService;
 			_dispatcherService = dispatcherService;
+			_messageService = messageService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
 			SelectedTracks = new ObservableCollection<Track>();
@@ -1247,12 +1251,11 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async Task ShowAboutAsync()
 		{
-			await Task.CompletedTask;
-			//if (ApplicationDeployment.IsNetworkDeployed)
-			//{
-			//	var version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
-			//	await _messageService.ShowInformationAsync(version, "Version");
-			//}
+			Version appVersion = Assembly.GetEntryAssembly()?.GetName().Version;
+			if (appVersion is not null)
+			{
+				await _messageService.ShowInformationAsync($"Radio Automation version {appVersion.ToString()}");
+			}
 		}
 
 		#endregion
