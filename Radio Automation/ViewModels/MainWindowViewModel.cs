@@ -470,6 +470,24 @@ namespace Radio_Automation.ViewModels
 
 		#endregion
 
+		#region StatusMessage property
+
+		/// <summary>
+		/// Gets or sets the StatusMessage value.
+		/// </summary>
+		public string StatusMessage
+		{
+			get { return GetValue<string>(StatusMessageProperty); }
+			set { SetValue(StatusMessageProperty, value); }
+		}
+
+		/// <summary>
+		/// StatusMessage property data.
+		/// </summary>
+		public static readonly IPropertyData StatusMessageProperty = RegisterProperty<string>(nameof(StatusMessage), string.Empty);
+
+		#endregion
+
 		#region SelectedTracks property
 
 		/// <summary>
@@ -988,6 +1006,9 @@ namespace Radio_Automation.ViewModels
 				}
 				else
 				{
+					CurrentTrack.IsValid = false;
+					Log.Error($"Could not play track {CurrentTrack.FormattedName} on path {CurrentTrack.Path}. Track has been marked invalid.");
+					StatusMessage = $"Could not play track {CurrentTrack.FormattedName}.";
 					PlaybackEnded();
 				}
 			}
@@ -1299,7 +1320,14 @@ namespace Radio_Automation.ViewModels
 					}
 				}
 
-				StartPlay();
+				if(Playlist.Tracks.Any(x => x.IsValid))
+				{
+					StartPlay();
+				} 
+				else
+				{
+					StopPlaying();
+				}
 			}
 		}
 
@@ -1395,7 +1423,12 @@ namespace Radio_Automation.ViewModels
 			if (CurrentTrackIndex >= 0)
 			{
 				CurrentTrack = Playlist.Tracks[CurrentTrackIndex];
-				NextTrack = CurrentTrackIndex + 1 < Playlist.Tracks.Count ? Playlist.Tracks[CurrentTrackIndex + 1] : null;
+				do
+				{
+					NextTrack = CurrentTrackIndex + 1 < Playlist.Tracks.Count ? Playlist.Tracks[CurrentTrackIndex + 1] : null;
+				}
+				while (NextTrack is { IsValid: false });
+
 			}
 			else
 			{

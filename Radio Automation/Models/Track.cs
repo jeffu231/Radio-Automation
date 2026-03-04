@@ -204,6 +204,25 @@ namespace Radio_Automation.Models
 
 		#endregion
 
+		#region IsValid property
+
+		/// <summary>
+		/// Gets or sets the IsValid value. Used to determine if the track is valid and can be played. If false, the track will be skipped during playback.
+		/// </summary>
+		[JsonIgnore]
+		public bool IsValid
+		{
+			get { return GetValue<bool>(IsTrackInvalidProperty); }
+			set { SetValue(IsTrackInvalidProperty, value); }
+		}
+
+		/// <summary>
+		/// IsValid property data.
+		/// </summary>
+		public static readonly IPropertyData IsTrackInvalidProperty = RegisterProperty<bool>(nameof(IsValid), true);
+
+		#endregion
+
 		public string GetStringTags(List<Tag> tags)
 		{
 			StringBuilder sb = new StringBuilder();

@@ -98,7 +98,7 @@
 			<StatusBarItem>
 				<StackPanel Orientation="Horizontal">
 
-					<TextBlock Text="Status bar"></TextBlock>
+					<TextBlock Text="{Binding StatusMessage}"></TextBlock>
 				</StackPanel>
 			</StatusBarItem>
 		</StatusBar>
