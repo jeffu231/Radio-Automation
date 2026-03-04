@@ -14,6 +14,7 @@ using Radio_Automation.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -884,7 +885,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private void Help()
 		{
-			// TODO: Handle command logic here
+			OpenHelpUrl();
 		}
 
 		#endregion
@@ -1615,6 +1616,26 @@ namespace Radio_Automation.ViewModels
 			}
 
 			_audioPlayer.Volume = Volume;
+		}
+
+		private void OpenHelpUrl()
+		{
+			OpenUrl("https://github.com/jeffu231/Radio-Automation/wiki");
+		}
+
+		private void OpenUrl(string url)
+		{
+			try
+			{
+				// Use Process.Start to open the URL in the default browser.
+				// On .NET Core/5/6+, it is recommended to use ProcessStartInfo for cross-platform compatibility
+				// and to ensure UseShellExecute is true for Windows.
+				Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, $"Error opening URL: {url}");
+			}
 		}
 	}
 }
