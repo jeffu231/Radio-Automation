@@ -30,6 +30,8 @@ namespace Radio_Automation.ViewModels
 {
 	public class MainWindowViewModel: ViewModelBase
 	{
+		private const string WindowTitleBase = "Radio Automation";
+
 		//Services injected
 		private readonly ISelectDirectoryService _selectDirectoryService;
 		private readonly IAudioTrackParserService _audioTrackParserService;
@@ -110,6 +112,8 @@ namespace Radio_Automation.ViewModels
 			if (!string.IsNullOrEmpty(_settings.LastPlaylistPath))
 			{
 				Playlist = await _persistenceService.LoadPlaylistAsync(_settings.LastPlaylistPath);
+				Path.GetFileName(_settings.LastPlaylistPath);
+				UpdateTitle();
 			}
 
 			await UpdateWeatherData();
@@ -152,9 +156,6 @@ namespace Radio_Automation.ViewModels
 			UpdateCommandStates();
 		}
 
-		/// <inheritdoc />
-		public override string Title => @"Radio Automation";
-
         #endregion
 
         private void PlaylistAction(PlaylistMessage message)
@@ -191,6 +192,11 @@ namespace Radio_Automation.ViewModels
 		private enum PlaybackState
 		{
 			Playing, Stopped, Paused
+		}
+
+		private void UpdateTitle()
+		{
+			Title = string.IsNullOrEmpty(Playlist.Name)?WindowTitleBase:$"{WindowTitleBase} - {Playlist.Name}";
 		}
 
 		#region Playlist property
@@ -577,6 +583,7 @@ namespace Radio_Automation.ViewModels
 				_busyIndicatorService.Show();
 				Playlist = await _persistenceService.LoadPlaylistAsync(result.FileName);
 				_settings.LastPlaylistPath = result.FileName;
+				UpdateTitle();
 				_busyIndicatorService.Hide();
 			}
 		}
