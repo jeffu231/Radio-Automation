@@ -13,6 +13,8 @@ REM C:\users\WDAGUtilityAccount\Downloads\aspcore-runtime.exe /norestart /quiet
 REM Install VC Redist
 REM C:\Dev\Vixen\Installer\Redist\VC_redist.x64.exe /install /passive /norestart
 
+REM PowerShell Start-Process PowerShell -WindowStyle Normal -WorkingDirectory 'C:\Dev\Radio-Automation\scripts' -ArgumentList '-ExecutionPolicy Bypass -NoExit -NoLogo -File pre-install.ps1'
+
 REM Launch App install panel
 appwiz.cpl
 
