@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.4.2"></a>
+## [1.4.2](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.2) (2026-03-04)
+
+### Bug Fixes
+
+* Add a simple about dialog to show version ([233a663](https://www.github.com/jeffu231/Radio-Automation/commit/233a663f245198bbe796d30fa5475fec377a1642))
+* Add link for help to github wiki ([6d9158c](https://www.github.com/jeffu231/Radio-Automation/commit/6d9158c0ebed90ace5dc3b1b78ebbf416793b2d6))
+* Add logic to mark tracks not found invalid ([431a593](https://www.github.com/jeffu231/Radio-Automation/commit/431a5937b7b368fa10ae0978a82fea3344609c3a))
+* Add playlist name to the title bar ([c7398c6](https://www.github.com/jeffu231/Radio-Automation/commit/c7398c67afa9e74b5b611dcf8afa3292f0ff2cf0))
+* Fix add internet stream to have an input dialog ([69cc927](https://www.github.com/jeffu231/Radio-Automation/commit/69cc92731e25783a7f5043fd73568f37eb18c82c))
+* Remove test code for default device ([c4209c9](https://www.github.com/jeffu231/Radio-Automation/commit/c4209c96e0778b66efc4673f893c35f3df815fc7))
+
+### Continuous Integration
+
+* Add action to update winget ([773e8ef](https://www.github.com/jeffu231/Radio-Automation/commit/773e8ef72d3c029297e1b593955a068131e8ed6b))
+* Update to use global.json and bump action versions ([5a87522](https://www.github.com/jeffu231/Radio-Automation/commit/5a875227d82cd579f3253197420aa2df4c624997))
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.1) (2026-03-03)
 
