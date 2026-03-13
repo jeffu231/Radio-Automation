@@ -74,11 +74,24 @@ The event section shows upcoming events from the scheduler and if they are immed
 
 Support for getting current temperature / humidity from Wunderground via their API. You will need to have an API key for Wunderground and the station id for the location you want to use. This information can then be used for automated temperature bumpers.
 
-### Support
+## Install
+
+It is recommended to use the installer for the latest release. You can find the latest release on GitHub via the release link above.
+
+
+Or via Winget installer.
+
+```ps
+winget install JTDev.RadioAutomation
+```
+
+More info on Winget can be found here: [Winget Installer](https://docs.microsoft.com/en-us/windows/package-manager/winget/)
+
+## Support
 
 While there is no formal support for this software, you can open an issue on GitHub if you find a bug or have a question.
 
-#### License
+### License
 
 Software is released under the GPL v3 and is free to use under those terms.
 
