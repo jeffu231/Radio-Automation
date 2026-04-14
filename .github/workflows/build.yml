@@ -12,6 +12,8 @@ on:
       - '.github/**'
       - 'CHANGELOG.md'
       - '.editorconfig'
+      - 'qodana.yml'
+      - 'CLAUDE.md'
 
 env:
   HUSKY: 0
@@ -105,7 +107,7 @@ jobs:
 
       - name: Create Release
         if: steps.versionize.outcome == 'success'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: downloaded-artifact/*.* # Path to the downloaded artifact
           body_path: latest_changelog.md
