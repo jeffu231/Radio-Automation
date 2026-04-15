@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.5.0"></a>
+## [1.5.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.5.0) (2026-04-15)
+
+### Features
+
+* **Song publish:** Added ability to publish song info to an MQTT topic ([d66629a](https://www.github.com/jeffu231/Radio-Automation/commit/d66629a903581b2a6ea4ea3f1889c07dbad083b1))
+
+### Documentation
+
+* Add Claude file to describe the project ([3ae8422](https://www.github.com/jeffu231/Radio-Automation/commit/3ae842221f13c2f55ea21172eb23f6cbe63b0a80))
+
 <a name="1.4.4"></a>
 ## [1.4.4](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.4) (2026-04-15)
 
