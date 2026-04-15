@@ -1,4 +1,4 @@
-﻿using Catel.Collections;
+using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.Logging;
@@ -50,15 +50,16 @@ namespace Radio_Automation.ViewModels
 		private readonly DispatcherTimer _weatherUpdateTimer;
 		private readonly EventScheduler _eventScheduler;
 		private readonly MqttEventListener _mqttEventListener;
+		private readonly IMqttPublisherService _mqttPublisher;
 		private EventSchedule _eventSchedule;
 		private readonly Queue<Event> _eventQueue = new Queue<Event>();
 		private Settings _settings = new Settings();
 		private readonly WunderGround _wg;
         private readonly IDispatcherService _dispatcherService;
 
-		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService, 
-			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IBusyIndicatorService busyIndicatorService, 
-			IDispatcherService dispatcherService, IMessageService messageService)
+		public MainWindowViewModel(ISelectDirectoryService selectDirectoryService, IOpenFileService openFileService,
+			IAudioTrackParserService audioTrackParserService, IPersistenceService persistenceService, IBusyIndicatorService busyIndicatorService,
+			IDispatcherService dispatcherService, IMessageService messageService, IMqttPublisherService mqttPublisherService)
 		{
 			_wg = new WunderGround();
 			CurrentTrackIndex = -1;
@@ -69,6 +70,7 @@ namespace Radio_Automation.ViewModels
 			_busyIndicatorService = busyIndicatorService;
 			_dispatcherService = dispatcherService;
 			_messageService = messageService;
+			_mqttPublisher = mqttPublisherService;
 
 			PendingEvents = new ObservableCollection<PendingEvent>();
 			SelectedTracks = new ObservableCollection<Track>();
@@ -123,9 +125,11 @@ namespace Radio_Automation.ViewModels
 			_eventScheduler.LoadSchedule(_eventSchedule);
 
 			await _mqttEventListener.Connect(_settings);
+			if (_settings.EnableSongToMqtt && !string.IsNullOrEmpty(_settings.MqttBroker))
+				await _mqttPublisher.ConnectAsync(_settings);
 
 			await _mqttEventListener.LoadSchedule(_eventSchedule);
-			
+
 			PlaylistMessage.Register(this, PlaylistAction);
 
 		}
@@ -778,6 +782,8 @@ namespace Radio_Automation.ViewModels
 			_eventSchedule = viewModel.EventSchedule;
 			PendingEvents.Clear();
 			await _mqttEventListener.Connect(_settings);
+			if (_settings.EnableSongToMqtt && !string.IsNullOrEmpty(_settings.MqttBroker))
+				await _mqttPublisher.ConnectAsync(_settings);
 			_eventScheduler.LoadSchedule(_eventSchedule);
 			await _mqttEventListener.LoadSchedule(_eventSchedule);
 		}
@@ -954,6 +960,8 @@ namespace Radio_Automation.ViewModels
 				{
 					await ConfigurePrimaryAudioPlayer();
 				}
+				if (_settings.EnableSongToMqtt && !string.IsNullOrEmpty(_settings.MqttBroker))
+					await _mqttPublisher.ConnectAsync(_settings);
 			}
 		}
 
@@ -1532,39 +1540,53 @@ namespace Radio_Automation.ViewModels
 
 		private void UpdateCurrentSong()
 		{
-			if (Directory.Exists(Path.GetDirectoryName(_settings.CurrentSongPath)))
+			var currentSong = CurrentTrack != null ? CurrentTrack.FormattedName : "Nothing Playing";
+
+			if (_settings.EnableSongToFile)
 			{
-				var currentSong = CurrentTrack != null ? CurrentTrack.FormattedName : "Nothing Playing";
-				try
+				if (Directory.Exists(Path.GetDirectoryName(_settings.CurrentSongPath)))
 				{
-					var tryCount = 0;
-					using (FileStream fs = new FileStream(_settings.CurrentSongPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+					try
 					{
-						
-						while (!fs.CanWrite || tryCount > 10)
+						var tryCount = 0;
+						using (FileStream fs = new FileStream(_settings.CurrentSongPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
 						{
-							tryCount++;
-							Thread.Sleep(500);
+							while (!fs.CanWrite || tryCount > 10)
+							{
+								tryCount++;
+								Thread.Sleep(500);
+							}
+							// If we get here, the file is not in use by another process and we have permissions.
 						}
-						// If we get here, the file is not in use by another process and we have permissions.
+						if (tryCount < 10)
+						{
+							File.WriteAllLines(_settings.CurrentSongPath, new[] { currentSong });
+						}
+						else
+						{
+							Log.Error("Unable to write current song file after multiple attempts. It may be in use by another process.");
+						}
 					}
-					if (tryCount < 10)
+					catch (Exception ex)
 					{
-						File.WriteAllLines(_settings.CurrentSongPath, new[] { currentSong });
-					}
-					else
-					{
-						Log.Error("Unable to write current song file after multiple attempts. It may be in use by another process.");
+						Log.Error(ex, "Unable to write current song file.");
 					}
 				}
-				catch (Exception ex)
+				else if (!string.IsNullOrEmpty(_settings.CurrentSongPath))
 				{
-					Log.Error(ex, "Unable to write current song file.");
+					Log.Error("Specified current song directory does not exist.");
 				}
 			}
-			else if (!string.IsNullOrEmpty(_settings.CurrentSongPath))
+
+			if (_settings.EnableSongToMqtt && !string.IsNullOrEmpty(_settings.MqttSongTopic))
 			{
-				Log.Error("Specified current song directory does not exist.");
+				var payload = System.Text.Json.JsonSerializer.Serialize(new
+				{
+					title  = CurrentTrack?.Name   ?? string.Empty,
+					artist = CurrentTrack?.Artist ?? string.Empty,
+					album  = CurrentTrack?.Album  ?? string.Empty
+				});
+				_ = _mqttPublisher.PublishAsync(_settings.MqttSongTopic, payload);
 			}
 		}
 

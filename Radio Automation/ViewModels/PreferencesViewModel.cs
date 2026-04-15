@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Services;
 using NAudioWrapper;
 using Radio_Automation.Models;
+using IFieldValidationResult = Catel.Data.IFieldValidationResult;
 
 namespace Radio_Automation.ViewModels
 {
@@ -15,6 +16,7 @@ namespace Radio_Automation.ViewModels
 
 		public PreferencesViewModel(Settings settings, IOpenFileService saveFileService, ISelectDirectoryService selectDirectoryService)
 		{
+			DeferValidationUntilFirstSaveCall = false;
 			_openFileService = saveFileService;
 			_selectDirectoryService = selectDirectoryService;
 			Devices = AudioPlayback.GetActiveDevices();
@@ -228,6 +230,78 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public static readonly IPropertyData ShufflePlaylistProperty = RegisterProperty<bool>(nameof(ShufflePlaylist));
 
+		#endregion
+
+		#region EnableSongToFile property
+
+		/// <summary>
+		/// Gets or sets the EnableSongToFile value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public bool EnableSongToFile
+		{
+			get { return GetValue<bool>(EnableSongToFileProperty); }
+			set { SetValue(EnableSongToFileProperty, value); }
+		}
+
+		/// <summary>
+		/// EnableSongToFile property data.
+		/// </summary>
+		public static readonly IPropertyData EnableSongToFileProperty = RegisterProperty<bool>(nameof(EnableSongToFile));
+
+		#endregion
+
+		#region EnableSongToMqtt property
+
+		/// <summary>
+		/// Gets or sets the EnableSongToMqtt value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public bool EnableSongToMqtt
+		{
+			get { return GetValue<bool>(EnableSongToMqttProperty); }
+			set { SetValue(EnableSongToMqttProperty, value); }
+		}
+
+		/// <summary>
+		/// EnableSongToMqtt property data.
+		/// </summary>
+		public static readonly IPropertyData EnableSongToMqttProperty = RegisterProperty<bool>(nameof(EnableSongToMqtt));
+
+		#endregion
+
+		#region MqttSongTopic property
+
+		/// <summary>
+		/// Gets or sets the MqttSongTopic value.
+		/// </summary>
+		[ViewModelToModel("Settings")]
+		public string MqttSongTopic
+		{
+			get { return GetValue<string>(MqttSongTopicProperty); }
+			set { SetValue(MqttSongTopicProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttSongTopic property data.
+		/// </summary>
+		public static readonly IPropertyData MqttSongTopicProperty = RegisterProperty<string>(nameof(MqttSongTopic));
+
+		#endregion
+
+		#region Validation
+		
+		protected override void ValidateFields(List<IFieldValidationResult> validationResults)
+		{
+			if (EnableSongToMqtt && string.IsNullOrWhiteSpace(MqttSongTopic))
+				validationResults.Add(FieldValidationResult.CreateError(MqttSongTopicProperty, "MQTT topic is required when MQTT publishing is enabled."));
+			else if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.IndexOfAny(new[] { '#', '+', '\0' }) >= 0)
+				validationResults.Add(FieldValidationResult.CreateError(MqttSongTopicProperty, "MQTT topic must not contain wildcards (# or +) or null characters."));
+		
+			if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.Contains('\\'))
+				validationResults.Add(FieldValidationResult.CreateWarning(MqttSongTopicProperty, "MQTT topic contains a backslash — did you mean forward slash (/)?"));
+		}
+		
 		#endregion
 
 		#region Ok command
