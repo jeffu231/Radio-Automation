@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.4.4"></a>
+## [1.4.4](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.4) (2026-04-15)
+
+### Continuous Integration
+
+* Bump download action to latest ([8fa717c](https://www.github.com/jeffu231/Radio-Automation/commit/8fa717cdedbc0a0f494790d9b8c1470b50a65c3a))
+* Update gitignore and workflow with latest actions and excludes ([2ceeb51](https://www.github.com/jeffu231/Radio-Automation/commit/2ceeb513746a9ebe9df7af6e0053569ca30f7310))
+
+### Documentation
+
+* Add CLAUDE.md with build commands and architecture overview ([b21799b](https://www.github.com/jeffu231/Radio-Automation/commit/b21799b5ad72b8ef2285fd138c6ad78c1e015bec))
+* Fixed incorrect region name in Persistence service ([083fd2e](https://www.github.com/jeffu231/Radio-Automation/commit/083fd2e9860155c8201dbaf2bbb6ca4160f1db47))
+* **README:** Update the readme with install information ([eecc554](https://www.github.com/jeffu231/Radio-Automation/commit/eecc554375a3acb3bf0cf4798be445009a4a4e4f))
+
 <a name="1.4.3"></a>
 ## [1.4.3](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.4.3) (2026-03-04)
 
