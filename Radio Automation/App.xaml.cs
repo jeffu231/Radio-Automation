@@ -29,6 +29,7 @@ namespace Radio_Automation
 			var serviceLocator = ServiceLocator.Default;//this.GetServiceLocator();
 			serviceLocator.RegisterType<IAudioTrackParserService, AudioTrackParserService>();
 			serviceLocator.RegisterType<IPersistenceService, PersistenceService>();
+			serviceLocator.RegisterType<IMqttPublisherService, MqttPublisherService>();
 
 			var options = new JsonSerializerOptions
 			{

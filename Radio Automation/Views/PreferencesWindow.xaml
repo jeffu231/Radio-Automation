@@ -1,4 +1,4 @@
-﻿<catel:Window x:Class="Radio_Automation.Views.PreferencesWindow"
+<catel:Window x:Class="Radio_Automation.Views.PreferencesWindow"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://schemas.catelproject.com"
@@ -6,87 +6,132 @@
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:viewModels="clr-namespace:Radio_Automation.ViewModels"
                   Title="{Binding Title}"
-                  Height="450" Width="550" 
+                  Height="590" Width="550"
                   WindowStartupLocation="CenterOwner"
                   Background="{StaticResource BackColorBrush}"
                   Foreground="{StaticResource ForeColorBrush}"
                   mc:Ignorable="d">
     <DockPanel d:DataContext="{d:DesignInstance Type=viewModels:PreferencesViewModel, IsDesignTimeCreatable=True}">
-	<WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
-		<Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
-		<Button Content="Cancel" IsCancel="True"  Style="{StaticResource RowButtonStyle}"/>
-	</WrapPanel>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
-		<TextBlock Grid.Row="0" Grid.Column="0" Text="Primary Output Device" Margin="5"/>
-		<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Devices}" 
-		          DisplayMemberPath="FriendlyName" 
-		          SelectedItem="{Binding Path=PrimaryOutputDevice}" Margin="5"/>
-		<TextBlock Grid.Row="1" Grid.Column="0" Text="Current Song Path" Margin="5"/>
-		<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentSongPath}" Margin="5"/>
-		<Button Grid.Row="1" Grid.Column="2" Command="{Binding SelectCurrentSongPathCommand}">
-			<Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"></Image>
-		</Button>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Time/Temp File Path" Margin="5"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding TimeTempFilePath}" Margin="5"/>
-        <Button Grid.Row="2" Grid.Column="2" Command="{Binding SelectTimeTempFilePathCommand}">
-            <Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"></Image>
-        </Button>
-        <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Shuffle Playlist At End" IsChecked="{Binding ShufflePlaylist}" 
-                  IsThreeState="False" Margin="5" ToolTip="Check this box to shuffle the playlist before it starts again."/>
-        <GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Header="Weather Info">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<CheckBox Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" IsChecked="{Binding UseWUnderground}" Margin="5">Enable Weather Underground</CheckBox>
-				<TextBlock Grid.Row="1" Grid.Column="0" Text="WUnderground Key" Margin="5"/>
-				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WUndergroundKey}" Margin="5"/>
-				<TextBlock Grid.Row="2" Grid.Column="0" Text="WUnderground Station" Margin="5"/>
-				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding WUndergroundStation}" Margin="5"/>
-			</Grid>
-		</GroupBox>
+        <WrapPanel DockPanel.Dock="Bottom" VerticalAlignment="Center" Style="{StaticResource RowButtonContainerStyle}">
+            <Button Content="Ok" IsDefault="True" Command="{Binding OkCommand}" Style="{StaticResource RowButtonStyle}"/>
+            <Button Content="Cancel" IsCancel="True" Style="{StaticResource RowButtonStyle}"/>
+        </WrapPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Row 0: Validation -->
+            <catel:InfoBarMessageControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+            <!-- Row 2; Primary Output Device -->
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Primary Output Device" Margin="5"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Devices}"
+                      DisplayMemberPath="FriendlyName"
+                      SelectedItem="{Binding Path=PrimaryOutputDevice}" Margin="5"/>
 
-		<GroupBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Header="MQTT Info">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				
-				<TextBlock Grid.Row="1" Grid.Column="0" Text="MQTT Broker" Margin="5"/>
-				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MqttBroker}" Margin="5"/>
-				<TextBlock Grid.Row="2" Grid.Column="0" Text="MQTT Broker Port" Margin="5"/>
-				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding MqttBrokerPort}" Margin="5"/>
-			</Grid>
-		</GroupBox>
-				</Grid>
-</DockPanel>
-    
-    
+            <!-- Row 3: Time/Temp path -->
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Time/Temp File Path" Margin="5"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding TimeTempFilePath}" Margin="5"/>
+            <Button Grid.Row="2" Grid.Column="2" Command="{Binding SelectTimeTempFilePathCommand}">
+                <Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"/>
+            </Button>
+
+            <!-- Row 4: Shuffle -->
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                      Content="Shuffle Playlist At End"
+                      IsChecked="{Binding ShufflePlaylist}"
+                      IsThreeState="False" Margin="5"
+                      ToolTip="Check this box to shuffle the playlist before it starts again."/>
+
+            <!-- Row 5: Song Publishing -->
+            <GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Header="Song Publishing">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                              Content="Enable File System Publishing"
+                              IsChecked="{Binding EnableSongToFile}"
+                              IsThreeState="False" Margin="5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Current Song Path" Margin="5"
+                               IsEnabled="{Binding EnableSongToFile}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentSongPath}" Margin="5"
+                             IsEnabled="{Binding EnableSongToFile}"/>
+                    <Button Grid.Row="1" Grid.Column="2" Command="{Binding SelectCurrentSongPathCommand}"
+                            IsEnabled="{Binding EnableSongToFile}">
+                        <Image Source="/Resources;component/Icons/Open_6529.png" Width="16" Height="16"/>
+                    </Button>
+
+                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                              Content="Enable MQTT Publishing"
+                              IsChecked="{Binding EnableSongToMqtt}"
+                              IsThreeState="False" Margin="5"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="MQTT Song Topic" Margin="5"
+                               IsEnabled="{Binding EnableSongToMqtt}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding MqttSongTopic}" Margin="5"
+                             IsEnabled="{Binding EnableSongToMqtt}"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- Row 6: Weather -->
+            <GroupBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Header="Weather Info">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                              IsChecked="{Binding UseWUnderground}" Margin="5">Enable Weather Underground</CheckBox>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="WUnderground Key" Margin="5"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WUndergroundKey}" Margin="5"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="WUnderground Station" Margin="5"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding WUndergroundStation}" Margin="5"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- Row 7: MQTT broker -->
+            <GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Header="MQTT Info">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="MQTT Broker" Margin="5"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding MqttBroker}" Margin="5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="MQTT Broker Port" Margin="5"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MqttBrokerPort}" Margin="5"/>
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </DockPanel>
 </catel:Window>

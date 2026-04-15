@@ -1,4 +1,4 @@
-﻿using Catel.Data;
+using Catel.Data;
 using NAudioWrapper;
 
 namespace Radio_Automation.Models
@@ -14,6 +14,7 @@ namespace Radio_Automation.Models
 			}
 			UseWUnderground = true;
 			MqttBrokerPort = 1883;
+			EnableSongToFile = true;
 		}
 
 		#region LastPlaylistPath property
@@ -229,6 +230,60 @@ namespace Radio_Automation.Models
 		/// MqttBrokerPort property data.
 		/// </summary>
 		public static readonly IPropertyData MqttBrokerPortProperty = RegisterProperty<int>(nameof(MqttBrokerPort));
+
+		#endregion
+
+		#region EnableSongToFile property
+
+		/// <summary>
+		/// Gets or sets whether the current song info is written to a file.
+		/// </summary>
+		public bool EnableSongToFile
+		{
+			get { return GetValue<bool>(EnableSongToFileProperty); }
+			set { SetValue(EnableSongToFileProperty, value); }
+		}
+
+		/// <summary>
+		/// EnableSongToFile property data.
+		/// </summary>
+		public static readonly IPropertyData EnableSongToFileProperty = RegisterProperty<bool>(nameof(EnableSongToFile));
+
+		#endregion
+
+		#region EnableSongToMqtt property
+
+		/// <summary>
+		/// Gets or sets whether the current song info is published to MQTT.
+		/// </summary>
+		public bool EnableSongToMqtt
+		{
+			get { return GetValue<bool>(EnableSongToMqttProperty); }
+			set { SetValue(EnableSongToMqttProperty, value); }
+		}
+
+		/// <summary>
+		/// EnableSongToMqtt property data.
+		/// </summary>
+		public static readonly IPropertyData EnableSongToMqttProperty = RegisterProperty<bool>(nameof(EnableSongToMqtt));
+
+		#endregion
+
+		#region MqttSongTopic property
+
+		/// <summary>
+		/// Gets or sets the MQTT topic to publish current song info to.
+		/// </summary>
+		public string MqttSongTopic
+		{
+			get { return GetValue<string>(MqttSongTopicProperty); }
+			set { SetValue(MqttSongTopicProperty, value); }
+		}
+
+		/// <summary>
+		/// MqttSongTopic property data.
+		/// </summary>
+		public static readonly IPropertyData MqttSongTopicProperty = RegisterProperty<string>(nameof(MqttSongTopic));
 
 		#endregion
 	}

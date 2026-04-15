@@ -92,6 +92,8 @@ Events have two trigger types (enum `Trigger`): `Cron` and `Mqtt`.
 
 **MQTT events** — `MqttEventListener` connects to a broker (from `Settings`) and subscribes to topics defined on each `Event.MqttExpression`. On message receipt, it matches topic + payload to trigger the appropriate event.
 
+**MQTT song publishing** — `MqttPublisherService` (implements `IMqttPublisherService`, registered in `App.xaml.cs`, injected into `MainWindowViewModel`) maintains its own outbound connection to the same broker and publishes current song info as a retained JSON payload (`{"title","artist","album"}`) to a user-configured topic each time a track changes. It is intentionally separate from `MqttEventListener` so subscribe and publish concerns don't share state. Both are connected at startup and when the event schedule is reloaded.
+
 Both trigger paths converge at `EventBus.OnEventTriggered(Event e)` — a static `Action<Event>` delegate that the main ViewModel subscribes to.
 
 Events have a `Demand` property: `Immediate` (interrupts current playback) or `Delayed` (queued to play between tracks).
@@ -102,7 +104,7 @@ Event types (`EventType`): `Play`, `Stop`, `Pause`, `Temperature`, `Time`, `Humi
 
 - **Playlist / app state**: JSON-serialized to a file via `IPersistenceService`.
 - **Event schedules**: Saved/loaded as `.evs` files via `IPersistenceService`. `EventSchedule` is a `ModelBase` with an `ObservableCollection<Event>`.
-- **User preferences**: Stored via WPF `Application.Settings` (`Properties/Settings.settings`).
+- **User preferences / Settings**: JSON-serialized via `IPersistenceService` to the user's AppData folder.
 
 ### Track Parsing
 
