@@ -31,7 +31,7 @@ namespace Radio_Automation.Services
 			EnsureTempPath();
 		}
 
-		#region Implementation of IPlaylistService
+		#region Implementation of IPersistenceService
 
 		/// <inheritdoc />
 		public async Task<Playlist> LoadPlaylistAsync(string path)
