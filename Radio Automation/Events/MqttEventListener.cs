@@ -20,6 +20,8 @@ namespace Radio_Automation.Events
 
 		private readonly Dictionary<string, List<Event>> _events = new ();
 
+		public bool IsConnected => _mqttClient?.IsConnected ?? false;
+
 		public async Task Connect(Settings settings)
 		{
 			if (settings == null) throw new ArgumentNullException(nameof(settings));
@@ -29,7 +31,12 @@ namespace Radio_Automation.Events
 
 		public async Task LoadSchedule(EventSchedule eventSchedule)
 		{
-			
+			if (_mqttClient == null || !_mqttClient.IsConnected)
+			{
+				Log.Warning("MQTT broker is not connected. MQTT event triggers will not be active.");
+				return;
+			}
+
 			var mqttFactory = new MqttClientFactory();
 
 			foreach (var e in _events.Keys)
@@ -73,9 +80,9 @@ namespace Radio_Automation.Events
 
 		private async Task InitBroker()
 		{
-
 			if (string.IsNullOrEmpty(_settings.MqttBroker))
 			{
+				Log.Error("No MQTT broker configured. MQTT event listener will not connect.");
 				return;
 			}
 
@@ -111,17 +118,14 @@ namespace Radio_Automation.Events
 			var message = arg.ApplicationMessage.ConvertPayloadToString();
 			Log.Info($"MQTT {topic} - {message}");
 
-			if (_events.TryGetValue(topic, out var e))
+			if (_events.TryGetValue(topic, out var events))
 			{
-				if (_events.TryGetValue(topic, out var events))
+				var eventsToTrigger = events.Where(x => x.MqttExpression.Message == message);
+				foreach (var eventToTrigger in eventsToTrigger)
 				{
-					var eventsToTrigger = events.Where(x => x.MqttExpression.Message == message);
-					foreach (var eventToTrigger in eventsToTrigger)
+					if (eventToTrigger.Enabled)
 					{
-						if (eventToTrigger.Enabled)
-						{
-							EventBus.OnEventTriggered(eventToTrigger);
-						}
+						EventBus.OnEventTriggered(eventToTrigger);
 					}
 				}
 			}

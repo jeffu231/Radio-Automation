@@ -290,18 +290,43 @@ namespace Radio_Automation.ViewModels
 		#endregion
 
 		#region Validation
-		
+
+		private void OnMqttBrokerChanged()
+		{
+			if (!string.IsNullOrEmpty(MqttBroker) && MqttBrokerPort == 0)
+				MqttBrokerPort = 1883;
+		}
+
 		protected override void ValidateFields(List<IFieldValidationResult> validationResults)
 		{
+			// Current Song Path
+			if (EnableSongToFile && !string.IsNullOrWhiteSpace(CurrentSongPath) && !System.IO.Path.IsPathRooted(CurrentSongPath))
+				validationResults.Add(FieldValidationResult.CreateError(CurrentSongPathProperty, "Current song path must be a valid absolute file path."));
+
+			// Time/Temp path
+			if (!string.IsNullOrWhiteSpace(TimeTempFilePath) && !System.IO.Path.IsPathRooted(TimeTempFilePath))
+				validationResults.Add(FieldValidationResult.CreateError(TimeTempFilePathProperty, "Time/Temp file path must be a valid absolute folder path."));
+
+			// Weather Underground
+			if (UseWUnderground && string.IsNullOrWhiteSpace(WUndergroundKey))
+				validationResults.Add(FieldValidationResult.CreateError(WUndergroundKeyProperty, "WUnderground API key is required when Weather Underground is enabled."));
+			if (UseWUnderground && string.IsNullOrWhiteSpace(WUndergroundStation))
+				validationResults.Add(FieldValidationResult.CreateError(WUndergroundStationProperty, "WUnderground station ID is required when Weather Underground is enabled."));
+
+			// MQTT Broker port
+			if (!string.IsNullOrWhiteSpace(MqttBroker) && MqttBrokerPort <= 0)
+				validationResults.Add(FieldValidationResult.CreateError(MqttBrokerPortProperty, "MQTT broker port must be a positive integer."));
+
+			// MQTT Song Topic
 			if (EnableSongToMqtt && string.IsNullOrWhiteSpace(MqttSongTopic))
 				validationResults.Add(FieldValidationResult.CreateError(MqttSongTopicProperty, "MQTT topic is required when MQTT publishing is enabled."));
 			else if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.IndexOfAny(new[] { '#', '+', '\0' }) >= 0)
 				validationResults.Add(FieldValidationResult.CreateError(MqttSongTopicProperty, "MQTT topic must not contain wildcards (# or +) or null characters."));
-		
+
 			if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.Contains('\\'))
 				validationResults.Add(FieldValidationResult.CreateWarning(MqttSongTopicProperty, "MQTT topic contains a backslash — did you mean forward slash (/)?"));
 		}
-		
+
 		#endregion
 
 		#region Ok command
