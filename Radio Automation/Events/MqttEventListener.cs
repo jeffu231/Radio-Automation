@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 using MQTTnet;
 using Radio_Automation.Models;
 using Catel.Logging;
-using MQTTnet.Internal;
-using System.Text;
-using System.Windows.Media;
 
 namespace Radio_Automation.Events
 {
@@ -24,8 +21,7 @@ namespace Radio_Automation.Events
 
 		public async Task Connect(Settings settings)
 		{
-			if (settings == null) throw new ArgumentNullException(nameof(settings));
-			_settings = settings;
+			_settings = settings ?? throw new ArgumentNullException(nameof(settings));
 			await InitBroker();
 		}
 
@@ -70,8 +66,8 @@ namespace Radio_Automation.Events
 				}
 				else
 				{
-					var evts = new List<Event> { e };
-					_events.Add(e.MqttExpression.Topic, evts);
+					var eventList = new List<Event> { e };
+					_events.Add(e.MqttExpression.Topic, eventList);
 				}
 
 				
@@ -99,8 +95,8 @@ namespace Radio_Automation.Events
 			var mqttClientOptions = new MqttClientOptionsBuilder()
 				.WithTcpServer(_settings.MqttBroker, _settings.MqttBrokerPort).Build();
 
-			// Setup message handling before connecting so that queued messages
-			// are also handled properly. When there is no event handler attached all
+			// Set up message handling before connecting so that queued messages
+			// are also handled properly. When there is no event handler attached, all
 			// received messages get lost.
 			_mqttClient.ApplicationMessageReceivedAsync += _mqttClient_ApplicationMessageReceivedAsync;
 
