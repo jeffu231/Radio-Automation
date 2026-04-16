@@ -8,14 +8,14 @@ namespace NAudioWrapper
     public class SampleAggregator : ISampleProvider
     {
         // volume
-        public event EventHandler<MaxSampleEventArgs> MaximumCalculated;
+        public event EventHandler<MaxSampleEventArgs>? MaximumCalculated;
         private float maxValue;
         private float minValue;
         public int NotificationCount { get; set; }
         int count;
 
         // FFT
-        public event EventHandler<FftEventArgs> FftCalculated;
+        public event EventHandler<FftEventArgs>? FftCalculated;
         public bool PerformFFT { get; set; }
         private readonly Complex[] fftBuffer;
         private readonly FftEventArgs fftArgs;

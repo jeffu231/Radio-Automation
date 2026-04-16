@@ -153,7 +153,7 @@ namespace Radio_Automation.ViewModels
 			VolumeChangedCommand.Execute();
 			Volume = _settings.Volume;
 
-			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
+			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId && AudioPlayback.CurrentDevice != null)
 			{
 				_settings.PrimaryOutputDevice = new Device(AudioPlayback.CurrentDevice, AudioPlayback.GetDefaultDevice().Id == AudioPlayback.CurrentDevice.ID);
 				await SaveSettingsAsync();

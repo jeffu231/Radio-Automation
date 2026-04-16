@@ -17,9 +17,9 @@ namespace NAudioWrapper
 			Id = device.ID;
 		}
 
-		public string FriendlyName { get; set; }
+		public string FriendlyName { get; set; } = string.Empty;
 
-		public string Id { get; set; }
+		public string Id { get; set; } = string.Empty;
 
 		public bool IsDefault { get; set; }
 
@@ -27,7 +27,7 @@ namespace NAudioWrapper
 		#region Equality members
 
 		/// <inheritdoc />
-		public bool Equals(Device other)
+		public bool Equals(Device? other)
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
@@ -35,7 +35,7 @@ namespace NAudioWrapper
 		}
 
 		/// <inheritdoc />
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
