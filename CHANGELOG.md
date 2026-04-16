@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.5.1"></a>
+## [1.5.1](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.5.1) (2026-04-16)
+
+### Bug Fixes
+
+* **Cleanup:** Address minor code quality issues ([650e9c0](https://www.github.com/jeffu231/Radio-Automation/commit/650e9c07b6ff48e0c5a714ea12be3af2b77dfd54))
+* **Cleanup:** Address nullability issues in Audio Project ([497cfb9](https://www.github.com/jeffu231/Radio-Automation/commit/497cfb94090c7eb0359e73d5aa92ac4011ca48e2))
+* **Validaton:** Add better preference page validation ([482cc83](https://www.github.com/jeffu231/Radio-Automation/commit/482cc83c3369ef7151b81cf36f50add2625474b7))
+* **Volume:** Fix bug in setting initial audio volume at startup ([6f968e6](https://www.github.com/jeffu231/Radio-Automation/commit/6f968e63bb0e475ee9ce9f7dfc0945cf07a6509c))
+
+### Documentation
+
+* Remove old requirement doc ([736ef7f](https://www.github.com/jeffu231/Radio-Automation/commit/736ef7f8137419cae9069d57b1b491ca8c4d7b6d))
+
 <a name="1.5.0"></a>
 ## [1.5.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.5.0) (2026-04-15)
 
