@@ -129,6 +129,7 @@ namespace Radio_Automation.ViewModels
 				await _mqttPublisher.ConnectAsync(_settings);
 
 			await _mqttEventListener.LoadSchedule(_eventSchedule);
+			await NotifyIfMqttEventsUnavailableAsync();
 
 			PlaylistMessage.Register(this, PlaylistAction);
 
@@ -149,10 +150,10 @@ namespace Radio_Automation.ViewModels
 			_audioPlayer.PlaybackEnded += PlaybackEnded;
 			_audioPlayer.OnSteamVolume += AudioPlayer_OnStreamVolume;
 
-			VolumeChangedCommand.Execute();
 			Volume = _settings.Volume;
+			VolumeChangedCommand.Execute();
 
-			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
+			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId && AudioPlayback.CurrentDevice != null)
 			{
 				_settings.PrimaryOutputDevice = new Device(AudioPlayback.CurrentDevice, AudioPlayback.GetDefaultDevice().Id == AudioPlayback.CurrentDevice.ID);
 				await SaveSettingsAsync();
@@ -786,6 +787,7 @@ namespace Radio_Automation.ViewModels
 				await _mqttPublisher.ConnectAsync(_settings);
 			_eventScheduler.LoadSchedule(_eventSchedule);
 			await _mqttEventListener.LoadSchedule(_eventSchedule);
+			await NotifyIfMqttEventsUnavailableAsync();
 		}
 
 		#endregion
@@ -1535,6 +1537,17 @@ namespace Radio_Automation.ViewModels
 					Log.Error(e, "An error occurred requesting a weather update. Reading may be stale.");
 				}
 				
+			}
+		}
+
+		private async Task NotifyIfMqttEventsUnavailableAsync()
+		{
+			if (_eventSchedule.Events.Any(e => e.Enabled && e.Trigger == Trigger.Mqtt) && !_mqttEventListener.IsConnected)
+			{
+				await _messageService.ShowInformationAsync(
+					"The event schedule contains MQTT triggers, but no MQTT broker is configured or the connection failed. " +
+					"These events will not fire until a valid broker is configured in Preferences.",
+					"MQTT Events Unavailable");
 			}
 		}
 

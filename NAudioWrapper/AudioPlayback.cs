@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Catel.Logging;
@@ -14,17 +15,17 @@ namespace NAudioWrapper
     {
 	    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private IWavePlayer _playbackDevice;
-        private WaveStream _fileStream;
+        private IWavePlayer? _playbackDevice;
+        private WaveStream? _fileStream;
 
-        public event Action PlaybackResumed;
-        public event Action PlaybackStopped;
-        public event Action PlaybackEnded;
-		public event Action PlaybackPaused;
-		public event Action<VolumeEventArgs> OnPreVolumeMeter;
-		public event Action<VolumeEventArgs> OnSteamVolume;
-		public static MMDevice CurrentDevice;
-		private VolumeSampleProvider _volumeProvider;
+        public event Action? PlaybackResumed;
+        public event Action? PlaybackStopped;
+        public event Action? PlaybackEnded;
+		public event Action? PlaybackPaused;
+		public event Action<VolumeEventArgs>? OnPreVolumeMeter;
+		public event Action<VolumeEventArgs>? OnSteamVolume;
+		public static MMDevice? CurrentDevice;
+		private VolumeSampleProvider? _volumeProvider;
 		private float _volume = 1f;
 		private static readonly MMDeviceEnumerator DeviceEnumerator;
 
@@ -33,9 +34,9 @@ namespace NAudioWrapper
 			DeviceEnumerator = new MMDeviceEnumerator();
 		}
 
-		public AudioPlayback():this(GetDefaultMMDevice())
+		public AudioPlayback():this(GetDefaultMMDevice()!)
 		{
-			
+
 		}
 
 		internal AudioPlayback(MMDevice device)
@@ -74,7 +75,7 @@ namespace NAudioWrapper
 		public static Device GetDefaultDevice()
 		{
 			var mmDevice = GetDefaultMMDevice();
-			return new Device(mmDevice, true);
+			return new Device(mmDevice!, true);
 		}
 
 		private static MMDevice? GetDefaultMMDevice()
@@ -102,7 +103,7 @@ namespace NAudioWrapper
 			return devices;
 		}
 
-		public static string DeviceId => CurrentDevice?.ID;
+		public static string? DeviceId => CurrentDevice?.ID;
 
 		/// <summary>
 		/// Registers a call back for Device Events
@@ -213,7 +214,7 @@ namespace NAudioWrapper
 			_playbackDevice.Init(postVolumeMeter);
         }
 
-		private void PostVolumeMeter_StreamVolume(object sender, StreamVolumeEventArgs e)
+		private void PostVolumeMeter_StreamVolume(object? sender, StreamVolumeEventArgs e)
 		{
 			OnSteamVolume?.Invoke(new VolumeEventArgs(e.MaxSampleValues.Length > 0 ? e.MaxSampleValues[0] : 0, 
                 e.MaxSampleValues.Length> 1?e.MaxSampleValues[1]: 0));
@@ -240,7 +241,7 @@ namespace NAudioWrapper
 			_playbackDevice.PlaybackStopped += PlaybackDeviceOnPlaybackStopped;
         }
 
-        private void PlaybackDeviceOnPlaybackStopped(object sender, StoppedEventArgs e)
+        private void PlaybackDeviceOnPlaybackStopped(object? sender, StoppedEventArgs e)
         {
 	        DisposePlaybackDevice();
 			PlaybackEnded?.Invoke();
@@ -251,7 +252,7 @@ namespace NAudioWrapper
 			EnsureDeviceCreated();
             if (_playbackDevice != null && _fileStream != null && _playbackDevice.PlaybackState != PlaybackState.Playing)
             {
-	            _volumeProvider.Volume = Volume;
+	            _volumeProvider!.Volume = Volume;
                 _playbackDevice.Play();
 				PlaybackResumed?.Invoke();
             }
@@ -293,7 +294,7 @@ namespace NAudioWrapper
         {
 	        EnsureDeviceCreated();
 	        
-	        if (_playbackDevice.PlaybackState == PlaybackState.Playing)
+	        if (_playbackDevice!.PlaybackState == PlaybackState.Playing)
 	        {
 		        Pause();
 	        }
@@ -316,7 +317,7 @@ namespace NAudioWrapper
 			}
 		}
 
-		public double Length => _fileStream.TotalTime.TotalSeconds;
+		public double Length => _fileStream?.TotalTime.TotalSeconds ?? 0;
 
 		public float Volume
         {
