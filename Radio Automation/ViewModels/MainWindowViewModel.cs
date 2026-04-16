@@ -150,8 +150,8 @@ namespace Radio_Automation.ViewModels
 			_audioPlayer.PlaybackEnded += PlaybackEnded;
 			_audioPlayer.OnSteamVolume += AudioPlayer_OnStreamVolume;
 
-			VolumeChangedCommand.Execute();
 			Volume = _settings.Volume;
+			VolumeChangedCommand.Execute();
 
 			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId && AudioPlayback.CurrentDevice != null)
 			{
