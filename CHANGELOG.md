@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.5.2"></a>
+## [1.5.2](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.5.2) (2026-10-23)
+
+### Bug Fixes
+
+* **Audio:** Recover playback after output device loss during RDP changes ([e8a84b1](https://www.github.com/jeffu231/Radio-Automation/commit/e8a84b11b8f77ce1d68f8f7a845a07f3db0dec4e))
+
+### Continuous Integration
+
+* **build:** Update GitHub Actions to current versions ([893f14d](https://www.github.com/jeffu231/Radio-Automation/commit/893f14d638e6ba19ee4ea275797a46931ded8b31))
+
 <a name="1.5.1"></a>
 ## [1.5.1](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.5.1) (2026-04-16)
 
