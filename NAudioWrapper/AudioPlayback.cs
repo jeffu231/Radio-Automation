@@ -24,9 +24,18 @@ namespace NAudioWrapper
 		public event Action? PlaybackPaused;
 		public event Action<VolumeEventArgs>? OnPreVolumeMeter;
 		public event Action<VolumeEventArgs>? OnSteamVolume;
-		public static MMDevice? CurrentDevice;
+		/// <summary>
+		/// Raised when the output stream died unexpectedly (device invalidated, removed, session change, etc.)
+		/// rather than reaching the end of the track. The argument is the underlying error, if any.
+		/// </summary>
+		public event Action<Exception?>? PlaybackFaulted;
+
+		public MMDevice? CurrentDevice { get; private set; }
+		private string? _deviceId;
+		private readonly string? _preferredDeviceId;
 		private VolumeSampleProvider? _volumeProvider;
 		private float _volume = 1f;
+		private bool _notificationsRegistered;
 		private static readonly MMDeviceEnumerator DeviceEnumerator;
 
 		static AudioPlayback()
@@ -41,28 +50,117 @@ namespace NAudioWrapper
 
 		internal AudioPlayback(MMDevice device)
 		{
-			CurrentDevice = device;
+			SetDevice(device);
+			RegisterNotifications();
 		}
 
 		public AudioPlayback(Device device)
 		{
+			_preferredDeviceId = device.Id;
+			SetDevice(ResolveDevice(_preferredDeviceId));
+			RegisterNotifications();
+		}
+
+		private void SetDevice(MMDevice? device)
+		{
+			CurrentDevice = device;
+			_deviceId = device is null ? null : SafeGetId(device);
+		}
+
+		private static string? SafeGetId(MMDevice device)
+		{
 			try
 			{
-				var mmDevice = DeviceEnumerator.GetDevice(device.Id);
-				if (mmDevice != null && mmDevice.State == DeviceState.Active)
-				{
-					CurrentDevice = mmDevice;
-				}
-				else
-				{
-					CurrentDevice = mmDevice ??
-					                DeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-				}
+				return device.ID;
 			}
 			catch (Exception e)
 			{
-				Log.Error(e, $"An error occurred while initializing the audio device. Falling back to default device.");
-				CurrentDevice = DeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+				Log.Warning(e, "Unable to read the audio device id.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Finds the preferred device if it is active, otherwise the current default render endpoint.
+		/// </summary>
+		private static MMDevice? ResolveDevice(string? preferredId)
+		{
+			if (!string.IsNullOrEmpty(preferredId))
+			{
+				try
+				{
+					var preferred = DeviceEnumerator.GetDevice(preferredId);
+					if (preferred.State == DeviceState.Active)
+					{
+						return preferred;
+					}
+
+					Log.Warning($"Preferred audio device {preferred.FriendlyName} is {preferred.State}. Falling back to the default device.");
+				}
+				catch (Exception e)
+				{
+					Log.Warning(e, "Preferred audio device is unavailable. Falling back to the default device.");
+				}
+			}
+
+			try
+			{
+				return GetDefaultMMDevice();
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, "Unable to find a default audio device.");
+				return null;
+			}
+		}
+
+		private bool IsCurrentDeviceActive()
+		{
+			try
+			{
+				return CurrentDevice is { State: DeviceState.Active };
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Discards the current output stream and re-resolves the output device (preferred device first,
+		/// then the default). Call after <see cref="PlaybackFaulted"/> and before loading again.
+		/// </summary>
+		/// <returns><c>true</c> if a usable device was found.</returns>
+		public bool RefreshDevice()
+		{
+			ReleaseDevice();
+			var device = ResolveDevice(_preferredDeviceId);
+			if (device is null)
+			{
+				Log.Warning("No audio output device is currently available.");
+				return false;
+			}
+
+			var newId = SafeGetId(device);
+			if (newId != _deviceId)
+			{
+				Log.Info($"Audio output device changed from {_deviceId} to {device.FriendlyName} ({newId}).");
+			}
+
+			SetDevice(device);
+			return true;
+		}
+
+		private void RegisterNotifications()
+		{
+			try
+			{
+				DeviceEnumerator.RegisterEndpointNotificationCallback(this);
+				_notificationsRegistered = true;
+			}
+			catch (Exception e)
+			{
+				Log.Warning(e, "Unable to register for audio device notifications.");
 			}
 		}
 
@@ -103,7 +201,7 @@ namespace NAudioWrapper
 			return devices;
 		}
 
-		public static string? DeviceId => CurrentDevice?.ID;
+		public string? DeviceId => _deviceId;
 
 		/// <summary>
 		/// Registers a call back for Device Events
@@ -131,8 +229,7 @@ namespace NAudioWrapper
         {
             Stop();
             CloseFile();
-            EnsureDeviceCreated();
-            return OpenFile(fileName);
+            return EnsureDeviceForLoad() && OpenFile(fileName);
         }
 
 		[SupportedOSPlatform("Windows7.0")]
@@ -140,8 +237,7 @@ namespace NAudioWrapper
 		{
 			Stop();
 			CloseFile();
-			EnsureDeviceCreated();
-			return LoadFiles(files);
+			return EnsureDeviceForLoad() && LoadFiles(files);
 		}
 
 		private void CloseFile()
@@ -211,7 +307,7 @@ namespace NAudioWrapper
 	        _volumeProvider = new VolumeSampleProvider(inputStream);
 			var postVolumeMeter = new MeteringSampleProvider(_volumeProvider);
 			postVolumeMeter.StreamVolume += PostVolumeMeter_StreamVolume;
-			_playbackDevice.Init(postVolumeMeter);
+			_playbackDevice!.Init(postVolumeMeter);
         }
 
 		private void PostVolumeMeter_StreamVolume(object? sender, StreamVolumeEventArgs e)
@@ -225,24 +321,69 @@ namespace NAudioWrapper
 	        OnPreVolumeMeter?.Invoke(new VolumeEventArgs(e.MaxSampleValues[0], e.MaxSampleValues[1]));
         }
 
+        /// <summary>
+        /// <c>true</c> when the last <c>Load</c> returned false because no output device could be
+        /// opened, as opposed to a problem with the file itself (missing, unreadable, bad format).
+        /// </summary>
+        public bool LastLoadFailedOnDevice { get; private set; }
+
+        private bool EnsureDeviceForLoad()
+        {
+            LastLoadFailedOnDevice = !TryEnsureDeviceCreated();
+            return !LastLoadFailedOnDevice;
+        }
+
         private void EnsureDeviceCreated()
         {
-            if (_playbackDevice == null)
+            TryEnsureDeviceCreated();
+        }
+
+        private bool TryEnsureDeviceCreated()
+        {
+            try
             {
+                if (_playbackDevice != null)
+                {
+                    return true;
+                }
+
+                if (!IsCurrentDeviceActive() && !RefreshDevice())
+                {
+                    return false;
+                }
+
                 CreateDevice();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to create the audio output device.");
+                ReleaseDevice();
+                return false;
             }
         }
 
         private void CreateDevice()
         {
-            //_playbackDevice = new WaveOutEvent {DesiredLatency = 100};
 			_playbackDevice = new WasapiOut(CurrentDevice,AudioClientShareMode.Exclusive, false, 10);
-			//_playbackDevice.Volume = Volume;
 			_playbackDevice.PlaybackStopped += PlaybackDeviceOnPlaybackStopped;
         }
 
         private void PlaybackDeviceOnPlaybackStopped(object? sender, StoppedEventArgs e)
         {
+	        if (e.Exception != null)
+	        {
+		        Log.Error(e.Exception, "Audio playback stopped unexpectedly.");
+		        // Ignore faults from a device we have already replaced.
+		        if (ReferenceEquals(sender, _playbackDevice))
+		        {
+			        ReleaseDevice();
+			        PlaybackFaulted?.Invoke(e.Exception);
+		        }
+
+		        return;
+	        }
+
 	        DisposePlaybackDevice();
 			PlaybackEnded?.Invoke();
         }
@@ -292,8 +433,11 @@ namespace NAudioWrapper
 
         public void TogglePlayPause()
         {
-	        EnsureDeviceCreated();
-	        
+	        if (!TryEnsureDeviceCreated())
+	        {
+		        return;
+	        }
+
 	        if (_playbackDevice!.PlaybackState == PlaybackState.Playing)
 	        {
 		        Pause();
@@ -336,6 +480,20 @@ namespace NAudioWrapper
 		
         public void Dispose()
         {
+            if (_notificationsRegistered)
+            {
+                try
+                {
+                    DeviceEnumerator.UnregisterEndpointNotificationCallback(this);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e, "Unable to unregister audio device notifications.");
+                }
+
+                _notificationsRegistered = false;
+            }
+
             Stop();
             CloseFile();
             DisposePlaybackDevice();
@@ -347,30 +505,65 @@ namespace NAudioWrapper
 	        _playbackDevice = null;
 		}
 
+		/// <summary>
+		/// Disposes the output device without letting it raise a late PlaybackStopped
+		/// that would be mistaken for the end of a track.
+		/// </summary>
+		private void ReleaseDevice()
+		{
+			var device = _playbackDevice;
+			_playbackDevice = null;
+			if (device == null)
+			{
+				return;
+			}
+
+			try
+			{
+				device.PlaybackStopped -= PlaybackDeviceOnPlaybackStopped;
+				device.Dispose();
+			}
+			catch (Exception e)
+			{
+				Log.Warning(e, "Error releasing the audio output device.");
+			}
+		}
+
         #region Implementation of IMMNotificationClient
 
         /// <inheritdoc />
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-	        
+	        Log.Info($"Audio device {deviceId} state changed to {newState}.");
+	        if (deviceId == _deviceId && newState != DeviceState.Active && _playbackDevice != null)
+	        {
+		        PlaybackFaulted?.Invoke(null);
+	        }
         }
 
         /// <inheritdoc />
         public void OnDeviceAdded(string pwstrDeviceId)
         {
-	        
+	        Log.Info($"Audio device added: {pwstrDeviceId}.");
         }
 
         /// <inheritdoc />
         public void OnDeviceRemoved(string deviceId)
         {
-	        
+	        Log.Info($"Audio device removed: {deviceId}.");
+	        if (deviceId == _deviceId && _playbackDevice != null)
+	        {
+		        PlaybackFaulted?.Invoke(null);
+	        }
         }
 
         /// <inheritdoc />
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-	        
+	        if (flow == DataFlow.Render && role == Role.Multimedia)
+	        {
+		        Log.Info($"Default audio render device changed to {defaultDeviceId}.");
+	        }
         }
 
         /// <inheritdoc />

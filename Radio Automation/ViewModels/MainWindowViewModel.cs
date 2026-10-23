@@ -144,21 +144,124 @@ namespace Radio_Automation.ViewModels
 				UpdateCommandStates();
 				return;
 			}
-			_audioPlayer = new AudioPlayback(_settings.PrimaryOutputDevice);
-			_audioPlayer.PlaybackPaused += PlaybackPaused;
-			_audioPlayer.PlaybackResumed += PlaybackResumed;
-			_audioPlayer.PlaybackEnded += PlaybackEnded;
-			_audioPlayer.OnSteamVolume += AudioPlayer_OnStreamVolume;
+			var player = new AudioPlayback(_settings.PrimaryOutputDevice);
+			_audioPlayer = player;
+			player.PlaybackPaused += PlaybackPaused;
+			player.PlaybackResumed += PlaybackResumed;
+			player.PlaybackEnded += PlaybackEnded;
+			player.OnSteamVolume += AudioPlayer_OnStreamVolume;
+			player.PlaybackFaulted += ex => _dispatcherService.BeginInvoke(() => OnPlaybackFaulted(player, ex));
 
 			Volume = _settings.Volume;
 			VolumeChangedCommand.Execute();
 
-			if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId && AudioPlayback.CurrentDevice != null)
+			// Do not overwrite the saved device with a fallback: the preferred device may only be
+			// temporarily unavailable (for example during a remote desktop session change).
+			if (_settings.PrimaryOutputDevice.Id != player.DeviceId)
 			{
-				_settings.PrimaryOutputDevice = new Device(AudioPlayback.CurrentDevice, AudioPlayback.GetDefaultDevice().Id == AudioPlayback.CurrentDevice.ID);
-				await SaveSettingsAsync();
+				Log.Warning($"Configured output device {_settings.PrimaryOutputDevice.FriendlyName} is unavailable. Using {player.CurrentDevice?.FriendlyName ?? "no device"} until it returns.");
 			}
 			UpdateCommandStates();
+			await Task.CompletedTask;
+		}
+
+		private bool _recoveringPlayback;
+
+		/// <summary>
+		/// The output stream died (device invalidated/removed, session change, ...). Re-resolve the
+		/// device and resume the current track, retrying with a capped backoff until it works or the
+		/// user stops playback.
+		/// </summary>
+		private async void OnPlaybackFaulted(AudioPlayback player, Exception? error)
+		{
+			if (!ReferenceEquals(player, _audioPlayer) || _recoveringPlayback || _playbackState != PlaybackState.Playing)
+			{
+				return;
+			}
+
+			var track = CurrentTrack;
+			if (track == null)
+			{
+				return;
+			}
+
+			_recoveringPlayback = true;
+			var advanceToNextTrack = false;
+			try
+			{
+				Log.Warning(error, $"Audio output lost while playing {track.FormattedName}. Attempting to recover.");
+				_playPositionTimer.Stop();
+				var isStream = track.Path.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+				var resumeAt = 0d;
+				if (!isStream)
+				{
+					try { resumeAt = player.Position; } catch { /* position unavailable */ }
+				}
+
+				var delays = new[] { 1, 2, 4, 8, 15, 30 };
+				for (var attempt = 0; ; attempt++)
+				{
+					await Task.Delay(TimeSpan.FromSeconds(delays[Math.Min(attempt, delays.Length - 1)]));
+					if (_playbackState != PlaybackState.Playing || !ReferenceEquals(track, CurrentTrack) || !ReferenceEquals(player, _audioPlayer))
+					{
+						Log.Info("Audio recovery abandoned: playback state changed.");
+						return;
+					}
+
+					StatusMessage = $"Audio device lost. Retrying (attempt {attempt + 1})...";
+					if (!player.RefreshDevice())
+					{
+						Log.Warning($"Audio recovery attempt {attempt + 1} failed: no output device.");
+						continue;
+					}
+
+					if (!isStream && !File.Exists(track.Path))
+					{
+						// Same handling as a missing file at normal track start: skip it, don't retry.
+						advanceToNextTrack = true;
+						break;
+					}
+
+					var loaded = player.Load(track.Path);
+					if (!loaded && !player.LastLoadFailedOnDevice)
+					{
+						advanceToNextTrack = true;
+						break;
+					}
+
+					if (loaded)
+					{
+						if (resumeAt > 0)
+						{
+							try { player.Position = resumeAt; } catch (Exception e) { Log.Warning(e, "Unable to restore play position."); }
+						}
+
+						TrackEndTime = DateTime.Now.Add(track.Duration - TimeSpan.FromSeconds(resumeAt));
+						player.TogglePlayPause();
+						StatusMessage = string.Empty;
+						Log.Info($"Audio output recovered after {attempt + 1} attempt(s). Resumed {track.FormattedName}.");
+						return;
+					}
+
+					Log.Warning($"Audio recovery attempt {attempt + 1} failed.");
+				}
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, "Unexpected error while recovering audio output.");
+			}
+			finally
+			{
+				_recoveringPlayback = false;
+			}
+
+			if (advanceToNextTrack)
+			{
+				track.IsValid = false;
+				Log.Error($"Could not play track {track.FormattedName} on path {track.Path} during audio recovery. Track has been marked invalid.");
+				StatusMessage = $"Could not play track {track.FormattedName}.";
+				PlaybackEnded();
+			}
 		}
 
         #endregion
@@ -958,7 +1061,7 @@ namespace Radio_Automation.ViewModels
 			if (ok.DialogResult.HasValue && ok.DialogResult.Value)
 			{
 				await SaveSettingsAsync();
-				if (_settings.PrimaryOutputDevice.Id != AudioPlayback.DeviceId)
+				if (_settings.PrimaryOutputDevice.Id != _audioPlayer?.DeviceId)
 				{
 					await ConfigurePrimaryAudioPlayer();
 				}
@@ -1021,6 +1124,11 @@ namespace Radio_Automation.ViewModels
 					TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
 					_audioPlayer.TogglePlayPause();
 				}
+				else if (_audioPlayer.LastLoadFailedOnDevice)
+				{
+					// Not the track's fault: no output device. Retry rather than invalidating the playlist.
+					OnPlaybackFaulted(_audioPlayer, null);
+				}
 				else
 				{
 					CurrentTrack.IsValid = false;
@@ -1037,7 +1145,7 @@ namespace Radio_Automation.ViewModels
 		/// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
 		private bool CanPlayPause()
 		{
-			return AudioPlayback.CurrentDevice != null && Playlist.Tracks.Count > 0;
+			return _audioPlayer?.CurrentDevice != null && Playlist.Tracks.Count > 0;
 		}
 
 		#endregion
