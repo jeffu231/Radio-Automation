@@ -20,5 +20,14 @@ namespace RadioAutomation.Tests.ViewModels
 
 			Assert.Equal(expected, MainWindowViewModel.GetTemperatureFileName(temperature));
 		}
+
+		// Not required (en-US is the target), but cheap: sv-SE writes the minus sign as U+2212.
+		[Fact]
+		public void GetTemperatureFileName_SvSe_StillUsesAsciiMinus()
+		{
+			using var _ = new CultureScope("sv-SE");
+
+			Assert.Equal("TMPN-005.mp3", MainWindowViewModel.GetTemperatureFileName(-5));
+		}
 	}
 }

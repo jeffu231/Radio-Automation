@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -1852,8 +1853,10 @@ namespace Radio_Automation.ViewModels
 
 		internal static string GetTemperatureFileName(int temperature)
 		{
+			// File names are machine values: avoid a culture's NegativeSign changing the name.
 			var format = "000";
-			return temperature < 0 ? $"TMPN{temperature.ToString(format)}.mp3" : $"TMP{temperature.ToString(format)}.mp3";
+			var number = temperature.ToString(format, CultureInfo.InvariantCulture);
+			return temperature < 0 ? $"TMPN{number}.mp3" : $"TMP{number}.mp3";
 		}
 
 		private async Task<bool> PlayTemperature()
