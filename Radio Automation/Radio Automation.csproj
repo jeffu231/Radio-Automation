@@ -29,6 +29,7 @@
 		<DebugType>None</DebugType>
 	</PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="RadioAutomation.Tests" />
     <Compile Remove="Controls\**" />
     <EmbeddedResource Remove="Controls\**" />
     <None Remove="Controls\**" />

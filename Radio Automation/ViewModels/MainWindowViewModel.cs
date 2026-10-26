@@ -1850,6 +1850,12 @@ namespace Radio_Automation.ViewModels
 			}
 		}
 
+		internal static string GetTemperatureFileName(int temperature)
+		{
+			var format = "000";
+			return temperature < 0 ? $"TMPN{temperature.ToString(format)}.mp3" : $"TMP{temperature.ToString(format)}.mp3";
+		}
+
 		private async Task<bool> PlayTemperature()
 		{
 			var player = _audioPlayer;
@@ -1865,8 +1871,7 @@ namespace Radio_Automation.ViewModels
 				player.Volume = _audioPlayer.Volume;
 				FadeVolumeDown();
 			}
-			var format = "000";
-			var tempFile = Temperature < 0 ? $"TMPN{Temperature.ToString(format)}.mp3" : $"TMP{Temperature.ToString(format)}.mp3";
+			var tempFile = GetTemperatureFileName(Temperature);
 			var temperaturePath = Path.Combine($"{_settings.TimeTempFilePath}\\Temperature", tempFile);
 			if (File.Exists(temperaturePath))
 			{
