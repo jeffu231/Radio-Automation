@@ -123,7 +123,7 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 - [x] **3.2 T** CA1510 (6). Add `ParamName`+type assertions for public guards that have none, then convert. *Done: 49.* Pinned `ParamName` on the two public guards first (`e20e684`); the four private WPF guards are STA-only and the rewrite is identical.
 - [x] **3.3 T** CA1861 (7) + CA1869 (1). Confirm no mutation of hoisted arrays; run serialization round-trips before and after. *Done: 40.* 8 hits (2 production, 6 test). Existing Zara-import and serializer tests cover the paths; hoisted arrays are never mutated.
 - [x] **3.4 T** CA1870 (1). Extract the invalid-path check if inline; pin inputs; convert. *Done: 40.* No code change: the one CA1870 hit was the `IndexOfAny` in `PreferencesViewModel`, cleared by the `static readonly char[]` in 3.3 (`de83d37`).
-- [ ] **3.5** CA1852 (3). Verify no derivation or proxying, then seal.
+- [x] **3.5** CA1852 (3). Verify no derivation or proxying, then seal. *Done: 37.* Sealed `InternetStreamEntryViewModel`, `TreeViewSelectedItemBehavior`, `Imperial`; no subtypes, no mocking library in the solution, no tests needed.
 - [ ] **3.6** CA1849 (5). Test-only conversion to async APIs; confirm assertions are unchanged.
 - [ ] **3.7 T** CA1851 (4). Enumeration-count characterization tests for `ConcatenatingAudioFileReader` and `AudioTrackParserService` first, then materialize.
 - [ ] **3.8 T** Culture: CA1305, CA1304, CA1309 (11).
@@ -198,3 +198,4 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 | 2026-10-26 | 3.2 | 49 | 122 / 0 | 6 hits; ParamName pins added before conversion |
 | 2026-10-26 | 3.3 | 40 | 122 / 0 | 8 hits; Split(string[]) became Split(char), static char[] for IndexOfAny |
 | 2026-10-26 | 3.4 | 40 | 122 / 0 | 0 hits remaining; cleared as a side effect of 3.3 |
+| 2026-10-26 | 3.5 | 37 | 122 / 0 | 3 classes sealed; no derivation or proxying found |
