@@ -13,6 +13,11 @@ namespace Radio_Automation.Services
 	{
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
+		private static readonly HashSet<string> SupportedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			".mp3", ".wav", ".flac", ".ogg", ".wma"
+		};
+
 		#region Implementation of IAudioTrackParserService
 
 		/// <inheritdoc />
@@ -52,7 +57,7 @@ namespace Radio_Automation.Services
 		private List<Track> RetrieveAudioTracksFromFolder(string path)
 		{
 			var files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
-				.Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".flac") || s.EndsWith(".ogg") || s.EndsWith(".wma"));
+				.Where(s => SupportedExtensions.Contains(Path.GetExtension(s)));
 
 			List<Track> tracks = new List<Track>(files.Count());
 			foreach (var file in files)

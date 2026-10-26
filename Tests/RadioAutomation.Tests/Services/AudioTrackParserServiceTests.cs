@@ -74,7 +74,7 @@ namespace RadioAutomation.Tests.Services
 			Assert.DoesNotContain(null, tracks);
 		}
 
-		[Fact(Skip = "Known defect D5: extension filter is case-sensitive - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void RetrieveAudioTracksInPath_UppercaseExtension_IsIncluded()
 		{
 			using var dir = new TempDirectory();
