@@ -72,7 +72,7 @@ namespace RadioAutomation.Tests.Audio
 			Assert.Equal(a.WaveFormat, reader.WaveFormat);
 		}
 
-		[Fact(Skip = "Known defect: Length re-enumerates the source, so a one-shot sequence yields Length 0")]
+		[Fact]
 		public void Ctor_OneShotSequence_EnumeratesOnceAndLengthIsSumOfInputs()
 		{
 			var a = Open("a.wav", 44100, 1, 250);

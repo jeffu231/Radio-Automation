@@ -56,9 +56,10 @@ namespace Radio_Automation.Services
 		private List<Track> RetrieveAudioTracksFromFolder(string path)
 		{
 			var files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
-				.Where(s => SupportedExtensions.Contains(Path.GetExtension(s)));
+				.Where(s => SupportedExtensions.Contains(Path.GetExtension(s)))
+				.ToList();
 
-			List<Track> tracks = new List<Track>(files.Count());
+			List<Track> tracks = new List<Track>(files.Count);
 			foreach (var file in files)
 			{
 				try
