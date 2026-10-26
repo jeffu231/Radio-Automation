@@ -62,10 +62,32 @@ namespace RadioAutomation.Tests.Models
 			Assert.NotEqual(Guid.Empty, new Track("s", "p").Id);
 		}
 
-		[Fact(Skip = "Known defect D2: GetStringTags throws on an empty list - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void GetStringTags_EmptyList_ReturnsEmptyString()
 		{
 			Assert.Equal(string.Empty, new Track().GetStringTags(new List<Tag>()));
+		}
+
+		[Fact]
+		public void GetStringTags_MultipleTags_ReturnsCommaSeparatedNames()
+		{
+			var tags = new List<Tag> { new Tag("rock"), new Tag("live") };
+
+			Assert.Equal("rock, live", new Track().GetStringTags(tags));
+		}
+
+		[Fact]
+		public void GetStringGenres_EmptyList_ReturnsEmptyString()
+		{
+			Assert.Equal(string.Empty, new Track().GetStringGenres(new List<Genre>()));
+		}
+
+		[Fact]
+		public void GetStringGenres_MultipleGenres_ReturnsCommaSeparatedNames()
+		{
+			var genres = new List<Genre> { new Genre("Rock"), new Genre("Pop") };
+
+			Assert.Equal("Rock, Pop", new Track().GetStringGenres(genres));
 		}
 	}
 }

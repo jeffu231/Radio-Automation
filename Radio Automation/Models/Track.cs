@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Catel.Data;
 
@@ -225,26 +225,12 @@ namespace Radio_Automation.Models
 
 		public string GetStringTags(List<Tag> tags)
 		{
-			StringBuilder sb = new StringBuilder();
-			foreach (Tag tag in tags)
-			{
-				sb.Append(tag + ", ");
-			}
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return string.Join(", ", tags.Select(tag => tag.Name));
 		}
 
 		public string GetStringGenres(List<Genre> genres)
 		{
-			StringBuilder sb = new StringBuilder();
-			foreach (Genre genre in genres)
-			{
-				sb.Append(genre + ", ");
-			}
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return string.Join(", ", genres.Select(genre => genre.Name));
 		}
 	}
 }
