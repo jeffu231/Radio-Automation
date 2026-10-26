@@ -76,7 +76,7 @@ namespace RadioAutomation.Tests.Services
 		public async Task LoadPlaylist_CorruptJson_ReturnsEmptyPlaylist()
 		{
 			using var dir = new TempDirectory();
-			File.WriteAllText(dir.File("p.json"), "{ not json");
+			await File.WriteAllTextAsync(dir.File("p.json"), "{ not json", TestContext.Current.CancellationToken);
 
 			var loaded = await CreateService().LoadPlaylistAsync(dir.File("p.json"));
 
@@ -137,7 +137,7 @@ namespace RadioAutomation.Tests.Services
 			using var dir = new TempDirectory();
 			var wav = TestAudio.CreateSineWav(dir.File("a.wav"));
 			var lines = new[] { "1", "0\t" + wav, "0\t" + dir.File("missing.wav"), "malformed line without tab" };
-			File.WriteAllText(dir.File("z.zpl"), string.Join("\r\n", lines), new UTF8Encoding(false));
+			await File.WriteAllTextAsync(dir.File("z.zpl"), string.Join("\r\n", lines), new UTF8Encoding(false), TestContext.Current.CancellationToken);
 
 			var playlist = await CreateService().ImportZaraPlaylistAsync(dir.File("z.zpl"));
 
@@ -149,7 +149,7 @@ namespace RadioAutomation.Tests.Services
 		public async Task ImportZaraPlaylist_HeaderOnly_ReturnsEmptyPlaylist()
 		{
 			using var dir = new TempDirectory();
-			File.WriteAllText(dir.File("z.zpl"), "header", new UTF8Encoding(false));
+			await File.WriteAllTextAsync(dir.File("z.zpl"), "header", new UTF8Encoding(false), TestContext.Current.CancellationToken);
 
 			var playlist = await CreateService().ImportZaraPlaylistAsync(dir.File("z.zpl"));
 

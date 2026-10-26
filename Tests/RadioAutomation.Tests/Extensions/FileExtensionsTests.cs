@@ -52,7 +52,7 @@ namespace RadioAutomation.Tests.Extensions
 		public async Task ReadAllLinesAsync_ReturnsAllLines()
 		{
 			using var dir = new TempDirectory();
-			File.WriteAllText(dir.File("f.txt"), "one\r\ntwo\nthree");
+			await File.WriteAllTextAsync(dir.File("f.txt"), "one\r\ntwo\nthree", TestContext.Current.CancellationToken);
 
 			var lines = await FileExtensions.ReadAllLinesAsync(dir.File("f.txt"));
 
@@ -63,7 +63,7 @@ namespace RadioAutomation.Tests.Extensions
 		public async Task ReadAllLinesAsync_Utf16File_DecodesCorrectly()
 		{
 			using var dir = new TempDirectory();
-			File.WriteAllText(dir.File("f.txt"), "héllo\nwörld", Encoding.Unicode);
+			await File.WriteAllTextAsync(dir.File("f.txt"), "héllo\nwörld", Encoding.Unicode, TestContext.Current.CancellationToken);
 
 			var lines = await FileExtensions.ReadAllLinesAsync(dir.File("f.txt"));
 
