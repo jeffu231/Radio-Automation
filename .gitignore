@@ -9,3 +9,5 @@ publish
 Release
 **/.idea
 .claude/settings.local.json
+
+TestResults/
