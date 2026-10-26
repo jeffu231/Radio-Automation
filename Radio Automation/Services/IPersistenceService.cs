@@ -19,7 +19,7 @@ namespace Radio_Automation.Services
 
 		Task<EventSchedule> LoadEventScheduleAsync(string path);
 
-		Task<bool> SaveEventScheduleAsync(EventSchedule settings, string path);
+		Task<bool> SaveEventScheduleAsync(EventSchedule eventSchedule, string path);
 
 	}
 }
