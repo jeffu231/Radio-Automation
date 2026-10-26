@@ -36,12 +36,7 @@ namespace NAudioWrapper
 		private VolumeSampleProvider? _volumeProvider;
 		private float _volume = 1f;
 		private bool _notificationsRegistered;
-		private static readonly MMDeviceEnumerator DeviceEnumerator;
-
-		static AudioPlayback()
-		{
-			DeviceEnumerator = new MMDeviceEnumerator();
-		}
+		private static readonly MMDeviceEnumerator DeviceEnumerator = new MMDeviceEnumerator();
 
 		public AudioPlayback():this(GetDefaultMMDevice()!)
 		{
@@ -496,6 +491,7 @@ namespace NAudioWrapper
             Stop();
             CloseFile();
             DisposePlaybackDevice();
+            GC.SuppressFinalize(this);
         }
 
         private void DisposePlaybackDevice()
