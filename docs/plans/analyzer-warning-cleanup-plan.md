@@ -103,9 +103,9 @@ Counts are *unique* warnings and are estimates. Re-baseline if they drift. Steps
 low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 
 ### Phase 0: Safety net (do first, standalone)
-- [ ] **0.1** Record the baseline and run the full suite green: `dotnet test --project 'Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj'`. Note pass/skip counts in the Progress log. *No commit.*
-- [ ] **0.2** Check whether `InternalsVisibleTo` exists for the test project (needed by ladder b). If not, decide whether to add it. *(Commit `build(tests): Expose internals to the test project` only if needed.)*
-- [ ] **0.3** Build the **testability inventory**: for each file in the table above, record under *Notes* below whether its risky code is reachable from the test project (yes / needs extraction / untestable). This turns the ladder into a concrete choice per file before any code changes.
+- [x] **0.1** Record the baseline and run the full suite green: `dotnet test --project 'Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj'`. Note pass/skip counts in the Progress log. *No commit.*
+- [x] **0.2** Check whether `InternalsVisibleTo` exists for the test project (needed by ladder b). If not, decide whether to add it. *(Commit `build(tests): Expose internals to the test project` only if needed.)*
+- [x] **0.3** Build the **testability inventory**: for each file in the table above, record under *Notes* below whether its risky code is reachable from the test project (yes / needs extraction / untestable). This turns the ladder into a concrete choice per file before any code changes.
 
 ### Phase 1: Style (IDE) rules
 - [ ] **1.1 T** IDE0074 + IDE0054 (36). Triage every hit into local / field / model property / VM property. Test commit for model-property hits (PropertyChanged-count pins), then fix commit. Promote `dotnet_style_prefer_compound_assignment` to `error`. *Expected after: 90.*
@@ -164,10 +164,26 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 | 5.1 | no | `build(analyzers): Promote clean rules to error` | the four above |
 
 ## Notes (fill in during Phase 0.3)
-- Testability of each risky file: _to be filled in_
-- Existing tests found per Questionable rule: _to be filled in_
+- `InternalsVisibleTo`: **absent** (no csproj/props/source hit). Not added up front; the first step that
+  needs ladder (b) adds it in its own `build(tests)` commit. Prefer making an extracted helper `public`
+  only if it is already a public type's member.
+- Reachability (test project references `Radio Automation`, `NAudioWrapper`, `Weather`; main types are public):
+  - **yes (no STA/device):** `Playlist`, `Event`/models, `EventBus`, `PendingEvent`, `PersistenceService`,
+    `AudioTrackParserService`, `ConcatenatingAudioFileReader`, `SampleAggregator`, `PercentageConverter`,
+    `WunderGround`, extensions/utils.
+  - **yes, new tests needed:** `Models/Clock.cs` (uses an `Elapsed` handler, so a `System.Timers.Timer`; confirm in 3.9
+    before writing tick/`Dispose` tests).
+  - **needs extraction or behavior-preserving form (ladder a/b):** `MainWindowViewModel`, `EventScheduleViewModel`,
+    `PreferencesViewModel`, `EditEventViewModel` (public Catel VMs; construction pulls the dependency resolver,
+    services, and in `MainWindowViewModel` audio/MQTT, so treat as untestable directly).
+  - **untestable (STA / Dispatcher / device):** `Windows/DataWindow.cs` (a `Window`; the header doc comment suggests
+    an adapted Catel `DataWindow`, so prefer scoped suppression), `TextBoxExtender`, `TreeViewSelectionHelper`,
+    `ScrollPlayingIntoViewBehavior`, `NAudioWrapper/AudioPlayback.cs`, `Device`.
+- Existing tests per Questionable rule: see the risk table; confirm with `change(tests)` at the start of each step.
+- Test warnings (CA1849/1861/1825/1869/5394/1711) live in the test project, so those steps change tests only.
 
 ## Progress log
 | Date | Step | Unique warnings after | Tests (pass/skip) | Notes |
 |---|---|---|---|---|
-| 2026-10-26 | baseline | 126 | _record in 0.1_ | 217 raw |
+| 2026-10-26 | baseline | 126 | 116 / 0 | 217 raw |
+| 2026-10-26 | 0.1-0.3 | 126 | 116 / 0 | No code changes. `InternalsVisibleTo` absent; inventory in Notes |
