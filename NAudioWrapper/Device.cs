@@ -12,9 +12,15 @@ namespace NAudioWrapper
 		}
 
 		public Device(MMDevice device, bool isDefault)
+			: this(device.FriendlyName, device.ID, isDefault)
 		{
-			FriendlyName = device.FriendlyName;
-			Id = device.ID;
+		}
+
+		internal Device(string friendlyName, string id, bool isDefault)
+		{
+			FriendlyName = friendlyName;
+			Id = id;
+			IsDefault = isDefault;
 		}
 
 		public string FriendlyName { get; set; } = string.Empty;

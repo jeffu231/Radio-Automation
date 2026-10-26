@@ -41,6 +41,18 @@ namespace RadioAutomation.Tests.Audio
 			Assert.True(clone.IsDefault);
 		}
 
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public void Constructor_SetsIsDefaultFromArgument(bool isDefault)
+		{
+			var device = new Device("Speakers", "id-1", isDefault);
+
+			Assert.Equal("Speakers", device.FriendlyName);
+			Assert.Equal("id-1", device.Id);
+			Assert.Equal(isDefault, device.IsDefault);
+		}
+
 		[Fact]
 		public void Json_LegacyPayloadWithoutIsDefault_DeserializesAsFalse()
 		{

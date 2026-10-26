@@ -30,7 +30,7 @@ csharp_style_prefer_primary_constructors = true:suggestion
 dotnet_style_readonly_field = true:error
 
 # Parameter preferences
-dotnet_code_quality_unused_parameters = all:warning # Make error
+dotnet_code_quality_unused_parameters = all:error
 
 #### C# Coding Conventions ####
 
