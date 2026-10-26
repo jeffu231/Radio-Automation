@@ -166,6 +166,108 @@ namespace Radio_Automation.ViewModels
 		}
 
 		private bool _recoveringPlayback;
+		private bool _retryingStream;
+		private bool _skipRequested;
+		private CancellationTokenSource? _streamRetryCts;
+		private static readonly int[] StreamRetryDelaySeconds = { 5, 10, 20, 40, 80 };
+
+		private enum StreamRetryResult
+		{
+			Recovered, Exhausted, Cancelled
+		}
+
+		private static bool IsInternetStream(Track? track)
+		{
+			return track?.Path.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true;
+		}
+
+		/// <summary>
+		/// Retries loading an internet stream that dropped, with exponentially increasing delays. If every
+		/// retry fails the track is marked invalid and playback moves on, as for any unplayable track.
+		/// </summary>
+		private async void ReconnectStreamAsync(Track track)
+		{
+			if (_retryingStream)
+			{
+				return;
+			}
+
+			_retryingStream = true;
+			var result = StreamRetryResult.Exhausted;
+			var cts = new CancellationTokenSource();
+			_streamRetryCts = cts;
+			try
+			{
+				_playPositionTimer.Stop();
+				for (var attempt = 0; attempt < StreamRetryDelaySeconds.Length; attempt++)
+				{
+					var delay = StreamRetryDelaySeconds[attempt];
+					Log.Warning($"Stream {track.FormattedName} unavailable. Retry {attempt + 1} of {StreamRetryDelaySeconds.Length} in {delay}s.");
+					StatusMessage = $"Stream {track.FormattedName} interrupted. Retry {attempt + 1} of {StreamRetryDelaySeconds.Length} in {delay}s...";
+					await Task.Delay(TimeSpan.FromSeconds(delay), cts.Token);
+
+					if (_playbackState != PlaybackState.Playing || !ReferenceEquals(track, CurrentTrack))
+					{
+						result = StreamRetryResult.Cancelled;
+						break;
+					}
+
+					bool loaded;
+					try
+					{
+						loaded = _audioPlayer.Load(track.Path);
+					}
+					catch (Exception e)
+					{
+						Log.Warning(e, "Error reloading stream.");
+						loaded = false;
+					}
+
+					if (loaded)
+					{
+						RemainingTime = track.Duration;
+						TrackEndTime = DateTime.Now.Add(track.Duration);
+						_audioPlayer.TogglePlayPause();
+						StatusMessage = string.Empty;
+						Log.Info($"Stream {track.FormattedName} recovered after {attempt + 1} retry(ies).");
+						result = StreamRetryResult.Recovered;
+						break;
+					}
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				result = StreamRetryResult.Cancelled;
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, "Unexpected error while retrying stream.");
+			}
+			finally
+			{
+				_retryingStream = false;
+				_streamRetryCts = null;
+				cts.Dispose();
+			}
+
+			switch (result)
+			{
+				case StreamRetryResult.Recovered:
+					_playPositionTimer.Start();
+					break;
+				case StreamRetryResult.Cancelled:
+					StatusMessage = string.Empty;
+					PlaybackEnded();
+					break;
+				default:
+					track.IsValid = false;
+					Log.Error($"Could not play stream {track.FormattedName} on path {track.Path} after {StreamRetryDelaySeconds.Length} retries. Track has been marked invalid.");
+					StatusMessage = $"Could not play track {track.FormattedName}.";
+					_skipRequested = true;
+					PlaybackEnded();
+					break;
+			}
+		}
 
 		/// <summary>
 		/// The output stream died (device invalidated/removed, session change, ...). Re-resolve the
@@ -174,7 +276,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private async void OnPlaybackFaulted(AudioPlayback player, Exception? error)
 		{
-			if (!ReferenceEquals(player, _audioPlayer) || _recoveringPlayback || _playbackState != PlaybackState.Playing)
+			if (!ReferenceEquals(player, _audioPlayer) || _recoveringPlayback || _retryingStream || _playbackState != PlaybackState.Playing)
 			{
 				return;
 			}
@@ -187,6 +289,7 @@ namespace Radio_Automation.ViewModels
 
 			_recoveringPlayback = true;
 			var advanceToNextTrack = false;
+			var reconnectStream = false;
 			try
 			{
 				Log.Warning(error, $"Audio output lost while playing {track.FormattedName}. Attempting to recover.");
@@ -225,7 +328,15 @@ namespace Radio_Automation.ViewModels
 					var loaded = player.Load(track.Path);
 					if (!loaded && !player.LastLoadFailedOnDevice)
 					{
-						advanceToNextTrack = true;
+						// A stream that fails to load is most likely a network outage: use the stream retry schedule.
+						if (isStream)
+						{
+							reconnectStream = true;
+						}
+						else
+						{
+							advanceToNextTrack = true;
+						}
 						break;
 					}
 
@@ -253,6 +364,12 @@ namespace Radio_Automation.ViewModels
 			finally
 			{
 				_recoveringPlayback = false;
+			}
+
+			if (reconnectStream)
+			{
+				ReconnectStreamAsync(track);
+				return;
 			}
 
 			if (advanceToNextTrack)
@@ -1117,9 +1234,11 @@ namespace Radio_Automation.ViewModels
 				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
 				Log.Info($"Playing Track {CurrentTrack.FormattedName}");
 				_playbackState = PlaybackState.Playing;
+				_skipRequested = false;
 				var success = _audioPlayer.Load(CurrentTrack.Path);
 				if(success)
 				{
+					StatusMessage = string.Empty;
 					RemainingTime = CurrentTrack.Duration;
 					TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
 					_audioPlayer.TogglePlayPause();
@@ -1128,6 +1247,10 @@ namespace Radio_Automation.ViewModels
 				{
 					// Not the track's fault: no output device. Retry rather than invalidating the playlist.
 					OnPlaybackFaulted(_audioPlayer, null);
+				}
+				else if (IsInternetStream(CurrentTrack))
+				{
+					ReconnectStreamAsync(CurrentTrack);
 				}
 				else
 				{
@@ -1168,6 +1291,7 @@ namespace Radio_Automation.ViewModels
 		private void StopPlayback()
 		{
 			_playbackState = PlaybackState.Stopped;
+			_streamRetryCts?.Cancel();
 			_audioPlayer?.Stop();
 		}
 
@@ -1199,6 +1323,8 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private void ForwardToEnd()
 		{
+			_skipRequested = true;
+			_streamRetryCts?.Cancel();
 			_audioPlayer?.Stop();
 		}
 
@@ -1420,6 +1546,19 @@ namespace Radio_Automation.ViewModels
 
 		private void PlaybackEnded()
 		{
+			if (_retryingStream)
+			{
+				return;
+			}
+
+			// A stream never ends on its own, so an unrequested end means the connection dropped.
+			if (_playbackState == PlaybackState.Playing && !_skipRequested && IsInternetStream(CurrentTrack))
+			{
+				ReconnectStreamAsync(CurrentTrack);
+				return;
+			}
+
+			_skipRequested = false;
 			_playPositionTimer.Stop();
 			TrackEndTime = DateTime.MinValue;
 			TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, false));

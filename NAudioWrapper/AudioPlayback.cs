@@ -409,9 +409,17 @@ namespace NAudioWrapper
         {
 			_playbackDevice?.Stop();
 			DisposePlaybackDevice();
-            if (_fileStream != null)
+            try
             {
-                _fileStream.Position = 0;
+                if (_fileStream != null)
+                {
+                    _fileStream.Position = 0;
+                }
+            }
+            catch (Exception e)
+            {
+                // Non-seekable or broken sources (e.g. a dropped internet stream) can't be rewound.
+                Log.Warning(e, "Unable to reset the stream position.");
             }
 			PlaybackStopped?.Invoke();
         }
