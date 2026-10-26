@@ -1,0 +1,4 @@
+[*.cs]
+
+# CA1707: the root namespace Radio_Automation is fixed by the project name and used by XAML and saved data
+dotnet_diagnostic.CA1707.severity = none
