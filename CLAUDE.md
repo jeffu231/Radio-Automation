@@ -117,4 +117,4 @@ Event types (`EventType`): `Play`, `Stop`, `Pause`, `Temperature`, `Time`, `Humi
 - Command: `dotnet test --project 'Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj'` (`global.json` selects the Microsoft.Testing.Platform runner, required by the .NET 10 SDK).
 - Filesystem access goes through `TempDirectory` only. No network, audio devices, MQTT broker, or STA/Dispatcher.
 - Use `[Collection(NonParallelCollection.Name)]` for tests that change static state (e.g. `EventBus.EventTriggered`).
-- Known defects are recorded as skipped tests; see `docs/plans/unit-tests-seed-plan.md` section 9.
+- Record a known defect as a skipped test (`[Fact(Skip = "Known defect: ...")]`) that asserts the correct behavior, and un-skip it in the commit that fixes the defect.
