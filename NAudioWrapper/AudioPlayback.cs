@@ -15,7 +15,7 @@ namespace NAudioWrapper
     {
 	    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private IWavePlayer? _playbackDevice;
+        private WasapiOut? _playbackDevice;
         private WaveStream? _fileStream;
 
         public event Action? PlaybackResumed;

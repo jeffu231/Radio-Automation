@@ -334,7 +334,7 @@ namespace Radio_Automation.Behaviors
 		/// <typeparam name="T">The type of item to retrieve.</typeparam>
 		/// <param name="parentItem">The parent item.</param>
 		/// <returns>The list of items within the parent item, may be empty.</returns>
-		private static IList<T> GetItemsRecursively<T>(ListView parentItem)
+		private static List<T> GetItemsRecursively<T>(ListView parentItem)
 			where T : ListBoxItem
 		{
 			if (parentItem == null)

@@ -88,7 +88,7 @@ namespace RadioAutomation.Tests.Extensions
 		public void GetEncoding_EmptyFile_ReturnsDefault()
 		{
 			using var dir = new TempDirectory();
-			File.WriteAllBytes(dir.File("f.txt"), new byte[0]);
+			File.WriteAllBytes(dir.File("f.txt"), System.Array.Empty<byte>());
 
 			Assert.Equal(Encoding.Default, FileExtensions.GetEncoding(dir.File("f.txt")));
 		}

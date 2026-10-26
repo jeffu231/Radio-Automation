@@ -1568,7 +1568,7 @@ namespace Radio_Automation.ViewModels
 				return;
 			}
 
-			if (_eventQueue.Any())
+			if (_eventQueue.Count > 0)
 			{
 				CurrentTrack = null;
 				ExecuteEvent(_eventQueue.Dequeue());

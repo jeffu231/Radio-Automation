@@ -302,7 +302,7 @@ namespace WPFDarkTheme.Controls
         /// The list of all items is returned as a convenience to avoid multiple iterations.
         /// </remarks>
         /// <returns>The list of all items.</returns>
-        private IEnumerable<TreeViewItem> DeSelectAll()
+        private List<TreeViewItem> DeSelectAll()
         {
             var items = GetItemsRecursively<TreeViewItem>(AssociatedObject);
             foreach (var item in items)
@@ -333,7 +333,7 @@ namespace WPFDarkTheme.Controls
         /// <typeparam name="T">The type of item to retrieve.</typeparam>
         /// <param name="parentItem">The parent item.</param>
         /// <returns>The list of items within the parent item, may be empty.</returns>
-        private static IList<T> GetItemsRecursively<T>(ItemsControl parentItem)
+        private static List<T> GetItemsRecursively<T>(ItemsControl parentItem)
             where T : ItemsControl
         {
             if (parentItem == null)
