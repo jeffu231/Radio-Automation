@@ -51,7 +51,7 @@ namespace Radio_Automation.Behaviors
 
 		// Using a DependencyProperty as the backing store for Words. 
 		//This enables animation, styling, binding, etc...
-		public static  DependencyProperty CurrentTrackIndexProperty =
+		public static readonly DependencyProperty CurrentTrackIndexProperty =
 			DependencyProperty.Register("CurrentTrackIndex", typeof(int),
 				typeof(ScrollPlayingIntoViewBehavior), new PropertyMetadata(default(int),new PropertyChangedCallback(CurrentTrackIndexChanged)));
 

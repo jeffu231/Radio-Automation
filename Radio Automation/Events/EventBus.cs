@@ -5,7 +5,7 @@ namespace Radio_Automation.Events
 {
 	public class EventBus
 	{
-		public static Action<Event> EventTriggered;
+		public static Action<Event> EventTriggered { get; set; }
 
 		public static void OnEventTriggered(Event e)
 		{
