@@ -111,6 +111,9 @@ namespace NAudioWrapper
         {
             Result = result;
         }
+        // The aggregator reuses one FftEventArgs wrapping its FFT buffer on the audio hot path, so handing out
+        // the array (not a copy) is deliberate; copying per notification would allocate on every FFT.
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1819:Properties should not return arrays", Justification = "Shared FFT buffer on the audio hot path; copying would allocate per notification.")]
         public Complex[] Result { get; private set; }
     }
 }
