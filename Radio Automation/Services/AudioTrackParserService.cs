@@ -74,7 +74,7 @@ namespace Radio_Automation.Services
 				}
 				catch (Exception e)
 				{
-					Console.Out.WriteLine($"Error reading {file}, message {e.Message}");
+					Log.Error($"Error reading {file}, message {e.Message}");
 
 				}
 
