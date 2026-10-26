@@ -34,7 +34,7 @@ namespace WPFDarkTheme.Utils
             view.ChangeSelectedItem(e.NewValue);
         }
 
-        private class TreeViewSelectedItemBehavior
+        private sealed class TreeViewSelectedItemBehavior
         {
             private readonly TreeView _view;
             public TreeViewSelectedItemBehavior(TreeView view)

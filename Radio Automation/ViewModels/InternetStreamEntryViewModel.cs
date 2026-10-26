@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Radio_Automation.ViewModels
 {
-	internal class InternetStreamEntryViewModel : ViewModelBase
+	internal sealed class InternetStreamEntryViewModel : ViewModelBase
 	{
 		public InternetStreamEntryViewModel()
 		{
