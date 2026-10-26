@@ -36,7 +36,7 @@ namespace WPFDarkTheme.Utils
 
         private class TreeViewSelectedItemBehavior
         {
-            readonly TreeView _view;
+            private readonly TreeView _view;
             public TreeViewSelectedItemBehavior(TreeView view)
             {
                 this._view = view;

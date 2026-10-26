@@ -12,7 +12,7 @@ namespace NAudioWrapper
         private float maxValue;
         private float minValue;
         public int NotificationCount { get; set; }
-        int count;
+        private int count;
 
         // FFT
         public event EventHandler<FftEventArgs>? FftCalculated;
@@ -40,7 +40,7 @@ namespace NAudioWrapper
             this.source = source;
         }
 
-        static bool IsPowerOfTwo(int x)
+        private static bool IsPowerOfTwo(int x)
         {
             return (x & (x - 1)) == 0;
         }

@@ -249,7 +249,7 @@ namespace Radio_Automation.Behaviors
 		private bool _isUpdatingTarget;
 		private bool _isUpdatingSource;
 
-		void SourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_isUpdatingSource)
 				return;

@@ -60,7 +60,7 @@ namespace Weather
 	    public double PrecipTotal => Imperial.PrecipTotal;
     }
 
-    class Imperial
+    internal class Imperial
     {
 	    [JsonPropertyName("temp")]
 	    public double Temp { get; set; }

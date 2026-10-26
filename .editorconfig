@@ -76,7 +76,7 @@ csharp_style_conditional_delegate_call = true:warning # Make error
 
 # Modifier preferences
 csharp_prefer_static_local_function = true:suggestion  # Make warning then error
-csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:warning # Make error
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:error
 
 # Code-block preferences
 csharp_prefer_braces = true:suggestion   # Make warning then error

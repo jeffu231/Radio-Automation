@@ -946,7 +946,7 @@ namespace Radio_Automation.Windows
         /// Applies all changes made by this window.
         /// </summary>
         /// <returns>True if successful, otherwise false.</returns>
-        protected async virtual Task<bool> ApplyChangesAsync()
+        protected virtual async Task<bool> ApplyChangesAsync()
         {
             var result = await _logic.SaveViewModelAsync();
             return result;
@@ -955,7 +955,7 @@ namespace Radio_Automation.Windows
         /// <summary>
         /// Discards all changes made by this window.
         /// </summary>
-        protected async virtual Task<bool> DiscardChangesAsync()
+        protected virtual async Task<bool> DiscardChangesAsync()
         {
             // CTL-735 We might be handling the ViewModel.Closed event
             var vm = _logic.ViewModel;
