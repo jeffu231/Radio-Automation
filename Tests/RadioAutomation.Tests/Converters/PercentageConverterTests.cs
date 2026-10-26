@@ -39,6 +39,17 @@ namespace RadioAutomation.Tests.Converters
 			Assert.Equal(expected, result);
 		}
 
+		// Not required (en-US is the target), but cheap to support: a XAML literal means the same in every culture.
+		[Fact]
+		public void Convert_DeDe_XamlLiteralParameterStillMeansQuarter()
+		{
+			using var _ = new CultureScope("de-DE");
+
+			var result = _converter.Convert(200.0, typeof(int), ".25", CultureInfo.CurrentCulture);
+
+			Assert.Equal(50, result);
+		}
+
 		[Theory]
 		[InlineData(null, "0.5")]
 		[InlineData(200.0, null)]
