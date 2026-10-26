@@ -56,7 +56,7 @@ namespace RadioAutomation.Tests.Models
 			Assert.True(new Track().IsValid);
 		}
 
-		[Fact(Skip = "Known defect D1: Track(name, path) does not chain to this() - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void Ctor_NamePath_AssignsId()
 		{
 			Assert.NotEqual(Guid.Empty, new Track("s", "p").Id);

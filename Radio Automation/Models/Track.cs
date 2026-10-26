@@ -13,7 +13,7 @@ namespace Radio_Automation.Models
 			Id = Guid.NewGuid();
 		}
 
-		public Track(string name, string path)
+		public Track(string name, string path) : this()
 		{
 			Name = name;
 			Path = path;
