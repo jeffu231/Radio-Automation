@@ -72,6 +72,25 @@ namespace RadioAutomation.Tests.Audio
 			Assert.Equal(a.WaveFormat, reader.WaveFormat);
 		}
 
+		[Fact(Skip = "Known defect: Length re-enumerates the source, so a one-shot sequence yields Length 0")]
+		public void Ctor_OneShotSequence_EnumeratesOnceAndLengthIsSumOfInputs()
+		{
+			var a = Open("a.wav", 44100, 1, 250);
+			var b = Open("b.wav", 44100, 1, 500);
+			var enumerations = 0;
+			IEnumerable<AudioFileReader> OneShot()
+			{
+				enumerations++;
+				yield return a;
+				yield return b;
+			}
+
+			var reader = new ConcatenatingAudioFileReader(OneShot());
+
+			Assert.Equal(1, enumerations);
+			Assert.Equal(a.Length + b.Length, reader.Length);
+		}
+
 		[Fact]
 		public void Read_ReadsAllInputsSequentially()
 		{
