@@ -168,7 +168,7 @@ namespace Radio_Automation.ViewModels
 		private bool _recoveringPlayback;
 		private bool _retryingStream;
 		private bool _skipRequested;
-		private CancellationTokenSource? _streamRetryCts;
+		private CancellationTokenSource _streamRetryCts;
 		private static readonly int[] StreamRetryDelaySeconds = { 5, 10, 20, 40, 80 };
 
 		private enum StreamRetryResult
@@ -176,7 +176,7 @@ namespace Radio_Automation.ViewModels
 			Recovered, Exhausted, Cancelled
 		}
 
-		private static bool IsInternetStream(Track? track)
+		private static bool IsInternetStream(Track track)
 		{
 			return track?.Path.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true;
 		}
@@ -274,7 +274,7 @@ namespace Radio_Automation.ViewModels
 		/// device and resume the current track, retrying with a capped backoff until it works or the
 		/// user stops playback.
 		/// </summary>
-		private async void OnPlaybackFaulted(AudioPlayback player, Exception? error)
+		private async void OnPlaybackFaulted(AudioPlayback player, Exception error)
 		{
 			if (!ReferenceEquals(player, _audioPlayer) || _recoveringPlayback || _retryingStream || _playbackState != PlaybackState.Playing)
 			{
