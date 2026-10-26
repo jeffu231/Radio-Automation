@@ -22,7 +22,7 @@ dotnet publish 'Radio Automation\Radio Automation.csproj' -p:PublishProfile=Buil
 dotnet build -c Release /p:Version=<version>
 ```
 
-There are no automated tests in this project.
+See the Testing section below for the unit test project.
 
 ## Commit Message Convention
 
@@ -64,6 +64,7 @@ JobToolKit.Core is used for cron-based event scheduling. It needs to be replaced
 | `WPFDarkTheme` | Custom WPF dark theme/styling |
 | `Resources` | Shared resources |
 | `Radio-Automation-Installer` | WiX MSI installer project |
+| `Tests/RadioAutomation.Tests` | xUnit.net v3 unit tests |
 
 ### MVVM Framework: Catel
 
@@ -109,3 +110,11 @@ Event types (`EventType`): `Play`, `Stop`, `Pause`, `Temperature`, `Time`, `Humi
 ### Track Parsing
 
 `AudioTrackParserService` (implements `IAudioTrackParserService`) reads ID3/metadata from audio files using **TagLibSharp**. It supports `.mp3`, `.wav`, `.flac`, `.ogg`, `.wma`. Playlist sources include folder scanning (recursive), M3U files (via OneWay.M3U), Zara playlists, and internet streams.
+
+## Testing
+
+- Framework: xUnit.net v3, project `Tests/RadioAutomation.Tests`.
+- Command: `dotnet test --project 'Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj'` (`global.json` selects the Microsoft.Testing.Platform runner, required by the .NET 10 SDK).
+- Filesystem access goes through `TempDirectory` only. No network, audio devices, MQTT broker, or STA/Dispatcher.
+- Use `[Collection(NonParallelCollection.Name)]` for tests that change static state (e.g. `EventBus.EventTriggered`).
+- Known defects are recorded as skipped tests; see `docs/plans/unit-tests-seed-plan.md` section 9.
