@@ -120,7 +120,7 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 
 ### Phase 3: Code analysis (CA)
 - [x] **3.1** Safe mechanical: CA1860, CA1825, CA1802, CA1859, CA1507. *(None: compiler-proven.)* *Done: 55.* 9 hits across 7 files (concrete types for private fields/methods, `Count > 0`, `const`, `nameof`, `Array.Empty`); no tests needed.
-- [ ] **3.2 T** CA1510 (6). Add `ParamName`+type assertions for public guards that have none, then convert.
+- [x] **3.2 T** CA1510 (6). Add `ParamName`+type assertions for public guards that have none, then convert. *Done: 49.* Pinned `ParamName` on the two public guards first (`e20e684`); the four private WPF guards are STA-only and the rewrite is identical.
 - [ ] **3.3 T** CA1861 (7) + CA1869 (1). Confirm no mutation of hoisted arrays; run serialization round-trips before and after.
 - [ ] **3.4 T** CA1870 (1). Extract the invalid-path check if inline; pin inputs; convert.
 - [ ] **3.5** CA1852 (3). Verify no derivation or proxying, then seal.
@@ -195,3 +195,4 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 | 2026-10-26 | 1.6 | 66 | 122 / 0 | 1 hit; Device.IsDefault now set (intentional); IVT added; rule promoted to error |
 | 2026-10-26 | 2.1 | 63 | 122 / 0 | 3 hits; annotations removed, #nullable not enabled |
 | 2026-10-26 | 3.1 | 55 | 122 / 0 | 9 hits; CA1859 on DeSelectAll surfaced after the first fix |
+| 2026-10-26 | 3.2 | 49 | 122 / 0 | 6 hits; ParamName pins added before conversion |
