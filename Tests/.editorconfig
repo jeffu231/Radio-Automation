@@ -1,0 +1,12 @@
+﻿[*.{cs,vb}]
+
+# Analyzer overrides
+
+# CA1707: Remove the underscores from member name
+dotnet_diagnostic.CA1707.severity = none
+
+# Bulk upgrade xUnit analyzer rules to build-breaking errors (wildcard rule IDs are not supported)
+dotnet_analyzer_diagnostic.category-Usage.severity = error
+dotnet_analyzer_diagnostic.category-Assertions.severity = error
+
+dotnet_diagnostic.CA1859.severity = suggestion
