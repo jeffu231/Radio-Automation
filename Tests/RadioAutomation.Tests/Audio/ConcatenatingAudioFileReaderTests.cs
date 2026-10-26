@@ -31,7 +31,9 @@ namespace RadioAutomation.Tests.Audio
 		[Fact]
 		public void Ctor_Null_ThrowsArgumentNullException()
 		{
-			Assert.Throws<ArgumentNullException>(() => new ConcatenatingAudioFileReader(null));
+			var ex = Assert.Throws<ArgumentNullException>(() => new ConcatenatingAudioFileReader(null));
+
+			Assert.Equal("providers", ex.ParamName);
 		}
 
 		[Fact]

@@ -16,7 +16,9 @@ namespace RadioAutomation.Tests.Extensions
 		[Fact]
 		public void Ctor_NullType_ThrowsArgumentNullException()
 		{
-			Assert.Throws<ArgumentNullException>(() => new EnumerationExtension(null));
+			var ex = Assert.Throws<ArgumentNullException>(() => new EnumerationExtension(null));
+
+			Assert.Equal("enumType", ex.ParamName);
 		}
 
 		[Fact]
