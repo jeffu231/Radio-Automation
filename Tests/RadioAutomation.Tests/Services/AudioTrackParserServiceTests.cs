@@ -61,7 +61,7 @@ namespace RadioAutomation.Tests.Services
 			Assert.Equal(new[] { one, two }.OrderBy(x => x), tracks.Select(t => t.Path).OrderBy(x => x));
 		}
 
-		[Fact(Skip = "Known defect D4: unreadable audio files are returned as null entries - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void RetrieveAudioTracksInPath_UnreadableAudioFile_IsSkipped()
 		{
 			using var dir = new TempDirectory();

@@ -60,6 +60,12 @@ namespace Radio_Automation.Services
 				try
 				{
 					var t = CreateTrackFromFile(file);
+					if (t == null)
+					{
+						Log.Warning($"Skipping unreadable audio file {file}");
+						continue;
+					}
+
 					tracks.Add(t);
 				}
 				catch (Exception e)
