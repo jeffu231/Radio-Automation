@@ -4,7 +4,7 @@ using Catel.Data;
 
 namespace Radio_Automation.Models
 {
-	public class Clock:ModelBase
+	public class Clock:ModelBase, IDisposable
 	{
 		private readonly Timer _clockTimer;
 
@@ -19,6 +19,16 @@ namespace Radio_Automation.Models
 		public void Stop()
 		{
 			_clockTimer.Stop();
+		}
+
+		/// <summary>
+		/// Stops the timer and releases it. Safe to call more than once.
+		/// </summary>
+		public void Dispose()
+		{
+			_clockTimer.Elapsed -= _clockTimer_Elapsed;
+			_clockTimer.Dispose();
+			GC.SuppressFinalize(this);
 		}
 
 		private void _clockTimer_Elapsed(object sender, ElapsedEventArgs e)

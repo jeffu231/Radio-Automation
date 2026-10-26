@@ -51,6 +51,29 @@ namespace RadioAutomation.Tests.Models
 		}
 
 		[Fact]
+		public void Dispose_HaltsUpdates()
+		{
+			var clock = new Clock();
+			clock.Dispose();
+			var disposed = clock.CurrentDateTime;
+
+			Thread.Sleep(1500);
+
+			Assert.Equal(disposed, clock.CurrentDateTime);
+		}
+
+		[Fact]
+		public void Dispose_CalledTwiceOrAfterStop_DoesNotThrow()
+		{
+			var clock = new Clock();
+			clock.Stop();
+
+			clock.Dispose();
+			clock.Dispose();
+			clock.Stop();
+		}
+
+		[Fact]
 		public void Stop_HaltsUpdates()
 		{
 			var clock = new Clock();

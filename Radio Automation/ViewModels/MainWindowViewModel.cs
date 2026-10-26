@@ -744,7 +744,7 @@ namespace Radio_Automation.ViewModels
 		protected override async Task CloseAsync()
 		{
 			StopPlaying();
-			Clock.Stop();
+			Clock.Dispose();
 			_pendingEventTimer.Stop();
 			_weatherUpdateTimer.Stop();
 			await SaveSettingsAsync().WaitAsync(TimeSpan.FromSeconds(10));
