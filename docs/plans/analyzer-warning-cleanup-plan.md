@@ -110,7 +110,7 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 ### Phase 1: Style (IDE) rules
 - [x] **1.1 T** IDE0074 + IDE0054 (34 unique). Triage every hit into local / field / model property / VM property. Test commit for model-property hits (PropertyChanged-count pins), then fix commit. Promote `dotnet_style_prefer_compound_assignment` to `error`. *Done: 92.* All 34 were field-backed lazy commands, one local, two float loop locals; no property targets, so no new tests needed.
 - [x] **1.2 T** IDE0031 (11). Promote `dotnet_style_null_propagation` to `error`. *Done: 81.* All 11 were `if (x != null) x.Call()` or `x.Prop = v` guards; RHS was pure or already guarded, so the rewrite is equivalent and no new tests were needed.
-- [ ] **1.3 T** IDE0041 (4). Check for `operator ==` overloads; pin if present. Promote `dotnet_style_prefer_is_null_check_over_reference_equality_method` to `error`. *Expected after: 75.*
+- [x] **1.3 T** IDE0041 (4). Promote `dotnet_style_prefer_is_null_check_over_reference_equality_method` to `error`. *Done: 77.* Neither `Device` nor `PendingEvent` overloads `operator ==`, so `is null` is equivalent; no tests needed.
 - [ ] **1.4** IDE0044 (3). Promote `dotnet_style_readonly_field` to `error`. *Expected after: 72.*
 - [ ] **1.5** IDE0036 + IDE0040 (7). Promote `csharp_preferred_modifier_order` to `error`. IDE0040 stays `warning` (no "Make error" note). *Expected after: 65.*
 - [ ] **1.6** IDE0060 (1). Check callers/reflection first. Promote `dotnet_code_quality_unused_parameters` to `error`. *Expected after: 64.*
@@ -189,3 +189,4 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 | 2026-10-26 | 0.1-0.3 | 126 | 116 / 0 | No code changes. `InternalsVisibleTo` absent; inventory in Notes |
 | 2026-10-26 | 1.1 | 92 | 116 / 0 | 34 unique hits (not 36); rule promoted to error |
 | 2026-10-26 | 1.2 | 81 | 116 / 0 | 11 hits; rule promoted to error |
+| 2026-10-26 | 1.3 | 77 | 116 / 0 | 4 hits; no operator == overloads; rule promoted to error |
