@@ -12,8 +12,7 @@ namespace Radio_Automation.Extensions
 
 		public EnumerationExtension(Type enumType)
 		{
-			if (enumType == null)
-				throw new ArgumentNullException(nameof(enumType));
+			ArgumentNullException.ThrowIfNull(enumType);
 
 			EnumType = enumType;
 		}

@@ -337,10 +337,7 @@ namespace Radio_Automation.Behaviors
 		private static List<T> GetItemsRecursively<T>(ListView parentItem)
 			where T : ListBoxItem
 		{
-			if (parentItem == null)
-			{
-				throw new ArgumentNullException(nameof(parentItem));
-			}
+			ArgumentNullException.ThrowIfNull(parentItem);
 
 			var items = new List<T>();
 
@@ -368,10 +365,7 @@ namespace Radio_Automation.Behaviors
 		private T GetRelativeItem<T>(T item, int relativePosition)
 			where T : ListViewItem
 		{
-			if (item == null)
-			{
-				throw new ArgumentNullException(nameof(item));
-			}
+			ArgumentNullException.ThrowIfNull(item);
 
 			var items = GetItemsRecursively<T>(AssociatedObject);
 			int index = items.IndexOf(item);

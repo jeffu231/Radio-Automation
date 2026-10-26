@@ -336,10 +336,7 @@ namespace WPFDarkTheme.Controls
         private static List<T> GetItemsRecursively<T>(ItemsControl parentItem)
             where T : ItemsControl
         {
-            if (parentItem == null)
-            {
-                throw new ArgumentNullException(nameof(parentItem));
-            }
+            ArgumentNullException.ThrowIfNull(parentItem);
 
             var items = new List<T>();
 
@@ -367,10 +364,7 @@ namespace WPFDarkTheme.Controls
         private T GetRelativeItem<T>(T item, int relativePosition)
             where T : ItemsControl
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             var items = GetItemsRecursively<T>(AssociatedObject);
             int index = items.IndexOf(item);

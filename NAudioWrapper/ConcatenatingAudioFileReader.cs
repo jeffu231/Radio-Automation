@@ -16,8 +16,7 @@ namespace NAudioWrapper
 		[SupportedOSPlatform("Windows7.0")]
 		public ConcatenatingAudioFileReader(IEnumerable<AudioFileReader> providers)
 		{
-			if (providers == null)
-				throw new ArgumentNullException(nameof(providers));
+			ArgumentNullException.ThrowIfNull(providers);
 			this.providers = providers.ToArray();
 			if (this.providers.Length == 0)
 				throw new ArgumentException("Must provide at least one input", nameof(providers));
