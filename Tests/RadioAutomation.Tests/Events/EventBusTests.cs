@@ -51,7 +51,7 @@ namespace RadioAutomation.Tests.Events
 
 			EventBus.OnEventTriggered(new Event());
 
-			Assert.Equal(new[] { 1, 2 }, order);
+			Assert.Collection(order, first => Assert.Equal(1, first), second => Assert.Equal(2, second));
 		}
 
 		[Fact]
