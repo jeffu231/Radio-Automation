@@ -6,7 +6,7 @@ namespace WPFDarkTheme.Utils
 {
     public class TreeViewHelper
     {
-        private static Dictionary<DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<DependencyObject, TreeViewSelectedItemBehavior>();
+        private static readonly Dictionary<DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<DependencyObject, TreeViewSelectedItemBehavior>();
 
         public static object GetSelectedItem(DependencyObject obj)
         {
