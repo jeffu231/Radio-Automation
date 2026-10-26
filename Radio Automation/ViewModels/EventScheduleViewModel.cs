@@ -112,7 +112,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand AddEventCommand
 		{
-			get { return _addEventCommand ?? (_addEventCommand = new TaskCommand(AddEventAsync)); }
+			get { return _addEventCommand ??= new TaskCommand(AddEventAsync); }
 		}
 
 		/// <summary>
@@ -141,7 +141,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand DeleteEventCommand
 		{
-			get { return _deleteEventCommand ?? (_deleteEventCommand = new TaskCommand(DeleteEventAsync, CanDeleteEvent)); }
+			get { return _deleteEventCommand ??= new TaskCommand(DeleteEventAsync, CanDeleteEvent); }
 		}
 
 		/// <summary>
@@ -173,7 +173,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand EditEventCommand
 		{
-			get { return _editEventCommand ?? (_editEventCommand = new TaskCommand(EditEvent, CanEditEvent)); }
+			get { return _editEventCommand ??= new TaskCommand(EditEvent, CanEditEvent); }
 		}
 
 		/// <summary>
@@ -208,7 +208,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SaveScheduleCommand
 		{
-			get { return _saveScheduleCommand ?? (_saveScheduleCommand = new TaskCommand(SaveScheduleAsync)); }
+			get { return _saveScheduleCommand ??= new TaskCommand(SaveScheduleAsync); }
 		}
 
 		/// <summary>
@@ -253,7 +253,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand OpenScheduleCommand
 		{
-			get { return _openScheduleCommand ?? (_openScheduleCommand = new TaskCommand(OpenScheduleAsync)); }
+			get { return _openScheduleCommand ??= new TaskCommand(OpenScheduleAsync); }
 		}
 
 		/// <summary>
@@ -292,7 +292,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand NewScheduleCommand
 		{
-			get { return _newScheduleCommand ?? (_newScheduleCommand = new TaskCommand(NewScheduleAsync)); }
+			get { return _newScheduleCommand ??= new TaskCommand(NewScheduleAsync); }
 		}
 
 		/// <summary>
@@ -316,7 +316,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand OkCommand
 		{
-			get { return _okCommand ?? (_okCommand = new TaskCommand(OkAsync)); }
+			get { return _okCommand ??= new TaskCommand(OkAsync); }
 		}
 
 		/// <summary>

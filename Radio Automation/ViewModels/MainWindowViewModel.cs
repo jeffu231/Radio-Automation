@@ -762,7 +762,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command NewPlaylistCommand
 		{
-			get { return _newPlaylistCommand ?? (_newPlaylistCommand = new Command(NewPlaylist)); }
+			get { return _newPlaylistCommand ??= new Command(NewPlaylist); }
 		}
 
 		/// <summary>
@@ -784,7 +784,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand OpenPlaylistCommand
 		{
-			get { return _openPlaylistCommand ?? (_openPlaylistCommand = new TaskCommand(OpenPlaylist)); }
+			get { return _openPlaylistCommand ??= new TaskCommand(OpenPlaylist); }
 		}
 
 		/// <summary>
@@ -824,7 +824,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand ImportZaraPlaylistCommand
 		{
-			get { return _importZaraPlaylistCommand ?? (_importZaraPlaylistCommand = new TaskCommand(ImportZaraPlaylist)); }
+			get { return _importZaraPlaylistCommand ??= new TaskCommand(ImportZaraPlaylist); }
 		}
 
 		/// <summary>
@@ -861,7 +861,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand ImportM3UPlaylistCommand
 		{
-			get { return _importM3UPlaylistCommand ?? (_importM3UPlaylistCommand = new TaskCommand(ImportM3UPlaylistAsync)); }
+			get { return _importM3UPlaylistCommand ??= new TaskCommand(ImportM3UPlaylistAsync); }
 		}
 
 		/// <summary>
@@ -898,7 +898,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SavePlaylistCommand
 		{
-			get { return _savePlaylistCommand ?? (_savePlaylistCommand = new TaskCommand(SavePlaylist)); }
+			get { return _savePlaylistCommand ??= new TaskCommand(SavePlaylist); }
 		}
 
 		/// <summary>
@@ -929,7 +929,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SavePlaylistAsCommand
 		{
-			get { return _savePlaylistAsCommand ?? (_savePlaylistAsCommand = new TaskCommand(SavePlaylistAs)); }
+			get { return _savePlaylistAsCommand ??= new TaskCommand(SavePlaylistAs); }
 		}
 
 		/// <summary>
@@ -965,7 +965,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Gets the Exit command.
 		/// </summary>
-		public Command<Window> ExitCommand => _exitCommand ?? (_exitCommand = new Command<Window>(Exit));
+		public Command<Window> ExitCommand => _exitCommand ??= new Command<Window>(Exit);
 
 		/// <summary>
 		/// Method to invoke when the Exit command is executed.
@@ -986,7 +986,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand EditEventScheduleCommand
 		{
-			get { return _editEventScheduleCommand ?? (_editEventScheduleCommand = new TaskCommand(EditEventScheduleAsync)); }
+			get { return _editEventScheduleCommand ??= new TaskCommand(EditEventScheduleAsync); }
 		}
 
 		/// <summary>
@@ -1051,7 +1051,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command AddFileCommand
 		{
-			get { return _addFileCommand ?? (_addFileCommand = new Command(AddFile, CanAddFile)); }
+			get { return _addFileCommand ??= new Command(AddFile, CanAddFile); }
 		}
 
 		/// <summary>
@@ -1096,7 +1096,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command AddFolderCommand
 		{
-			get { return _addFolderCommand ?? (_addFolderCommand = new Command(AddFolder, CanAddFolder)); }
+			get { return _addFolderCommand ??= new Command(AddFolder, CanAddFolder); }
 		}
 
 		/// <summary>
@@ -1138,7 +1138,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command HelpCommand
 		{
-			get { return _helpCommand ?? (_helpCommand = new Command(Help)); }
+			get { return _helpCommand ??= new Command(Help); }
 		}
 
 		/// <summary>
@@ -1160,7 +1160,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand PreferencesCommand
 		{
-			get { return _preferencesCommand ?? (_preferencesCommand = new TaskCommand(PreferencesAsync)); }
+			get { return _preferencesCommand ??= new TaskCommand(PreferencesAsync); }
 		}
 
 		/// <summary>
@@ -1198,7 +1198,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command PlayPauseCommand
 		{
-			get { return _playPauseCommand ?? (_playPauseCommand = new Command(PlayPause, CanPlayPause)); }
+			get { return _playPauseCommand ??= new Command(PlayPause, CanPlayPause); }
 		}
 
 		/// <summary>
@@ -1282,7 +1282,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command StopPlaybackCommand
 		{
-			get { return _stopPlaybackCommand ?? (_stopPlaybackCommand = new Command(StopPlayback, CanStopPlayback)); }
+			get { return _stopPlaybackCommand ??= new Command(StopPlayback, CanStopPlayback); }
 		}
 
 		/// <summary>
@@ -1315,7 +1315,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command ForwardToEndCommand
 		{
-			get { return _forwardToEndCommand ?? (_forwardToEndCommand = new Command(ForwardToEnd, CanForwardToEnd)); }
+			get { return _forwardToEndCommand ??= new Command(ForwardToEnd, CanForwardToEnd); }
 		}
 
 		/// <summary>
@@ -1348,7 +1348,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command RewindToStartCommand
 		{
-			get { return _rewindToStartCommand ?? (_rewindToStartCommand = new Command(RewindToStart, CanRewindToStart)); }
+			get { return _rewindToStartCommand ??= new Command(RewindToStart, CanRewindToStart); }
 		}
 
 		/// <summary>
@@ -1379,7 +1379,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand PlayTemperatureCommand
 		{
-			get { return _playTemperatureCommand ?? (_playTemperatureCommand = new TaskCommand(PlayTemperatureAsync)); }
+			get { return _playTemperatureCommand ??= new TaskCommand(PlayTemperatureAsync); }
 		}
 
 		/// <summary>
@@ -1401,7 +1401,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command ShuffleCommand
 		{
-			get { return _shuffleCommand ?? (_shuffleCommand = new Command(Shuffle, CanShuffle)); }
+			get { return _shuffleCommand ??= new Command(Shuffle, CanShuffle); }
 		}
 
 		/// <summary>
@@ -1502,7 +1502,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command VolumeChangedCommand
 		{
-			get { return _volumeChangedCommand ?? (_volumeChangedCommand = new Command(VolumeChanged)); }
+			get { return _volumeChangedCommand ??= new Command(VolumeChanged); }
 		}
 
 		/// <summary>
@@ -1524,7 +1524,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand ShowAboutCommand
 		{
-			get { return _showAboutCommand ?? (_showAboutCommand = new TaskCommand(ShowAboutAsync)); }
+			get { return _showAboutCommand ??= new TaskCommand(ShowAboutAsync); }
 		}
 
 		/// <summary>
@@ -1928,7 +1928,7 @@ namespace Radio_Automation.ViewModels
 
 		private void FadeVolumeDown()
 		{
-			for (float i = _audioPlayer.Volume - .1f; i > 0; i = i - .1f)
+			for (float i = _audioPlayer.Volume - .1f; i > 0; i -= .1f)
 			{
 				_audioPlayer.Volume = i;
 				Thread.Sleep(25);
@@ -1939,7 +1939,7 @@ namespace Radio_Automation.ViewModels
 
 		private void FadeVolumeUp()
 		{
-			for (float i = 0; i < Volume; i = i + .1f)
+			for (float i = 0; i < Volume; i += .1f)
 			{
 				_audioPlayer.Volume = i;
 				Thread.Sleep(25);

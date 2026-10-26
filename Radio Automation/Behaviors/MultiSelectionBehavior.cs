@@ -65,10 +65,7 @@ namespace Radio_Automation.Behaviors
 		private void OnListViewItemKeyDown(object sender, KeyEventArgs e)
 		{
 			var listViewItem = e.OriginalSource as ListViewItem;
-			if (listViewItem == null)
-			{
-				listViewItem = FindParentTreeViewItem(e.OriginalSource);
-			}
+			listViewItem ??= FindParentTreeViewItem(e.OriginalSource);
 
 			if (listViewItem != null)
 			{
