@@ -8,6 +8,9 @@ namespace RadioAutomation.Tests.Audio
 {
 	public sealed class SampleAggregatorTests
 	{
+		private static readonly float[] ThreeSamples = { 0.1f, 0.2f, 0.3f };
+		private static readonly float[] TwoPositiveSamples = { 0.3f, 0.6f };
+
 		private static List<MaxSampleEventArgs> Capture(SampleAggregator aggregator)
 		{
 			var raised = new List<MaxSampleEventArgs>();
@@ -34,13 +37,13 @@ namespace RadioAutomation.Tests.Audio
 		[Fact]
 		public void Read_PassesSamplesThroughUnchanged()
 		{
-			var aggregator = new SampleAggregator(new FakeSampleProvider(new[] { 0.1f, 0.2f, 0.3f }));
+			var aggregator = new SampleAggregator(new FakeSampleProvider(ThreeSamples));
 			var buffer = new float[3];
 
 			var read = aggregator.Read(buffer, 0, 3);
 
 			Assert.Equal(3, read);
-			Assert.Equal(new[] { 0.1f, 0.2f, 0.3f }, buffer);
+			Assert.Equal(ThreeSamples, buffer);
 		}
 
 		[Fact]
@@ -84,7 +87,7 @@ namespace RadioAutomation.Tests.Audio
 		[Fact]
 		public void Read_AllPositiveSamples_MinIsZero()
 		{
-			var aggregator = new SampleAggregator(new FakeSampleProvider(new[] { 0.3f, 0.6f })) { NotificationCount = 2 };
+			var aggregator = new SampleAggregator(new FakeSampleProvider(TwoPositiveSamples)) { NotificationCount = 2 };
 			var raised = Capture(aggregator);
 
 			aggregator.Read(new float[2], 0, 2);

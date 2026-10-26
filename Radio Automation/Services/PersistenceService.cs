@@ -75,7 +75,7 @@ namespace Radio_Automation.Services
 				List<Track> tracks = new List<Track>(totalTracks);
 				foreach (var line in lines.Skip(1))
 				{
-					var items = line.Split(new[] { "\t" }, StringSplitOptions.None);
+					var items = line.Split('\t');
 					if (items.Length == 2)
 					{
 						if (File.Exists(items[1]))

@@ -9,9 +9,11 @@ namespace RadioAutomation.Tests.WeatherClient
 	{
 		private const string SamplePayload = "{\"observations\":[{\"stationID\":\"KTEST123\",\"obsTimeUtc\":\"2026-10-26T14:00:00Z\",\"neighborhood\":\"Test Hill\",\"country\":\"US\",\"humidity\":65,\"winddir\":270,\"imperial\":{\"temp\":72.5,\"dewpt\":60.1,\"heatIndex\":73.0,\"windChill\":72.0,\"windSpeed\":5.0,\"windGust\":8.0,\"pressure\":30.01,\"precipRate\":0.0,\"precipTotal\":0.12}}]}";
 
+		private static readonly JsonSerializerOptions WebOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
 		private static WundergroundObservations Deserialize(string json)
 		{
-			return JsonSerializer.Deserialize<WundergroundObservations>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+			return JsonSerializer.Deserialize<WundergroundObservations>(json, WebOptions);
 		}
 
 		[Fact]

@@ -9,6 +9,9 @@ namespace RadioAutomation.Tests.Extensions
 {
 	public sealed class FileExtensionsTests
 	{
+		private static readonly string[] ThreeLines = { "one", "two", "three" };
+		private static readonly string[] AccentedLines = { "héllo", "wörld" };
+
 		[Fact]
 		public void GetEncoding_Utf8Bom_ReturnsUtf8()
 		{
@@ -53,7 +56,7 @@ namespace RadioAutomation.Tests.Extensions
 
 			var lines = await FileExtensions.ReadAllLinesAsync(dir.File("f.txt"));
 
-			Assert.Equal(new[] { "one", "two", "three" }, lines);
+			Assert.Equal(ThreeLines, lines);
 		}
 
 		[Fact]
@@ -64,7 +67,7 @@ namespace RadioAutomation.Tests.Extensions
 
 			var lines = await FileExtensions.ReadAllLinesAsync(dir.File("f.txt"));
 
-			Assert.Equal(new[] { "héllo", "wörld" }, lines);
+			Assert.Equal(AccentedLines, lines);
 		}
 
 		[Fact]
