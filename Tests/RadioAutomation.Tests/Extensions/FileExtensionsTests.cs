@@ -75,13 +75,51 @@ namespace RadioAutomation.Tests.Extensions
 			await Assert.ThrowsAsync<FileNotFoundException>(() => FileExtensions.ReadAllLinesAsync(dir.File("missing.txt")));
 		}
 
-		[Fact(Skip = "Known defect D3: files under 4 bytes throw EndOfStreamException - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void GetEncoding_FileShorterThanFourBytes_ReturnsDefault()
 		{
 			using var dir = new TempDirectory();
 			File.WriteAllBytes(dir.File("f.txt"), new byte[] { 0x41, 0x42 });
 
 			Assert.Equal(Encoding.Default, FileExtensions.GetEncoding(dir.File("f.txt")));
+		}
+
+		[Fact]
+		public void GetEncoding_EmptyFile_ReturnsDefault()
+		{
+			using var dir = new TempDirectory();
+			File.WriteAllBytes(dir.File("f.txt"), new byte[0]);
+
+			Assert.Equal(Encoding.Default, FileExtensions.GetEncoding(dir.File("f.txt")));
+		}
+
+		[Fact]
+		public void GetEncoding_TwoByteUtf16LeBomOnly_ReturnsUnicode()
+		{
+			using var dir = new TempDirectory();
+			File.WriteAllBytes(dir.File("f.txt"), new byte[] { 0xFF, 0xFE });
+
+			Assert.Equal(Encoding.Unicode, FileExtensions.GetEncoding(dir.File("f.txt")));
+		}
+
+		[Fact]
+		public void GetEncoding_Utf32LeBom_ReturnsUtf32()
+		{
+			using var dir = new TempDirectory();
+			File.WriteAllBytes(dir.File("f.txt"), new byte[] { 0xFF, 0xFE, 0x00, 0x00, 0x41, 0x00, 0x00, 0x00 });
+
+			Assert.Equal(Encoding.UTF32, FileExtensions.GetEncoding(dir.File("f.txt")));
+		}
+
+		[Fact]
+		public void GetEncoding_Utf32BeBom_ReturnsBigEndianUtf32()
+		{
+			using var dir = new TempDirectory();
+			File.WriteAllBytes(dir.File("f.txt"), new byte[] { 0x00, 0x00, 0xFE, 0xFF, 0x00, 0x00, 0x00, 0x41 });
+
+			var encoding = FileExtensions.GetEncoding(dir.File("f.txt"));
+
+			Assert.Equal(12001, encoding.CodePage);
 		}
 	}
 }

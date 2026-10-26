@@ -55,19 +55,23 @@ namespace Radio_Automation.Extensions
 		{
 			// Read the BOM
 			var bom = new byte[4];
+			int length;
 			using (var file = new FileStream(filename, FileMode.Open, FileAccess.Read))
 			{
-				file.ReadExactly(bom, 0, 4);
+				// Files can be shorter than four bytes (or empty), so only trust the bytes actually read
+				length = file.Read(bom, 0, 4);
 			}
 
-			// Analyze the BOM
+			// Analyze the BOM. The four byte UTF-32 marks must be checked before UTF-16
+			// because the UTF-32LE BOM (FF FE 00 00) starts with the UTF-16LE BOM (FF FE).
+			if (length >= 4 && bom[0] == 0xff && bom[1] == 0xfe && bom[2] == 0 && bom[3] == 0) return Encoding.UTF32; //UTF-32LE
+			if (length >= 4 && bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff) return new UTF32Encoding(true, true); //UTF-32BE
 #pragma warning disable SYSLIB0001
-			if (bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return Encoding.UTF7;
+			if (length >= 3 && bom[0] == 0x2b && bom[1] == 0x2f && bom[2] == 0x76) return Encoding.UTF7;
 #pragma warning restore SYSLIB0001
-			if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) return Encoding.UTF8;
-			if (bom[0] == 0xff && bom[1] == 0xfe) return Encoding.Unicode; //UTF-16LE
-			if (bom[0] == 0xfe && bom[1] == 0xff) return Encoding.BigEndianUnicode; //UTF-16BE
-			if (bom[0] == 0 && bom[1] == 0 && bom[2] == 0xfe && bom[3] == 0xff) return Encoding.UTF32;
+			if (length >= 3 && bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) return Encoding.UTF8;
+			if (length >= 2 && bom[0] == 0xff && bom[1] == 0xfe) return Encoding.Unicode; //UTF-16LE
+			if (length >= 2 && bom[0] == 0xfe && bom[1] == 0xff) return Encoding.BigEndianUnicode; //UTF-16BE
 			return Encoding.Default;
 		}
 	}
