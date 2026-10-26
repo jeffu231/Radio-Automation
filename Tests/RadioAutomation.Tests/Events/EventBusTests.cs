@@ -40,5 +40,32 @@ namespace RadioAutomation.Tests.Events
 
 			Assert.Same(e, captured);
 		}
+
+		[Fact]
+		public void OnEventTriggered_MultipleSubscribers_InvokedInSubscriptionOrder()
+		{
+			var order = new System.Collections.Generic.List<int>();
+			EventBus.EventTriggered = null;
+			EventBus.EventTriggered += _ => order.Add(1);
+			EventBus.EventTriggered += _ => order.Add(2);
+
+			EventBus.OnEventTriggered(new Event());
+
+			Assert.Equal(new[] { 1, 2 }, order);
+		}
+
+		[Fact]
+		public void OnEventTriggered_UnsubscribedHandler_IsNotInvoked()
+		{
+			var calls = 0;
+			Action<Event> handler = _ => calls++;
+			EventBus.EventTriggered = null;
+			EventBus.EventTriggered += handler;
+			EventBus.EventTriggered -= handler;
+
+			EventBus.OnEventTriggered(new Event());
+
+			Assert.Equal(0, calls);
+		}
 	}
 }
