@@ -119,7 +119,7 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 - [x] **2.1** CS8632 (3). Remove `?` annotations in `MainWindowViewModel.cs` (fields, param, handler param); `#nullable` not enabled. *Done: 63.* Annotations are compile-time only, so no behavior change; no tests needed.
 
 ### Phase 3: Code analysis (CA)
-- [ ] **3.1** Safe mechanical: CA1860, CA1825, CA1802, CA1859, CA1507. *(None: compiler-proven.)*
+- [x] **3.1** Safe mechanical: CA1860, CA1825, CA1802, CA1859, CA1507. *(None: compiler-proven.)* *Done: 55.* 9 hits across 7 files (concrete types for private fields/methods, `Count > 0`, `const`, `nameof`, `Array.Empty`); no tests needed.
 - [ ] **3.2 T** CA1510 (6). Add `ParamName`+type assertions for public guards that have none, then convert.
 - [ ] **3.3 T** CA1861 (7) + CA1869 (1). Confirm no mutation of hoisted arrays; run serialization round-trips before and after.
 - [ ] **3.4 T** CA1870 (1). Extract the invalid-path check if inline; pin inputs; convert.
@@ -194,3 +194,4 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 | 2026-10-26 | 1.5 | 67 | 116 / 0 | 7 hits; modifier_order promoted to error |
 | 2026-10-26 | 1.6 | 66 | 122 / 0 | 1 hit; Device.IsDefault now set (intentional); IVT added; rule promoted to error |
 | 2026-10-26 | 2.1 | 63 | 122 / 0 | 3 hits; annotations removed, #nullable not enabled |
+| 2026-10-26 | 3.1 | 55 | 122 / 0 | 9 hits; CA1859 on DeSelectAll surfaced after the first fix |
