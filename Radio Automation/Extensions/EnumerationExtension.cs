@@ -35,9 +35,11 @@ namespace Radio_Automation.Extensions
 			}
 		}
 
+		private Type UnderlyingEnumType => Nullable.GetUnderlyingType(EnumType) ?? EnumType;
+
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{
-			var enumValues = Enum.GetValues(EnumType);
+			var enumValues = Enum.GetValues(UnderlyingEnumType);
 
 			return (
 				from object enumValue in enumValues
@@ -49,7 +51,7 @@ namespace Radio_Automation.Extensions
 
 		private string GetDescription(object enumValue)
 		{
-			var descriptionAttribute = EnumType
+			var descriptionAttribute = UnderlyingEnumType
 				.GetField(enumValue.ToString())
 				.GetCustomAttributes(typeof (DescriptionAttribute), false)
 				.FirstOrDefault() as DescriptionAttribute;

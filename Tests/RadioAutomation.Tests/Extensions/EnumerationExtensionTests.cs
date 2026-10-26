@@ -59,12 +59,14 @@ namespace RadioAutomation.Tests.Extensions
 			Assert.Equal("Second", members[1].Description);
 		}
 
-		[Fact(Skip = "Known defect D7: nullable enum throws in ProvideValue - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void ProvideValue_NullableEnum_ReturnsUnderlyingMembers()
 		{
 			var members = (EnumerationExtension.EnumerationMember[])new EnumerationExtension(typeof(Sample?)).ProvideValue(null);
 
 			Assert.Equal(2, members.Length);
+			Assert.Equal("First Item", members[0].Description);
+			Assert.Equal("Second", members[1].Description);
 		}
 	}
 }
