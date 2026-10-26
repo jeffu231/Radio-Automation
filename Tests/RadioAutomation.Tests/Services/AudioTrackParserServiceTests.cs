@@ -85,7 +85,7 @@ namespace RadioAutomation.Tests.Services
 			Assert.Single(tracks);
 		}
 
-		[Fact(Skip = "Known defect D6: recursion returns duplicate tracks - see docs/plans/unit-tests-seed-plan.md section 9")]
+		[Fact]
 		public void RetrieveAudioTracksInPath_Recursive_ReturnsEachFileOnce()
 		{
 			using var dir = new TempDirectory();

@@ -47,8 +47,7 @@ namespace Radio_Automation.Services
 			var dirs = i.GetDirectories().Where(d => (d.Attributes & FileAttributes.Hidden) == 0);
 			foreach (var dir in dirs)
 			{
-				tracks.AddRange(RetrieveAudioTracksFromFolder(dir.FullName));
-				tracks.AddRange(RecurseFoldersForTracks(dir.FullName, tracks));
+				RecurseFoldersForTracks(dir.FullName, tracks);
 			}
 
 			return tracks;
