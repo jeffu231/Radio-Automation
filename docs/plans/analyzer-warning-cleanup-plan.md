@@ -108,7 +108,7 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 - [x] **0.3** Build the **testability inventory**: for each file in the table above, record under *Notes* below whether its risky code is reachable from the test project (yes / needs extraction / untestable). This turns the ladder into a concrete choice per file before any code changes.
 
 ### Phase 1: Style (IDE) rules
-- [ ] **1.1 T** IDE0074 + IDE0054 (36). Triage every hit into local / field / model property / VM property. Test commit for model-property hits (PropertyChanged-count pins), then fix commit. Promote `dotnet_style_prefer_compound_assignment` to `error`. *Expected after: 90.*
+- [x] **1.1 T** IDE0074 + IDE0054 (34 unique). Triage every hit into local / field / model property / VM property. Test commit for model-property hits (PropertyChanged-count pins), then fix commit. Promote `dotnet_style_prefer_compound_assignment` to `error`. *Done: 92.* All 34 were field-backed lazy commands, one local, two float loop locals; no property targets, so no new tests needed.
 - [ ] **1.2 T** IDE0031 (11). Pin `Playlist.cs` null/non-null branches; read each WPF site and convert only pure-call guards. Promote `dotnet_style_null_propagation` to `error`. *Expected after: 79.*
 - [ ] **1.3 T** IDE0041 (4). Check for `operator ==` overloads; pin if present. Promote `dotnet_style_prefer_is_null_check_over_reference_equality_method` to `error`. *Expected after: 75.*
 - [ ] **1.4** IDE0044 (3). Promote `dotnet_style_readonly_field` to `error`. *Expected after: 72.*
@@ -187,3 +187,4 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 |---|---|---|---|---|
 | 2026-10-26 | baseline | 126 | 116 / 0 | 217 raw |
 | 2026-10-26 | 0.1-0.3 | 126 | 116 / 0 | No code changes. `InternalsVisibleTo` absent; inventory in Notes |
+| 2026-10-26 | 1.1 | 92 | 116 / 0 | 34 unique hits (not 36); rule promoted to error |
