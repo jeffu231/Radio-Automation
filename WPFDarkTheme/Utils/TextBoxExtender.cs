@@ -55,7 +55,7 @@ namespace WPFDarkTheme.Utils
 			if (textbox == null) return;
 
 			var expression = textbox.GetBindingExpression(TextBox.TextProperty);
-			if (expression != null) expression.UpdateSource();
+			expression?.UpdateSource();
 			e.Handled = true;
 			
 		}
@@ -103,7 +103,7 @@ namespace WPFDarkTheme.Utils
 			if ((e.Key == Key.Enter))
 			{
 				var expression = textbox.GetBindingExpression(TextBox.TextProperty);
-				if (expression != null) expression.UpdateSource();
+				expression?.UpdateSource();
 				e.Handled = true;
 			}
 		}
@@ -148,7 +148,7 @@ namespace WPFDarkTheme.Utils
 				var textbox = sender as TextBox;
 				if (textbox == null) return;
 				var expression = textbox.GetBindingExpression(TextBox.TextProperty);
-				if (expression != null) expression.UpdateSource();
+				expression?.UpdateSource();
 				e.Handled = true;
 			}
 		}
@@ -204,7 +204,7 @@ namespace WPFDarkTheme.Utils
 			if (e.Key == Key.Escape)
 			{
 				var expression = textbox.GetBindingExpression(TextBox.TextProperty);
-				if (expression != null) expression.UpdateTarget();
+				expression?.UpdateTarget();
 				e.Handled = true;
 			}
 		}
@@ -275,8 +275,7 @@ namespace WPFDarkTheme.Utils
 		private static void HandleGotFocus(object sender, RoutedEventArgs e)
 		{
 			var tb = (sender as TextBox);
-			if (tb != null)
-				tb.SelectAll();
+			tb?.SelectAll();
 		}
 
 		private static void SelectivelyIgnoreMouseButton(object sender, MouseButtonEventArgs e)

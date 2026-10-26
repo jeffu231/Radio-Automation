@@ -411,10 +411,7 @@ namespace NAudioWrapper
 			DisposePlaybackDevice();
             try
             {
-                if (_fileStream != null)
-                {
-                    _fileStream.Position = 0;
-                }
+                _fileStream?.Position = 0;
             }
             catch (Exception e)
             {
@@ -462,10 +459,7 @@ namespace NAudioWrapper
 	        get => _fileStream?.CurrentTime.TotalSeconds ?? 0;
 	        set
 	        {
-		        if (_fileStream != null)
-		        {
-			        _fileStream.CurrentTime = TimeSpan.FromSeconds(value);
-		        }
+		        _fileStream?.CurrentTime = TimeSpan.FromSeconds(value);
 			}
 		}
 
@@ -479,10 +473,7 @@ namespace NAudioWrapper
 	        {
 				EnsureDeviceCreated();
 				_volume = Math.Min(1,Math.Max(0, value));
-				if (_volumeProvider != null)
-				{
-					_volumeProvider.Volume = _volume;
-				}
+				_volumeProvider?.Volume = _volume;
 	        }
         }
 		

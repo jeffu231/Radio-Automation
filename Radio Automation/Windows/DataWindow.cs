@@ -979,10 +979,7 @@ namespace Radio_Automation.Windows
             foreach (var command in Commands)
             {
                 var commandAsICatelCommand = command as ICatelCommand;
-                if (commandAsICatelCommand != null)
-                {
-                    commandAsICatelCommand.RaiseCanExecuteChanged();
-                }
+                commandAsICatelCommand?.RaiseCanExecuteChanged();
             }
         }
 

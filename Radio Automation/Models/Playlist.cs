@@ -90,10 +90,7 @@ namespace Radio_Automation.Models
 			protected set
 			{
 				var oldT = Tracks;
-				if (oldT != null)
-				{
-					oldT.CollectionChanged -= Tracks_CollectionChanged;
-				}
+				oldT?.CollectionChanged -= Tracks_CollectionChanged;
 				SetValue(TracksProperty, value);
 				CalculateTotalTime();
 				Tracks.CollectionChanged += Tracks_CollectionChanged;

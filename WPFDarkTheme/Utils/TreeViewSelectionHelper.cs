@@ -46,10 +46,7 @@ namespace WPFDarkTheme.Utils
             internal void ChangeSelectedItem(object p)
             {
                 TreeViewItem item = (TreeViewItem)_view.ItemContainerGenerator.ContainerFromItem(p);
-                if (item != null)
-                {
-                    item.IsSelected = true;
-                }
+                item?.IsSelected = true;
             }
         }
     }
