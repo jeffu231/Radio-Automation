@@ -1,4 +1,5 @@
 using Radio_Automation.Converters;
+using RadioAutomation.Tests.TestUtilities;
 using System;
 using System.Globalization;
 using Xunit;
@@ -20,6 +21,43 @@ namespace RadioAutomation.Tests.Converters
 
 			Assert.IsType<int>(result);
 			Assert.Equal(expected, result);
+		}
+
+		// The app targets en-US: these pin the strings a XAML binding can supply (ConverterParameter=.25).
+		[Theory]
+		[InlineData(200.0, ".25", 50)]
+		[InlineData(200.0, "0.5", 100)]
+		[InlineData("200", "0.5", 100)]
+		[InlineData("1,000", ".5", 500)]
+		[InlineData(400, ".12", 48)]
+		public void Convert_EnUs_ParsesStringInputs(object value, object parameter, int expected)
+		{
+			using var _ = new CultureScope("en-US");
+
+			var result = _converter.Convert(value, typeof(int), parameter, CultureInfo.CurrentCulture);
+
+			Assert.Equal(expected, result);
+		}
+
+		[Theory]
+		[InlineData(null, "0.5")]
+		[InlineData(200.0, null)]
+		public void Convert_EnUs_NullOperandCountsAsZero(object value, object parameter)
+		{
+			using var _ = new CultureScope("en-US");
+
+			var result = _converter.Convert(value, typeof(int), parameter, CultureInfo.CurrentCulture);
+
+			Assert.Equal(0, result);
+		}
+
+		[Fact]
+		public void Convert_EnUs_NonNumericString_ThrowsFormatException()
+		{
+			using var _ = new CultureScope("en-US");
+
+			Assert.Throws<FormatException>(() => _converter.Convert("abc", typeof(int), "0.5", CultureInfo.CurrentCulture));
+			Assert.Throws<FormatException>(() => _converter.Convert(200.0, typeof(int), "abc", CultureInfo.CurrentCulture));
 		}
 
 		[Fact]
