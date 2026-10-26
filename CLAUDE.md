@@ -36,6 +36,8 @@ Valid types: `feat`, `fix`, `docs`, `chore`, `style`, `refactor`, `perf`, `test`
 
 Subject must be 4+ characters and the line must be under 90 characters total. No trailing period or whitespace.
 
+Commits that update files under `docs/plans/` use `chore(plans)`, not `docs(plans)`. Versionize groups the changelog by type only and `docs` has a section, so `docs(plans)` would appear in the release notes. `chore` has no section in `.versionize`, so it is left out.
+
 ## CI / Versioning
 
 The CI workflow (`.github/workflows/build.yml`) runs on push to `master`. It uses [Versionize](https://github.com/versionize/versionize) to auto-bump the version from conventional commit messages, generates a CHANGELOG, publishes the app, builds the MSI, creates a GitHub release, and submits to Winget (`JTDev.RadioAutomation`). Releases only happen when Versionize determines one is required — commits that don't trigger a version bump are no-ops in CI.
