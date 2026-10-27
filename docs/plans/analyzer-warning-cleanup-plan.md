@@ -141,7 +141,7 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 
 ### Phase 4: Policy decisions (suppress rather than fix), one `build(analyzers)` commit
 - [x] **4.1** CA1707 (`Radio_Automation` namespace) → `none` for the main project; CA1716 (`Event`) → suppress; CA1711 (`NonParallelCollection`) → suppress in `Tests/.editorconfig`; CA5394 (`Random`, shuffle only, not security) → scoped suppression on the 4 sites with justification, **after** confirming via `ThreadSafeRandomTests`/`CollectionExtensionsTests` that those are shuffles, not security tokens; CA1824 → add `[assembly: NeutralResourcesLanguage("en-US")]`. Each line gets a justification comment. *Done: 2 (WiX only).* CA5394 sites confirmed as shuffles, shuffle seeding and a test fixture (no security use). CA1824 via `<NeutralLanguage>en-US</NeutralLanguage>` in the main csproj (generates the attribute). CA1707 via `Radio Automation/.editorconfig`.
-- [x] **4.2** WiX warnings (`WIX8601`, `WIX1076` / ICE71) are out of scope: the installer project, not the C# rules. Leave and note in Progress log unless you ask otherwise. *Confirmed out of scope by user; the 2 WiX warnings remain.*
+- [x] **4.2** WiX warnings (`WIX8601`, `WIX1076` / ICE71) are out of scope: the installer project, not the C# rules. Leave and note in Progress log unless you ask otherwise. *Confirmed out of scope by user; later remediated: both warnings came from building without `publish/` output (Debug and .sln builds). The installer is no longer built for Debug in the .sln, Release fails with a clear error when `publish/` is missing, and the wixproj defaults to x64.*
 
 ### Phase 5: Lock-in
 - [x] **5.1** Promote the "Make error" rules that were already clean and need no fix: `dotnet_style_collection_initializer`, `dotnet_style_explicit_tuple_names`, `csharp_style_conditional_delegate_call`, `csharp_using_directive_placement`. Rebuild `--no-incremental` first to confirm 0 hits. Do **not** promote any `suggestion`-level rule (out of scope). *Done.* Zero hits confirmed on a `--no-incremental` build before promoting; suggestion-level rules left alone.
@@ -205,3 +205,4 @@ low-risk to high-risk and group by rule family. "T" = test-first gate applies.
 | 2026-10-26 | 3.9 | 10 | 146 / 0 | 7 hits; 7 commits; Clock tests add ~3s of timer waits |
 | 2026-10-26 | 4.1 | 2 | 146 / 0 | All C# warnings clear; only WIX1076 and WIX8601 remain (4.2, out of scope) |
 | 2026-10-26 | 5.1, 5.2 | 2 (WiX) | 146 / 0 | 4 rules promoted to error; 0 C# warnings, 0 errors |
+| 2026-10-27 | 4.2 | 0 | n/a | WiX WIX8601/WIX1076 remediated; 0 warnings in Debug and Release builds |
