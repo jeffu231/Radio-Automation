@@ -11,6 +11,8 @@ namespace Radio_Automation.ViewModels
 {
 	public class PreferencesViewModel: ViewModelBase
 	{
+		private static readonly char[] InvalidTopicChars = { '#', '+', '\0' };
+
 		private readonly IOpenFileService _openFileService;
 		private readonly ISelectDirectoryService _selectDirectoryService;
 
@@ -320,7 +322,7 @@ namespace Radio_Automation.ViewModels
 			// MQTT Song Topic
 			if (EnableSongToMqtt && string.IsNullOrWhiteSpace(MqttSongTopic))
 				validationResults.Add(FieldValidationResult.CreateError(MqttSongTopicProperty, "MQTT topic is required when MQTT publishing is enabled."));
-			else if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.IndexOfAny(new[] { '#', '+', '\0' }) >= 0)
+			else if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.IndexOfAny(InvalidTopicChars) >= 0)
 				validationResults.Add(FieldValidationResult.CreateError(MqttSongTopicProperty, "MQTT topic must not contain wildcards (# or +) or null characters."));
 
 			if (!string.IsNullOrWhiteSpace(MqttSongTopic) && MqttSongTopic.Contains('\\'))
@@ -338,7 +340,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand OkCommand
 		{
-			get { return _okCommand ?? (_okCommand = new TaskCommand(OkAsync, CanOk)); }
+			get { return _okCommand ??= new TaskCommand(OkAsync, CanOk); }
 		}
 
 		/// <summary>
@@ -370,7 +372,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SelectCurrentSongPathCommand
 		{
-			get { return _selectCurrentSongPathCommand ?? (_selectCurrentSongPathCommand = new TaskCommand(SelectCurrentSongPathAsync)); }
+			get { return _selectCurrentSongPathCommand ??= new TaskCommand(SelectCurrentSongPathAsync); }
 		}
 
 		/// <summary>
@@ -400,7 +402,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SelectTimeTempFilePathCommand
 		{
-			get { return _selectTimeTempPathCommand ?? (_selectTimeTempPathCommand = new TaskCommand(SelectTimeTempPathAsync)); }
+			get { return _selectTimeTempPathCommand ??= new TaskCommand(SelectTimeTempPathAsync); }
 		}
 
 		/// <summary>

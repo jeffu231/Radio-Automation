@@ -16,8 +16,7 @@ namespace NAudioWrapper
 		[SupportedOSPlatform("Windows7.0")]
 		public ConcatenatingAudioFileReader(IEnumerable<AudioFileReader> providers)
 		{
-			if (providers == null)
-				throw new ArgumentNullException(nameof(providers));
+			ArgumentNullException.ThrowIfNull(providers);
 			this.providers = providers.ToArray();
 			if (this.providers.Length == 0)
 				throw new ArgumentException("Must provide at least one input", nameof(providers));
@@ -26,7 +25,7 @@ namespace NAudioWrapper
 			if (this.providers.Any(p => p.WaveFormat.SampleRate != this.WaveFormat.SampleRate))
 				throw new ArgumentException("All inputs must have the same sample rate", nameof(providers));
 
-			Length = providers.Sum(p => p.Length);
+			Length = this.providers.Sum(p => p.Length);
 		}
 
 		#region Overrides of Stream

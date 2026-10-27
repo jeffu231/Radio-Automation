@@ -13,6 +13,11 @@ namespace Radio_Automation.Services
 	{
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
+		private static readonly HashSet<string> SupportedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			".mp3", ".wav", ".flac", ".ogg", ".wma"
+		};
+
 		#region Implementation of IAudioTrackParserService
 
 		/// <inheritdoc />
@@ -42,8 +47,7 @@ namespace Radio_Automation.Services
 			var dirs = i.GetDirectories().Where(d => (d.Attributes & FileAttributes.Hidden) == 0);
 			foreach (var dir in dirs)
 			{
-				tracks.AddRange(RetrieveAudioTracksFromFolder(dir.FullName));
-				tracks.AddRange(RecurseFoldersForTracks(dir.FullName, tracks));
+				RecurseFoldersForTracks(dir.FullName, tracks);
 			}
 
 			return tracks;
@@ -52,19 +56,26 @@ namespace Radio_Automation.Services
 		private List<Track> RetrieveAudioTracksFromFolder(string path)
 		{
 			var files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
-				.Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav") || s.EndsWith(".flac") || s.EndsWith(".ogg") || s.EndsWith(".wma"));
+				.Where(s => SupportedExtensions.Contains(Path.GetExtension(s)))
+				.ToList();
 
-			List<Track> tracks = new List<Track>(files.Count());
+			List<Track> tracks = new List<Track>(files.Count);
 			foreach (var file in files)
 			{
 				try
 				{
 					var t = CreateTrackFromFile(file);
+					if (t == null)
+					{
+						Log.Warning($"Skipping unreadable audio file {file}");
+						continue;
+					}
+
 					tracks.Add(t);
 				}
 				catch (Exception e)
 				{
-					Console.Out.WriteLine($"Error reading {file}, message {e.Message}");
+					Log.Error($"Error reading {file}, message {e.Message}");
 
 				}
 

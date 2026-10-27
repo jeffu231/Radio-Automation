@@ -1,0 +1,9 @@
+﻿<Project>
+    <PropertyGroup>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>Recommended</AnalysisMode>
+        <AnalysisModeSecurity>All</AnalysisModeSecurity>
+        <AnalysisModePerformance>All</AnalysisModePerformance>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+</Project>

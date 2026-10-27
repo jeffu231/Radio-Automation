@@ -9,8 +9,8 @@ namespace Radio_Automation.Events
 {
 	public sealed class EventScheduler
 	{
-		private JobManager _jm;
-		private JobServer _js;
+		private readonly JobManager _jm;
+		private readonly JobServer _js;
 		private EventSchedule _schedule;
 		private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 		

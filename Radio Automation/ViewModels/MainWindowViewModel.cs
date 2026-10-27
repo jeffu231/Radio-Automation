@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -166,15 +167,117 @@ namespace Radio_Automation.ViewModels
 		}
 
 		private bool _recoveringPlayback;
+		private bool _retryingStream;
+		private bool _skipRequested;
+		private CancellationTokenSource _streamRetryCts;
+		private static readonly int[] StreamRetryDelaySeconds = { 5, 10, 20, 40, 80 };
+
+		private enum StreamRetryResult
+		{
+			Recovered, Exhausted, Cancelled
+		}
+
+		private static bool IsInternetStream(Track track)
+		{
+			return track?.Path.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true;
+		}
+
+		/// <summary>
+		/// Retries loading an internet stream that dropped, with exponentially increasing delays. If every
+		/// retry fails the track is marked invalid and playback moves on, as for any unplayable track.
+		/// </summary>
+		private async void ReconnectStreamAsync(Track track)
+		{
+			if (_retryingStream)
+			{
+				return;
+			}
+
+			_retryingStream = true;
+			var result = StreamRetryResult.Exhausted;
+			var cts = new CancellationTokenSource();
+			_streamRetryCts = cts;
+			try
+			{
+				_playPositionTimer.Stop();
+				for (var attempt = 0; attempt < StreamRetryDelaySeconds.Length; attempt++)
+				{
+					var delay = StreamRetryDelaySeconds[attempt];
+					Log.Warning($"Stream {track.FormattedName} unavailable. Retry {attempt + 1} of {StreamRetryDelaySeconds.Length} in {delay}s.");
+					StatusMessage = $"Stream {track.FormattedName} interrupted. Retry {attempt + 1} of {StreamRetryDelaySeconds.Length} in {delay}s...";
+					await Task.Delay(TimeSpan.FromSeconds(delay), cts.Token);
+
+					if (_playbackState != PlaybackState.Playing || !ReferenceEquals(track, CurrentTrack))
+					{
+						result = StreamRetryResult.Cancelled;
+						break;
+					}
+
+					bool loaded;
+					try
+					{
+						loaded = _audioPlayer.Load(track.Path);
+					}
+					catch (Exception e)
+					{
+						Log.Warning(e, "Error reloading stream.");
+						loaded = false;
+					}
+
+					if (loaded)
+					{
+						RemainingTime = track.Duration;
+						TrackEndTime = DateTime.Now.Add(track.Duration);
+						_audioPlayer.TogglePlayPause();
+						StatusMessage = string.Empty;
+						Log.Info($"Stream {track.FormattedName} recovered after {attempt + 1} retry(ies).");
+						result = StreamRetryResult.Recovered;
+						break;
+					}
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				result = StreamRetryResult.Cancelled;
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, "Unexpected error while retrying stream.");
+			}
+			finally
+			{
+				_retryingStream = false;
+				_streamRetryCts = null;
+				cts.Dispose();
+			}
+
+			switch (result)
+			{
+				case StreamRetryResult.Recovered:
+					_playPositionTimer.Start();
+					break;
+				case StreamRetryResult.Cancelled:
+					StatusMessage = string.Empty;
+					PlaybackEnded();
+					break;
+				default:
+					track.IsValid = false;
+					Log.Error($"Could not play stream {track.FormattedName} on path {track.Path} after {StreamRetryDelaySeconds.Length} retries. Track has been marked invalid.");
+					StatusMessage = $"Could not play track {track.FormattedName}.";
+					_skipRequested = true;
+					PlaybackEnded();
+					break;
+			}
+		}
 
 		/// <summary>
 		/// The output stream died (device invalidated/removed, session change, ...). Re-resolve the
 		/// device and resume the current track, retrying with a capped backoff until it works or the
 		/// user stops playback.
 		/// </summary>
-		private async void OnPlaybackFaulted(AudioPlayback player, Exception? error)
+		private async void OnPlaybackFaulted(AudioPlayback player, Exception error)
 		{
-			if (!ReferenceEquals(player, _audioPlayer) || _recoveringPlayback || _playbackState != PlaybackState.Playing)
+			if (!ReferenceEquals(player, _audioPlayer) || _recoveringPlayback || _retryingStream || _playbackState != PlaybackState.Playing)
 			{
 				return;
 			}
@@ -187,6 +290,7 @@ namespace Radio_Automation.ViewModels
 
 			_recoveringPlayback = true;
 			var advanceToNextTrack = false;
+			var reconnectStream = false;
 			try
 			{
 				Log.Warning(error, $"Audio output lost while playing {track.FormattedName}. Attempting to recover.");
@@ -225,7 +329,15 @@ namespace Radio_Automation.ViewModels
 					var loaded = player.Load(track.Path);
 					if (!loaded && !player.LastLoadFailedOnDevice)
 					{
-						advanceToNextTrack = true;
+						// A stream that fails to load is most likely a network outage: use the stream retry schedule.
+						if (isStream)
+						{
+							reconnectStream = true;
+						}
+						else
+						{
+							advanceToNextTrack = true;
+						}
 						break;
 					}
 
@@ -253,6 +365,12 @@ namespace Radio_Automation.ViewModels
 			finally
 			{
 				_recoveringPlayback = false;
+			}
+
+			if (reconnectStream)
+			{
+				ReconnectStreamAsync(track);
+				return;
 			}
 
 			if (advanceToNextTrack)
@@ -626,7 +744,7 @@ namespace Radio_Automation.ViewModels
 		protected override async Task CloseAsync()
 		{
 			StopPlaying();
-			Clock.Stop();
+			Clock.Dispose();
 			_pendingEventTimer.Stop();
 			_weatherUpdateTimer.Stop();
 			await SaveSettingsAsync().WaitAsync(TimeSpan.FromSeconds(10));
@@ -645,7 +763,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command NewPlaylistCommand
 		{
-			get { return _newPlaylistCommand ?? (_newPlaylistCommand = new Command(NewPlaylist)); }
+			get { return _newPlaylistCommand ??= new Command(NewPlaylist); }
 		}
 
 		/// <summary>
@@ -667,7 +785,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand OpenPlaylistCommand
 		{
-			get { return _openPlaylistCommand ?? (_openPlaylistCommand = new TaskCommand(OpenPlaylist)); }
+			get { return _openPlaylistCommand ??= new TaskCommand(OpenPlaylist); }
 		}
 
 		/// <summary>
@@ -707,7 +825,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand ImportZaraPlaylistCommand
 		{
-			get { return _importZaraPlaylistCommand ?? (_importZaraPlaylistCommand = new TaskCommand(ImportZaraPlaylist)); }
+			get { return _importZaraPlaylistCommand ??= new TaskCommand(ImportZaraPlaylist); }
 		}
 
 		/// <summary>
@@ -744,7 +862,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand ImportM3UPlaylistCommand
 		{
-			get { return _importM3UPlaylistCommand ?? (_importM3UPlaylistCommand = new TaskCommand(ImportM3UPlaylistAsync)); }
+			get { return _importM3UPlaylistCommand ??= new TaskCommand(ImportM3UPlaylistAsync); }
 		}
 
 		/// <summary>
@@ -781,7 +899,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SavePlaylistCommand
 		{
-			get { return _savePlaylistCommand ?? (_savePlaylistCommand = new TaskCommand(SavePlaylist)); }
+			get { return _savePlaylistCommand ??= new TaskCommand(SavePlaylist); }
 		}
 
 		/// <summary>
@@ -812,7 +930,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand SavePlaylistAsCommand
 		{
-			get { return _savePlaylistAsCommand ?? (_savePlaylistAsCommand = new TaskCommand(SavePlaylistAs)); }
+			get { return _savePlaylistAsCommand ??= new TaskCommand(SavePlaylistAs); }
 		}
 
 		/// <summary>
@@ -848,7 +966,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Gets the Exit command.
 		/// </summary>
-		public Command<Window> ExitCommand => _exitCommand ?? (_exitCommand = new Command<Window>(Exit));
+		public Command<Window> ExitCommand => _exitCommand ??= new Command<Window>(Exit);
 
 		/// <summary>
 		/// Method to invoke when the Exit command is executed.
@@ -869,7 +987,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand EditEventScheduleCommand
 		{
-			get { return _editEventScheduleCommand ?? (_editEventScheduleCommand = new TaskCommand(EditEventScheduleAsync)); }
+			get { return _editEventScheduleCommand ??= new TaskCommand(EditEventScheduleAsync); }
 		}
 
 		/// <summary>
@@ -934,7 +1052,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command AddFileCommand
 		{
-			get { return _addFileCommand ?? (_addFileCommand = new Command(AddFile, CanAddFile)); }
+			get { return _addFileCommand ??= new Command(AddFile, CanAddFile); }
 		}
 
 		/// <summary>
@@ -979,7 +1097,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command AddFolderCommand
 		{
-			get { return _addFolderCommand ?? (_addFolderCommand = new Command(AddFolder, CanAddFolder)); }
+			get { return _addFolderCommand ??= new Command(AddFolder, CanAddFolder); }
 		}
 
 		/// <summary>
@@ -1021,7 +1139,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command HelpCommand
 		{
-			get { return _helpCommand ?? (_helpCommand = new Command(Help)); }
+			get { return _helpCommand ??= new Command(Help); }
 		}
 
 		/// <summary>
@@ -1043,7 +1161,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand PreferencesCommand
 		{
-			get { return _preferencesCommand ?? (_preferencesCommand = new TaskCommand(PreferencesAsync)); }
+			get { return _preferencesCommand ??= new TaskCommand(PreferencesAsync); }
 		}
 
 		/// <summary>
@@ -1081,7 +1199,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command PlayPauseCommand
 		{
-			get { return _playPauseCommand ?? (_playPauseCommand = new Command(PlayPause, CanPlayPause)); }
+			get { return _playPauseCommand ??= new Command(PlayPause, CanPlayPause); }
 		}
 
 		/// <summary>
@@ -1117,9 +1235,11 @@ namespace Radio_Automation.ViewModels
 				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
 				Log.Info($"Playing Track {CurrentTrack.FormattedName}");
 				_playbackState = PlaybackState.Playing;
+				_skipRequested = false;
 				var success = _audioPlayer.Load(CurrentTrack.Path);
 				if(success)
 				{
+					StatusMessage = string.Empty;
 					RemainingTime = CurrentTrack.Duration;
 					TrackEndTime = DateTime.Now.Add(CurrentTrack.Duration);
 					_audioPlayer.TogglePlayPause();
@@ -1128,6 +1248,10 @@ namespace Radio_Automation.ViewModels
 				{
 					// Not the track's fault: no output device. Retry rather than invalidating the playlist.
 					OnPlaybackFaulted(_audioPlayer, null);
+				}
+				else if (IsInternetStream(CurrentTrack))
+				{
+					ReconnectStreamAsync(CurrentTrack);
 				}
 				else
 				{
@@ -1159,7 +1283,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command StopPlaybackCommand
 		{
-			get { return _stopPlaybackCommand ?? (_stopPlaybackCommand = new Command(StopPlayback, CanStopPlayback)); }
+			get { return _stopPlaybackCommand ??= new Command(StopPlayback, CanStopPlayback); }
 		}
 
 		/// <summary>
@@ -1168,6 +1292,7 @@ namespace Radio_Automation.ViewModels
 		private void StopPlayback()
 		{
 			_playbackState = PlaybackState.Stopped;
+			_streamRetryCts?.Cancel();
 			_audioPlayer?.Stop();
 		}
 
@@ -1191,7 +1316,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command ForwardToEndCommand
 		{
-			get { return _forwardToEndCommand ?? (_forwardToEndCommand = new Command(ForwardToEnd, CanForwardToEnd)); }
+			get { return _forwardToEndCommand ??= new Command(ForwardToEnd, CanForwardToEnd); }
 		}
 
 		/// <summary>
@@ -1199,6 +1324,8 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		private void ForwardToEnd()
 		{
+			_skipRequested = true;
+			_streamRetryCts?.Cancel();
 			_audioPlayer?.Stop();
 		}
 
@@ -1222,7 +1349,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command RewindToStartCommand
 		{
-			get { return _rewindToStartCommand ?? (_rewindToStartCommand = new Command(RewindToStart, CanRewindToStart)); }
+			get { return _rewindToStartCommand ??= new Command(RewindToStart, CanRewindToStart); }
 		}
 
 		/// <summary>
@@ -1253,7 +1380,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand PlayTemperatureCommand
 		{
-			get { return _playTemperatureCommand ?? (_playTemperatureCommand = new TaskCommand(PlayTemperatureAsync)); }
+			get { return _playTemperatureCommand ??= new TaskCommand(PlayTemperatureAsync); }
 		}
 
 		/// <summary>
@@ -1275,7 +1402,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command ShuffleCommand
 		{
-			get { return _shuffleCommand ?? (_shuffleCommand = new Command(Shuffle, CanShuffle)); }
+			get { return _shuffleCommand ??= new Command(Shuffle, CanShuffle); }
 		}
 
 		/// <summary>
@@ -1376,7 +1503,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public Command VolumeChangedCommand
 		{
-			get { return _volumeChangedCommand ?? (_volumeChangedCommand = new Command(VolumeChanged)); }
+			get { return _volumeChangedCommand ??= new Command(VolumeChanged); }
 		}
 
 		/// <summary>
@@ -1398,7 +1525,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand ShowAboutCommand
 		{
-			get { return _showAboutCommand ?? (_showAboutCommand = new TaskCommand(ShowAboutAsync)); }
+			get { return _showAboutCommand ??= new TaskCommand(ShowAboutAsync); }
 		}
 
 		/// <summary>
@@ -1420,6 +1547,19 @@ namespace Radio_Automation.ViewModels
 
 		private void PlaybackEnded()
 		{
+			if (_retryingStream)
+			{
+				return;
+			}
+
+			// A stream never ends on its own, so an unrequested end means the connection dropped.
+			if (_playbackState == PlaybackState.Playing && !_skipRequested && IsInternetStream(CurrentTrack))
+			{
+				ReconnectStreamAsync(CurrentTrack);
+				return;
+			}
+
+			_skipRequested = false;
 			_playPositionTimer.Stop();
 			TrackEndTime = DateTime.MinValue;
 			TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, false));
@@ -1429,7 +1569,7 @@ namespace Radio_Automation.ViewModels
 				return;
 			}
 
-			if (_eventQueue.Any())
+			if (_eventQueue.Count > 0)
 			{
 				CurrentTrack = null;
 				ExecuteEvent(_eventQueue.Dequeue());
@@ -1711,6 +1851,14 @@ namespace Radio_Automation.ViewModels
 			}
 		}
 
+		internal static string GetTemperatureFileName(int temperature)
+		{
+			// File names are machine values: avoid a culture's NegativeSign changing the name.
+			var format = "000";
+			var number = temperature.ToString(format, CultureInfo.InvariantCulture);
+			return temperature < 0 ? $"TMPN{number}.mp3" : $"TMP{number}.mp3";
+		}
+
 		private async Task<bool> PlayTemperature()
 		{
 			var player = _audioPlayer;
@@ -1726,8 +1874,7 @@ namespace Radio_Automation.ViewModels
 				player.Volume = _audioPlayer.Volume;
 				FadeVolumeDown();
 			}
-			var format = "000";
-			var tempFile = Temperature < 0 ? $"TMPN{Temperature.ToString(format)}.mp3" : $"TMP{Temperature.ToString(format)}.mp3";
+			var tempFile = GetTemperatureFileName(Temperature);
 			var temperaturePath = Path.Combine($"{_settings.TimeTempFilePath}\\Temperature", tempFile);
 			if (File.Exists(temperaturePath))
 			{
@@ -1789,7 +1936,7 @@ namespace Radio_Automation.ViewModels
 
 		private void FadeVolumeDown()
 		{
-			for (float i = _audioPlayer.Volume - .1f; i > 0; i = i - .1f)
+			for (float i = _audioPlayer.Volume - .1f; i > 0; i -= .1f)
 			{
 				_audioPlayer.Volume = i;
 				Thread.Sleep(25);
@@ -1800,7 +1947,7 @@ namespace Radio_Automation.ViewModels
 
 		private void FadeVolumeUp()
 		{
-			for (float i = 0; i < Volume; i = i + .1f)
+			for (float i = 0; i < Volume; i += .1f)
 			{
 				_audioPlayer.Volume = i;
 				Thread.Sleep(25);

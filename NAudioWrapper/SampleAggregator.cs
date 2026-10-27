@@ -12,7 +12,7 @@ namespace NAudioWrapper
         private float maxValue;
         private float minValue;
         public int NotificationCount { get; set; }
-        int count;
+        private int count;
 
         // FFT
         public event EventHandler<FftEventArgs>? FftCalculated;
@@ -40,7 +40,7 @@ namespace NAudioWrapper
             this.source = source;
         }
 
-        static bool IsPowerOfTwo(int x)
+        private static bool IsPowerOfTwo(int x)
         {
             return (x & (x - 1)) == 0;
         }
@@ -111,6 +111,9 @@ namespace NAudioWrapper
         {
             Result = result;
         }
+        // The aggregator reuses one FftEventArgs wrapping its FFT buffer on the audio hot path, so handing out
+        // the array (not a copy) is deliberate; copying per notification would allocate on every FFT.
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1819:Properties should not return arrays", Justification = "Shared FFT buffer on the audio hot path; copying would allocate per notification.")]
         public Complex[] Result { get; private set; }
     }
 }

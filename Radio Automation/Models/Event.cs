@@ -3,6 +3,8 @@ using Catel.Data;
 
 namespace Radio_Automation.Models
 {
+	// "Event" is the domain term used throughout the app and its saved .evs files; it is never consumed from Visual Basic.
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "Domain term; renaming would break the persisted event schedule format and the UI vocabulary.")]
 	public class Event:ModelBase
 	{
 		public Event()

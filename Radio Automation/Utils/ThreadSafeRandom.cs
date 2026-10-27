@@ -18,6 +18,7 @@ namespace Radio_Automation.Utils
 		/// from a global (static) instance of Random, rather 
 		/// than time. 
 		/// </summary> 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Seeds the shuffle generator; not a security use.")]
 		private static Random NewRandom()
 		{
 			lock (LockObject)

@@ -1,0 +1,18 @@
+﻿[*.{cs,vb}]
+
+# Analyzer overrides
+
+# CA1707: Remove the underscores from member name
+dotnet_diagnostic.CA1707.severity = none
+
+# Bulk upgrade xUnit analyzer rules to build-breaking errors (wildcard rule IDs are not supported)
+dotnet_analyzer_diagnostic.category-Usage.severity = error
+dotnet_analyzer_diagnostic.category-Assertions.severity = error
+
+dotnet_diagnostic.CA1859.severity = suggestion
+
+# CA5394: Random is fine for test fixtures (junk file bytes), not a security use
+dotnet_diagnostic.CA5394.severity = none
+
+# CA1711: the xUnit collection definition is deliberately named *Collection
+dotnet_diagnostic.CA1711.severity = none

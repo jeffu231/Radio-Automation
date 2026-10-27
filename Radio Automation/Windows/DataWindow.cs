@@ -214,8 +214,8 @@ namespace Radio_Automation.Windows
             {
                 // Do not call this for ActualWidth and ActualHeight WPF, will cause problems with NET 40 
                 // on systems where NET45 is *not* installed
-                if (!string.Equals(e.PropertyName, nameof(ActualWidth), StringComparison.InvariantCulture) &&
-                    !string.Equals(e.PropertyName, nameof(ActualHeight), StringComparison.InvariantCulture))
+                if (!string.Equals(e.PropertyName, nameof(ActualWidth), StringComparison.Ordinal) &&
+                    !string.Equals(e.PropertyName, nameof(ActualHeight), StringComparison.Ordinal))
                 {
                     PropertyChanged?.Invoke(this, e);
                 }
@@ -795,6 +795,9 @@ namespace Radio_Automation.Windows
 
             var languageService = ServiceLocator.Default.ResolveType<ILanguageService>();
 
+            // Vendored from Catel: the parameterless GetString resolves the culture via Catel's language service
+            // (the app's UI culture). Passing a culture here would bypass that and could change which resource is used.
+#pragma warning disable CA1304
             if (IsOKButtonAvailable)
             {
                 var button = DataWindowButton.FromAsync(languageService.GetString("OK"), OnOkExecuteAsync, OnOkCanExecute);
@@ -819,6 +822,7 @@ namespace Radio_Automation.Windows
                 button.IsDefault = DefaultButton == DataWindowDefaultButton.Close;
                 _buttons.Add(button);
             }
+#pragma warning restore CA1304
 
             foreach (var button in _buttons)
             {
@@ -844,7 +848,7 @@ namespace Radio_Automation.Windows
 
             var contentGrid = WrapControlService.Wrap(newContentAsFrameworkElement, wrapOptions, _buttons.ToArray(), this);
 
-            var internalGrid = contentGrid.FindVisualDescendant(obj => (obj is FrameworkElement) && string.Equals(((FrameworkElement)obj).Name, WrapControlServiceControlNames.InternalGridName)) as Grid;
+            var internalGrid = contentGrid.FindVisualDescendant(obj => (obj is FrameworkElement) && string.Equals(((FrameworkElement)obj).Name, WrapControlServiceControlNames.InternalGridName, StringComparison.Ordinal)) as Grid;
             if (internalGrid != null)
             {
                 internalGrid.SetResourceReference(StyleProperty, "WindowGridStyle");
@@ -946,7 +950,7 @@ namespace Radio_Automation.Windows
         /// Applies all changes made by this window.
         /// </summary>
         /// <returns>True if successful, otherwise false.</returns>
-        protected async virtual Task<bool> ApplyChangesAsync()
+        protected virtual async Task<bool> ApplyChangesAsync()
         {
             var result = await _logic.SaveViewModelAsync();
             return result;
@@ -955,7 +959,7 @@ namespace Radio_Automation.Windows
         /// <summary>
         /// Discards all changes made by this window.
         /// </summary>
-        protected async virtual Task<bool> DiscardChangesAsync()
+        protected virtual async Task<bool> DiscardChangesAsync()
         {
             // CTL-735 We might be handling the ViewModel.Closed event
             var vm = _logic.ViewModel;
@@ -979,10 +983,7 @@ namespace Radio_Automation.Windows
             foreach (var command in Commands)
             {
                 var commandAsICatelCommand = command as ICatelCommand;
-                if (commandAsICatelCommand != null)
-                {
-                    commandAsICatelCommand.RaiseCanExecuteChanged();
-                }
+                commandAsICatelCommand?.RaiseCanExecuteChanged();
             }
         }
 

@@ -14,6 +14,7 @@ on:
       - '.editorconfig'
       - 'qodana.yml'
       - 'CLAUDE.md'
+      - '.claude'
 
 env:
   HUSKY: 0
@@ -40,6 +41,16 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore --runtime win-x64
+
+      - name: Test
+        run: dotnet test --project '.\Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj' --no-restore --report-trx --results-directory TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: "Test Results"
+          path: "./TestResults/*.trx"
 
       - name: Setup git
         run: |

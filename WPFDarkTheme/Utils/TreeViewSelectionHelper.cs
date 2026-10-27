@@ -6,7 +6,7 @@ namespace WPFDarkTheme.Utils
 {
     public class TreeViewHelper
     {
-        private static Dictionary<DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<DependencyObject, TreeViewSelectedItemBehavior>();
+        private static readonly Dictionary<DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<DependencyObject, TreeViewSelectedItemBehavior>();
 
         public static object GetSelectedItem(DependencyObject obj)
         {
@@ -34,9 +34,9 @@ namespace WPFDarkTheme.Utils
             view.ChangeSelectedItem(e.NewValue);
         }
 
-        private class TreeViewSelectedItemBehavior
+        private sealed class TreeViewSelectedItemBehavior
         {
-            readonly TreeView _view;
+            private readonly TreeView _view;
             public TreeViewSelectedItemBehavior(TreeView view)
             {
                 this._view = view;
@@ -46,10 +46,7 @@ namespace WPFDarkTheme.Utils
             internal void ChangeSelectedItem(object p)
             {
                 TreeViewItem item = (TreeViewItem)_view.ItemContainerGenerator.ContainerFromItem(p);
-                if (item != null)
-                {
-                    item.IsSelected = true;
-                }
+                item?.IsSelected = true;
             }
         }
     }

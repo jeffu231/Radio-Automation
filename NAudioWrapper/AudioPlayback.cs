@@ -15,7 +15,7 @@ namespace NAudioWrapper
     {
 	    private static readonly ILog Log = LogManager.GetCurrentClassLogger();
 
-        private IWavePlayer? _playbackDevice;
+        private WasapiOut? _playbackDevice;
         private WaveStream? _fileStream;
 
         public event Action? PlaybackResumed;
@@ -36,12 +36,7 @@ namespace NAudioWrapper
 		private VolumeSampleProvider? _volumeProvider;
 		private float _volume = 1f;
 		private bool _notificationsRegistered;
-		private static readonly MMDeviceEnumerator DeviceEnumerator;
-
-		static AudioPlayback()
-		{
-			DeviceEnumerator = new MMDeviceEnumerator();
-		}
+		private static readonly MMDeviceEnumerator DeviceEnumerator = new MMDeviceEnumerator();
 
 		public AudioPlayback():this(GetDefaultMMDevice()!)
 		{
@@ -409,9 +404,14 @@ namespace NAudioWrapper
         {
 			_playbackDevice?.Stop();
 			DisposePlaybackDevice();
-            if (_fileStream != null)
+            try
             {
-                _fileStream.Position = 0;
+                _fileStream?.Position = 0;
+            }
+            catch (Exception e)
+            {
+                // Non-seekable or broken sources (e.g. a dropped internet stream) can't be rewound.
+                Log.Warning(e, "Unable to reset the stream position.");
             }
 			PlaybackStopped?.Invoke();
         }
@@ -454,10 +454,7 @@ namespace NAudioWrapper
 	        get => _fileStream?.CurrentTime.TotalSeconds ?? 0;
 	        set
 	        {
-		        if (_fileStream != null)
-		        {
-			        _fileStream.CurrentTime = TimeSpan.FromSeconds(value);
-		        }
+		        _fileStream?.CurrentTime = TimeSpan.FromSeconds(value);
 			}
 		}
 
@@ -471,10 +468,7 @@ namespace NAudioWrapper
 	        {
 				EnsureDeviceCreated();
 				_volume = Math.Min(1,Math.Max(0, value));
-				if (_volumeProvider != null)
-				{
-					_volumeProvider.Volume = _volume;
-				}
+				_volumeProvider?.Volume = _volume;
 	        }
         }
 		
@@ -497,6 +491,7 @@ namespace NAudioWrapper
             Stop();
             CloseFile();
             DisposePlaybackDevice();
+            GC.SuppressFinalize(this);
         }
 
         private void DisposePlaybackDevice()

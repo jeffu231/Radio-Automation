@@ -223,7 +223,7 @@ namespace Radio_Automation.ViewModels
 		/// </summary>
 		public TaskCommand OkCommand
 		{
-			get { return _okCommand ?? (_okCommand = new TaskCommand(OkAsync, CanOk)); }
+			get { return _okCommand ??= new TaskCommand(OkAsync, CanOk); }
 		}
 
 		/// <summary>

@@ -22,7 +22,7 @@ dotnet publish 'Radio Automation\Radio Automation.csproj' -p:PublishProfile=Buil
 dotnet build -c Release /p:Version=<version>
 ```
 
-There are no automated tests in this project.
+See the Testing section below for the unit test project.
 
 ## Commit Message Convention
 
@@ -35,6 +35,8 @@ Commits are linted via Husky. Messages must follow Conventional Commits:
 Valid types: `feat`, `fix`, `docs`, `chore`, `style`, `refactor`, `perf`, `test`, `wip`, `ci`, `build`, `log`, `revert`
 
 Subject must be 4+ characters and the line must be under 90 characters total. No trailing period or whitespace.
+
+Commits that update files under `docs/plans/` use `chore(plans)`, not `docs(plans)`. Versionize groups the changelog by type only and `docs` has a section, so `docs(plans)` would appear in the release notes. `chore` has no section in `.versionize`, so it is left out.
 
 ## CI / Versioning
 
@@ -64,6 +66,7 @@ JobToolKit.Core is used for cron-based event scheduling. It needs to be replaced
 | `WPFDarkTheme` | Custom WPF dark theme/styling |
 | `Resources` | Shared resources |
 | `Radio-Automation-Installer` | WiX MSI installer project |
+| `Tests/RadioAutomation.Tests` | xUnit.net v3 unit tests |
 
 ### MVVM Framework: Catel
 
@@ -109,3 +112,11 @@ Event types (`EventType`): `Play`, `Stop`, `Pause`, `Temperature`, `Time`, `Humi
 ### Track Parsing
 
 `AudioTrackParserService` (implements `IAudioTrackParserService`) reads ID3/metadata from audio files using **TagLibSharp**. It supports `.mp3`, `.wav`, `.flac`, `.ogg`, `.wma`. Playlist sources include folder scanning (recursive), M3U files (via OneWay.M3U), Zara playlists, and internet streams.
+
+## Testing
+
+- Framework: xUnit.net v3, project `Tests/RadioAutomation.Tests`.
+- Command: `dotnet test --project 'Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj'` (`global.json` selects the Microsoft.Testing.Platform runner, required by the .NET 10 SDK).
+- Filesystem access goes through `TempDirectory` only. No network, audio devices, MQTT broker, or STA/Dispatcher.
+- Use `[Collection(NonParallelCollection.Name)]` for tests that change static state (e.g. `EventBus.EventTriggered`).
+- Record a known defect as a skipped test (`[Fact(Skip = "Known defect: ...")]`) that asserts the correct behavior, and un-skip it in the commit that fixes the defect.

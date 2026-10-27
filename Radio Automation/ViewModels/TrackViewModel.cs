@@ -13,7 +13,7 @@ namespace Radio_Automation.ViewModels
 	{
 		public TrackViewModel(Track track)
 		{
-			Argument.IsNotNull("track", track);
+			Argument.IsNotNull(nameof(track), track);
 			Track = track;
         }
 

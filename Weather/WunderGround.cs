@@ -10,7 +10,7 @@ namespace Weather
 	public class WunderGround
 	{
 		private static readonly HttpClient _client = new HttpClient();
-		private static readonly string _url = "https://api.weather.com/v2/pws/observations/current";
+		private const string _url = "https://api.weather.com/v2/pws/observations/current";
 
 		static WunderGround()
 		{
@@ -30,7 +30,7 @@ namespace Weather
 				{
 					obs = await _client.GetFromJsonAsync<WundergroundObservations>(request);
 					
-					if (obs != null && obs.Observations.Any())
+					if (obs != null && obs.Observations.Count > 0)
 					{
 						return obs.Observations.First();
 					}

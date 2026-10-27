@@ -65,10 +65,7 @@ namespace Radio_Automation.Behaviors
 		private void OnListViewItemKeyDown(object sender, KeyEventArgs e)
 		{
 			var listViewItem = e.OriginalSource as ListViewItem;
-			if (listViewItem == null)
-			{
-				listViewItem = FindParentTreeViewItem(e.OriginalSource);
-			}
+			listViewItem ??= FindParentTreeViewItem(e.OriginalSource);
 
 			if (listViewItem != null)
 			{
@@ -252,7 +249,7 @@ namespace Radio_Automation.Behaviors
 		private bool _isUpdatingTarget;
 		private bool _isUpdatingSource;
 
-		void SourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (_isUpdatingSource)
 				return;
@@ -337,13 +334,10 @@ namespace Radio_Automation.Behaviors
 		/// <typeparam name="T">The type of item to retrieve.</typeparam>
 		/// <param name="parentItem">The parent item.</param>
 		/// <returns>The list of items within the parent item, may be empty.</returns>
-		private static IList<T> GetItemsRecursively<T>(ListView parentItem)
+		private static List<T> GetItemsRecursively<T>(ListView parentItem)
 			where T : ListBoxItem
 		{
-			if (parentItem == null)
-			{
-				throw new ArgumentNullException(nameof(parentItem));
-			}
+			ArgumentNullException.ThrowIfNull(parentItem);
 
 			var items = new List<T>();
 
@@ -371,10 +365,7 @@ namespace Radio_Automation.Behaviors
 		private T GetRelativeItem<T>(T item, int relativePosition)
 			where T : ListViewItem
 		{
-			if (item == null)
-			{
-				throw new ArgumentNullException(nameof(item));
-			}
+			ArgumentNullException.ThrowIfNull(item);
 
 			var items = GetItemsRecursively<T>(AssociatedObject);
 			int index = items.IndexOf(item);

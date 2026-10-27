@@ -11,6 +11,7 @@ namespace Radio_Automation.Extensions
 {
 	public static class CollectionExtensions
 	{
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Playlist shuffle for listening order; not a security use.")]
 		public static void Shuffle<T>(this FastObservableCollection<T> list)
 		{
 			var disposable = list.SuspendChangeNotifications(SuspensionMode.Mixed);
@@ -26,6 +27,7 @@ namespace Radio_Automation.Extensions
 			disposable.Dispose();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Playlist shuffle for listening order; not a security use.")]
 		public static void Shuffle<T>(this ObservableCollection<T> list)
 		{
 			//var disposable = list.SuspendChangeNotifications(SuspensionMode.Mixed);
