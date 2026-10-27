@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.6.0"></a>
+## [1.6.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.6.0) (2026-10-27)
+
+### Features
+
+* **Audio:** Retry dropped internet streams with exponential backoff ([02f5310](https://www.github.com/jeffu231/Radio-Automation/commit/02f5310074419b4051b94e1a69203a32143e7d67))
+
+### Bug Fixes
+
+* **audio:** Enumerate source sequences once ([b3d957b](https://www.github.com/jeffu231/Radio-Automation/commit/b3d957b34ba2684c3d12ad0dcc66bb72f68321c3))
+* **audio:** Set Device.IsDefault from constructor and promote rule to error ([a87a4d1](https://www.github.com/jeffu231/Radio-Automation/commit/a87a4d1c79a6dbcc0700c0225c41ac885cd6e30c))
+* **AudioTrackParser:** Match audio file extensions case-insensitively ([fd58ae0](https://www.github.com/jeffu231/Radio-Automation/commit/fd58ae0175e6e27508be7ec1b64e333ca238db68))
+* **AudioTrackParser:** Return each track once from recursive scans ([66621c5](https://www.github.com/jeffu231/Radio-Automation/commit/66621c5fdbe38de3e3c5363b7789c7d846032e70))
+* **AudioTrackParser:** Skip unreadable audio files in folder scans ([145c978](https://www.github.com/jeffu231/Radio-Automation/commit/145c978cb2b34bb4bee9976970e0937c1b98b8d8))
+* **Extensions:** Support nullable enums in EnumerationExtension ([c9a88b6](https://www.github.com/jeffu231/Radio-Automation/commit/c9a88b64786ff8fd5e7cf7320cee110face6190a))
+* **FileExtensions:** Detect encoding for short files and UTF-32 ([4bde539](https://www.github.com/jeffu231/Radio-Automation/commit/4bde539b23b9208fae460ad4e8a035051f602486))
+* **globalization:** Format temperature file names invariantly ([158c6e7](https://www.github.com/jeffu231/Radio-Automation/commit/158c6e7a8401490c9596a77ad989d8f9a85ab25d))
+* **globalization:** Parse PercentageConverter operands invariantly ([49faddf](https://www.github.com/jeffu231/Radio-Automation/commit/49faddf26432d57384866bd97e1a8c1993181d84))
+* **lifetime:** Make Clock disposable and dispose it on close ([f688394](https://www.github.com/jeffu231/Radio-Automation/commit/f688394c57f9222704de90df0637176f50ae588d))
+* **logging:** Replace console error with a real log entry ([4cf050f](https://www.github.com/jeffu231/Radio-Automation/commit/4cf050fc414f892cf74384378a0441e9c58bf3d1))
+* **nullable:** Drop unscoped nullable annotations in MainWindowViewModel ([e0ec5a3](https://www.github.com/jeffu231/Radio-Automation/commit/e0ec5a30494a65b6280a486fbe061e207c84cdac))
+* **Track:** Assign Id in the stream track constructor ([bca3841](https://www.github.com/jeffu231/Radio-Automation/commit/bca38410f0ede150375084c2ae888fb81f9df61f))
+* **Track:** Handle empty lists in tag and genre formatting ([a495e7b](https://www.github.com/jeffu231/Radio-Automation/commit/a495e7b728823cf444e6077f1ece4bb9a7d468c2))
+
+### Performance
+
+* **analyzers:** Hoist constant arrays and cache JsonSerializerOptions ([da9b197](https://www.github.com/jeffu231/Radio-Automation/commit/da9b1978cf957afae79d71720662ca0f8ce4d45c))
+
+### Continuous Integration
+
+* **build:** Run unit tests before versioning ([d2483d8](https://www.github.com/jeffu231/Radio-Automation/commit/d2483d885e37e45c019bd05cc1d1aec0cc4489cd))
+* **workflows:** Build the app project instead of the installer on PRs ([25a95dc](https://www.github.com/jeffu231/Radio-Automation/commit/25a95dca5126011ac3aa70a5cb57e98d9c0a99a1))
+* **workflows:** Validate build and tests on pull requests ([63ef332](https://www.github.com/jeffu231/Radio-Automation/commit/63ef332cb4cd7a98b36457872867bf21192007cb))
+
+### Documentation
+
+* **CLAUDE:** Document test project and conventions ([c4ea68b](https://www.github.com/jeffu231/Radio-Automation/commit/c4ea68bb12ceb898eac70b50b5e719c06b3744dc))
+* **CLAUDE:** Update known defect testing guidance ([dac7220](https://www.github.com/jeffu231/Radio-Automation/commit/dac72203000c95d50ca3d4d45adaf684e2a1e574))
+* **readme:** Point to wiki for full documentation ([d141780](https://www.github.com/jeffu231/Radio-Automation/commit/d14178066891e49e1665065dcb6aa0df5abd4d8a))
+
 <a name="1.5.2"></a>
 ## [1.5.2](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.5.2) (2026-10-23)
 
