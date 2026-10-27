@@ -29,9 +29,10 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore --runtime win-x64
 
-      # Code style (EnforceCodeStyleInBuild) and analyzer errors from .editorconfig fail here
+      # Code style (EnforceCodeStyleInBuild) and analyzer errors from .editorconfig fail here.
+      # The installer project is excluded: its Release build requires publish output, which is not produced on pull requests.
       - name: Build
-        run: dotnet build "Radio Automation.sln" --no-restore --configuration Release
+        run: dotnet build "Radio Automation\Radio Automation.csproj" --no-restore --configuration Release
 
       - name: Test
         run: dotnet test --project '.\Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj' --configuration Release --no-restore --report-trx --results-directory TestResults
