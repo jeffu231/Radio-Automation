@@ -1,3 +1,7 @@
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/jeffu231/Radio-Automation)](https://github.com/jeffu231/Radio-Automation/releases/latest)
+[![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/jeffu231/Radio-Automation/latest/total)](https://github.com/jeffu231/Radio-Automation/releases/latest)
+[![Issue Tracker](https://img.shields.io/badge/issue-tracker-blue.svg?logo=jira)](https://github.com/jeffu231/Radio-Automation/issues)
+
 # Radio-Automation
 
 Radio Automation is a purpose built audio player designed to be a off hours music player for my animated light display during the holidays. 
