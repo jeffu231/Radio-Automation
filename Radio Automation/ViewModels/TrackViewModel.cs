@@ -22,26 +22,6 @@ namespace Radio_Automation.ViewModels
 		/// <inheritdoc />
 		protected override Task InitializeAsync()
 		{
-			TrackPlayingMessage.Register(this, TrackPlaying);
-			return Task.CompletedTask;
-		}
-
-		#endregion
-
-		private void TrackPlaying(TrackPlayingMessage message)
-		{
-			if (Track == message.Data.Track)
-			{
-				IsPlaying = message.Data.IsPlaying;
-			}
-		}
-
-		#region Overrides of ViewModelBase
-
-		/// <inheritdoc />
-		protected override Task OnClosingAsync()
-		{
-			TrackPlayingMessage.Unregister(this, TrackPlaying);
 			return Task.CompletedTask;
 		}
 
@@ -71,6 +51,7 @@ namespace Radio_Automation.ViewModels
 		/// <summary>
 		/// Gets or sets the IsPlaying value.
 		/// </summary>
+		[ViewModelToModel(nameof(Track))]
 		public bool IsPlaying
 		{
 			get { return GetValue<bool>(IsPlayingProperty); }

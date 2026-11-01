@@ -223,6 +223,25 @@ namespace Radio_Automation.Models
 
 		#endregion
 
+		#region IsPlaying property
+
+		/// <summary>
+		/// Gets or sets whether this track is the one playing now. Runtime state only; not persisted.
+		/// </summary>
+		[JsonIgnore]
+		public bool IsPlaying
+		{
+			get { return GetValue<bool>(IsPlayingProperty); }
+			set { SetValue(IsPlayingProperty, value); }
+		}
+
+		/// <summary>
+		/// IsPlaying property data.
+		/// </summary>
+		public static readonly IPropertyData IsPlayingProperty = RegisterProperty<bool>(nameof(IsPlaying));
+
+		#endregion
+
 		public string GetStringTags(List<Tag> tags)
 		{
 			return string.Join(", ", tags.Select(tag => tag.Name));

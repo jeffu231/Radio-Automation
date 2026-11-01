@@ -1,4 +1,5 @@
 using Radio_Automation.Models;
+using Radio_Automation.ViewModels;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -48,6 +49,27 @@ namespace RadioAutomation.Tests.Models
 			var track = new Track { Artist = "Artist", Name = "Name" };
 
 			Assert.Equal("Artist - Name", track.FormattedName);
+		}
+
+		[Fact]
+		public void IsPlaying_DefaultsToFalse()
+		{
+			Assert.False(new Track().IsPlaying);
+		}
+
+		[Fact]
+		public void NewTrackViewModel_ReflectsPlayingTrack()
+		{
+			// A row view model is recreated when the list scrolls the row back into view.
+			var track = new Track { IsPlaying = true };
+
+			var vm = new TrackViewModel(track);
+
+			Assert.True(vm.IsPlaying);
+
+			track.IsPlaying = false;
+
+			Assert.False(vm.IsPlaying);
 		}
 
 		[Fact]

@@ -44,6 +44,7 @@ namespace RadioAutomation.Tests.Models
 
 			Assert.DoesNotContain("FormattedName", keys);
 			Assert.DoesNotContain("IsValid", keys);
+			Assert.DoesNotContain("IsPlaying", keys);
 		}
 
 		[Fact]
