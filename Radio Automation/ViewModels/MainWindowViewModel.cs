@@ -1227,12 +1227,17 @@ namespace Radio_Automation.ViewModels
 			
 		}
 
+		private static void SetTrackPlaying(Track track, bool isPlaying)
+		{
+			track?.IsPlaying = isPlaying;
+		}
+
 		private void StartPlay()
 		{
 			UpdateCurrentNextTracks();
 			if (CurrentTrack != null)
 			{
-				TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, true));
+				SetTrackPlaying(CurrentTrack, true);
 				Log.Info($"Playing Track {CurrentTrack.FormattedName}");
 				_playbackState = PlaybackState.Playing;
 				_skipRequested = false;
@@ -1562,7 +1567,7 @@ namespace Radio_Automation.ViewModels
 			_skipRequested = false;
 			_playPositionTimer.Stop();
 			TrackEndTime = DateTime.MinValue;
-			TrackPlayingMessage.SendWith(new TrackInfoData(CurrentTrack, false));
+			SetTrackPlaying(CurrentTrack, false);
 			if (_playbackState == PlaybackState.Stopped)
 			{
 				StopPlaying();
