@@ -77,7 +77,7 @@ jobs:
         if: steps.versionize.outcome == 'success'
         uses: ad-m/github-push-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.RELEASE_TOKEN }}
           branch: ${{ github.ref }}
           tags: true
            
