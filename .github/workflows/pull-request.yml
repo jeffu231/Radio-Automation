@@ -45,4 +45,4 @@ jobs:
           path: |
             ./TestResults/*.trx
             ./TestResults/**/*.dmp
-            ./TestResults/**/*.txt
+            ./TestResults/**/*.log

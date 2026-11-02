@@ -118,5 +118,7 @@ Event types (`EventType`): `Play`, `Stop`, `Pause`, `Temperature`, `Time`, `Humi
 - Framework: xUnit.net v3, project `Tests/RadioAutomation.Tests`.
 - Command: `dotnet test --project 'Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj'` (`global.json` selects the Microsoft.Testing.Platform runner, required by the .NET 10 SDK).
 - Filesystem access goes through `TempDirectory` only. No network, audio devices, MQTT broker, or STA/Dispatcher.
-- Use `[Collection(NonParallelCollection.Name)]` for tests that change static state (e.g. `EventBus.EventTriggered`).
+- Test parallelization is disabled for the whole assembly (`AssemblyConfiguration.cs`). Catel's `ServiceLocator` and static initializers are process-wide, and concurrent initialization deadlocked CI (the build hung for 6 hours). Do not re-enable it. If the suite ever becomes slow, opt isolated tests in explicitly instead of turning it back on globally.
+- `[Collection(NonParallelCollection.Name)]` is still used by tests that change static state (e.g. `EventBus.EventTriggered`); it is redundant while parallelization is off but keeps intent clear.
+- CI runs tests with a job timeout and `--hangdump`; a hang uploads a dump in the "Test Results" artifact.
 - Record a known defect as a skipped test (`[Fact(Skip = "Known defect: ...")]`) that asserts the correct behavior, and un-skip it in the commit that fixes the defect.

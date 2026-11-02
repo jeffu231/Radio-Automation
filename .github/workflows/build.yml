@@ -54,7 +54,7 @@ jobs:
           path: |
             ./TestResults/*.trx
             ./TestResults/**/*.dmp
-            ./TestResults/**/*.txt
+            ./TestResults/**/*.log
 
       - name: Setup git
         run: |
