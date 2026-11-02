@@ -22,6 +22,7 @@ env:
 jobs:
   build-and-publish:
     runs-on: windows-latest
+    timeout-minutes: 20
     permissions:
       packages: write
       contents: write
@@ -43,14 +44,17 @@ jobs:
         run: dotnet restore --runtime win-x64
 
       - name: Test
-        run: dotnet test --project '.\Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj' --no-restore --report-trx --results-directory TestResults
+        run: dotnet test --project '.\Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj' --configuration Release --no-restore --report-trx --hangdump --hangdump-timeout 5m --results-directory TestResults
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: "Test Results"
-          path: "./TestResults/*.trx"
+          path: |
+            ./TestResults/*.trx
+            ./TestResults/**/*.dmp
+            ./TestResults/**/*.log
 
       - name: Setup git
         run: |
