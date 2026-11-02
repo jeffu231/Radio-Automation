@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.6.1"></a>
+## [1.6.1](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.6.1) (2026-11-02)
+
+### Bug Fixes
+
+* **playlist:** Keep playing-track highlight when list is scrolled ([6bd73fe](https://www.github.com/jeffu231/Radio-Automation/commit/6bd73fe3129a6a7c398abd955ab2ce5554f04345))
+
+### Continuous Integration
+
+* **build:** Check out with RELEASE_TOKEN so the release push can bypass ([a044820](https://www.github.com/jeffu231/Radio-Automation/commit/a0448207f3c41b3871c9f83802cbcafb915ddd39))
+* **build:** Push release commit and tag with RELEASE_TOKEN ([c80a5e5](https://www.github.com/jeffu231/Radio-Automation/commit/c80a5e5766574fd33e3cd062693f5127cd53c548))
+* **build:** Test in Release with a timeout and hang dump ([e1e1ecf](https://www.github.com/jeffu231/Radio-Automation/commit/e1e1ecf2951572a90d98e431165a5c708e0ca2fa))
+
+### Documentation
+
+* **readme:** Add release and issue badges ([d3dc638](https://www.github.com/jeffu231/Radio-Automation/commit/d3dc6381279a5876c0665c039ec417e0d2f31931))
+
 <a name="1.6.0"></a>
 ## [1.6.0](https://www.github.com/jeffu231/Radio-Automation/releases/tag/v1.6.0) (2026-10-27)
 
