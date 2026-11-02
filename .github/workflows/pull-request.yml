@@ -35,11 +35,14 @@ jobs:
         run: dotnet build "Radio Automation\Radio Automation.csproj" --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test --project '.\Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj' --configuration Release --no-restore --report-trx --results-directory TestResults
+        run: dotnet test --project '.\Tests\RadioAutomation.Tests\RadioAutomation.Tests.csproj' --configuration Release --no-restore --report-trx --hangdump --hangdump-timeout 5m --results-directory TestResults
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: "Test Results"
-          path: "./TestResults/*.trx"
+          path: |
+            ./TestResults/*.trx
+            ./TestResults/**/*.dmp
+            ./TestResults/**/*.txt
